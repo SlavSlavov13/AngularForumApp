@@ -1,12 +1,18 @@
 <header class="nav">
 	<a routerLink="/threads">Threads</a>
-	<a routerLink="/threads/create">Create</a>
-	<a routerLink="/my-profile/threads">My Threads</a>
+	@if (loggedIn()) {
+		<a routerLink="/threads/create">Create</a>
+		<a routerLink="/my-profile/threads">My Threads</a>
+	}
 	<span class="spacer"></span>
-	<a routerLink="/login">Login</a>
-	<a routerLink="/register">Register</a>
-	<a routerLink="/my-profile">Profile</a>
-	<button (click)="logout()">Logout</button>
+	@if (loggedIn()) {
+		<a routerLink="/my-profile">Profile</a>
+		<button (click)="logout()">Logout</button>
+	} @else {
+		<a routerLink="/login">Login</a>
+		<a routerLink="/register">Register</a>
+	}
+
 </header>
 
 <main>

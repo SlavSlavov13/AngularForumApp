@@ -5,9 +5,8 @@ export interface Post {
 	readonly threadId: string;
 	readonly body: string;
 	readonly authorId: string;
-	readonly authorName: string;
 	readonly createdAt: Timestamp | Date;
 	readonly updatedAt?: Timestamp | Date;
 }
 
-export type PostCreate = Omit<Post, 'id' | 'createdAt' | 'updatedAt'>;
+export type PostCreateModel = Omit<Post, 'id' | 'createdAt' | 'updatedAt'>;

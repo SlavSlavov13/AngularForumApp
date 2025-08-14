@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, computed, inject, Signal, signal, WritableSignal} from '@angular/core';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import {AuthService} from "./core/services/auth.service";
 
@@ -9,17 +9,17 @@ import {AuthService} from "./core/services/auth.service";
 	styleUrl: './app.css'
 })
 export class App {
-	protected readonly title = signal('forum');
-
-	private auth = inject(AuthService);
-	private router = inject(Router);
+	protected readonly title: WritableSignal<string> = signal('forum');
+	private auth: AuthService = inject(AuthService);
+	protected loggedIn: Signal<boolean> = computed((): boolean => this.auth.isLoggedIn());
+	private router: Router = inject(Router);
 
 	async logout() {
 		try {
-			await this.auth.logout();             // calls signOut(this.auth)[4]
-			await this.router.navigate(['/login']); // optional redirect after logout
+			await this.auth.logout();
+			await this.router.navigate(['/threads']);
 		} catch (e) {
-			console.error('Sign out error:', e);  // useful for debugging
+			console.error('Sign out error:', e);
 		}
 	}
 }
