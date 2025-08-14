@@ -1,0 +1,30 @@
+<section class="container">
+	<h1>Create Thread</h1>
+
+	<form (ngSubmit)="submit()" [formGroup]="form">
+		<label>
+			Title
+			<input formControlName="title" type="text"/>
+		</label>
+
+		@if (form.get('title')?.invalid && form.get('title')?.touched) {
+			<div>Title is required (min 6).</div>
+		}
+
+		<label>
+			Body
+			<textarea formControlName="body"></textarea>
+		</label>
+
+		@if (form.get('body')?.invalid && form.get('body')?.touched) {
+			<div>Body is required (min 20).</div>
+		}
+
+		<label>
+			Tags (comma-separated)
+			<input formControlName="tags" placeholder="angular,help,discussion"/>
+		</label>
+
+		<button [disabled]="form.invalid" type="submit">Create</button>
+	</form>
+</section>
