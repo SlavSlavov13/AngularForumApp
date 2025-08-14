@@ -16,6 +16,7 @@ export class AuthService {
 
 	constructor() {
 		onAuthStateChanged(this.auth, async (fbUser: User | null) => {
+			console.log('Auth state:', fbUser ? `SIGNED IN ${fbUser.uid}` : 'SIGNED OUT');
 			if (fbUser) {
 				this.user.set({
 					uid: fbUser.uid,
