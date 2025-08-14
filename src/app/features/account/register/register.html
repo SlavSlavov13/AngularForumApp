@@ -1,12 +1,36 @@
-<section class="container">
-	<h1>Register</h1>
-	<form (ngSubmit)="submit()" [formGroup]="form">
-		<label>Email
-			<input formControlName="email" type="email"/>
-		</label>
-		<label>Password
-			<input formControlName="password" type="password"/>
-		</label>
-		<button [disabled]="form.invalid" type="submit">Create Account</button>
-	</form>
-</section>
+<form (ngSubmit)="submit()" [formGroup]="form">
+	<div>
+		<label>Email</label>
+		<input formControlName="email" type="email"/>
+		<small *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+			<span *ngIf="form.get('email')?.errors?.['required']">Email is required.</span>
+			<span *ngIf="form.get('email')?.errors?.['email']">Enter a valid email.</span>
+		</small>
+	</div>
+
+	<div>
+		<label>Password</label>
+		<input formControlName="password" type="password"/>
+		<small *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+			<span *ngIf="form.get('password')?.errors?.['required']">Password is required.</span>
+			<span *ngIf="form.get('password')?.errors?.['minlength']">
+        Minimum {{ form.get('password')?.errors?.['minlength']?.requiredLength }} characters.
+      </span>
+		</small>
+	</div>
+
+	<div>
+		<label>Display name</label>
+		<input formControlName="displayName" type="text"/>
+		<small *ngIf="form.get('displayName')?.touched && form.get('displayName')?.invalid">
+			<span *ngIf="form.get('displayName')?.errors?.['required']">Display name is required.</span>
+			<span *ngIf="form.get('displayName')?.errors?.['minlength']">Minimum length is 2 characters.</span>
+		</small>
+	</div>
+
+	<button [disabled]="loading || form.invalid" type="submit">
+		{{ loading ? 'Creating account...' : 'Register' }}
+	</button>
+
+	<p *ngIf="error" style="color:#b00020">{{ error }}</p>
+</form>

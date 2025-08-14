@@ -1,27 +1,42 @@
-import {Component} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {Component, inject} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {CommonModule} from '@angular/common';
+import {Router} from '@angular/router';
+import {AuthService} from "../../../core/services/auth.service";
 
 @Component({
 	selector: 'app-login',
-	imports: [
-		ReactiveFormsModule
-	],
+	standalone: true,
+	imports: [ReactiveFormsModule, CommonModule],
 	templateUrl: './login.html',
-	styleUrl: './login.css'
+	styleUrls: ['./login.css']
 })
 export class Login {
-	form: FormGroup;
+	loading: boolean = false;
+	error: string | null = null;
+	private fb: FormBuilder = inject(FormBuilder);
+	form: FormGroup = this.fb.group({
+		email: ['', [Validators.required, Validators.email]],
+		password: ['', [Validators.required, Validators.minLength(6)]],
+	});
+	private auth: AuthService = inject(AuthService);
+	private router: Router = inject(Router);
 
-	constructor(private fb: FormBuilder) {
-		this.form = this.fb.group({
-			email: ['', [Validators.required, Validators.email]],
-			password: ['', [Validators.required, Validators.minLength(6)]],
-		});
-	}
+	async submit() {
+		if (this.form.invalid || this.loading) return;
+		this.error = null;
+		this.loading = true;
 
-	submit() {
-		if (this.form.invalid) return;
-		// TODO: AuthService.login(...)
-		console.log('login:', this.form.value);
+		const {email, password} = this.form.value;
+
+		try {
+			await this.auth.login(email, password);
+			// Navigate to a protected page or home after login
+			await this.router.navigateByUrl('/'); // change to your target route
+		} catch (e) {
+			this.error = (e as Error)?.message || 'Login failed.';
+		} finally {
+			this.loading = false;
+		}
 	}
 }

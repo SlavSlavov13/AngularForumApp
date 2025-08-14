@@ -1,6 +1,12 @@
+import {Timestamp} from '@angular/fire/firestore';
+
 export interface AppUser {
-	id: string;
-	email: string;
-	username?: string;
-	photoURL?: string;
+	readonly uid: string;
+	readonly email: string;
+	readonly displayName: string;
+	readonly photoURL?: string;
+	readonly createdAt?: Timestamp | Date;
+	readonly updatedAt?: Timestamp | Date;
 }
+
+export type AppUserCreate = Omit<AppUser, 'createdAt' | 'updatedAt'>;

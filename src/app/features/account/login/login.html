@@ -1,12 +1,41 @@
-<section class="container">
-	<h1>Login</h1>
-	<form (ngSubmit)="submit()" [formGroup]="form">
-		<label>Email
-			<input formControlName="email" type="email"/>
-		</label>
-		<label>Password
-			<input formControlName="password" type="password"/>
-		</label>
-		<button [disabled]="form.invalid" type="submit">Login</button>
-	</form>
-</section>
+<form (ngSubmit)="submit()" [formGroup]="form">
+	<div>
+		<label>Email</label>
+		<input formControlName="email" type="email"/>
+
+		@if (form.get('email')?.touched && form.get('email')?.invalid) {
+			<small>
+				@if (form.get('email')?.errors?.['required']) {
+					<span>Email is required.</span>
+				}
+				@if (form.get('email')?.errors?.['email']) {
+					<span>Enter a valid email.</span>
+				}
+			</small>
+		}
+	</div>
+
+	<div>
+		<label>Password</label>
+		<input formControlName="password" type="password"/>
+
+		@if (form.get('password')?.touched && form.get('password')?.invalid) {
+			<small>
+				@if (form.get('password')?.errors?.['required']) {
+					<span>Password is required.</span>
+				}
+				@if (form.get('password')?.errors?.['minlength']) {
+					<span>Minimum {{ form.get('password')?.errors?.['minlength']?.requiredLength }} characters.</span>
+				}
+			</small>
+		}
+	</div>
+
+	<button [disabled]="loading || form.invalid" type="submit">
+		{{ loading ? 'Signing in...' : 'Login' }}
+	</button>
+
+	@if (error) {
+		<p style="color:#b00020">{{ error }}</p>
+	}
+</form>

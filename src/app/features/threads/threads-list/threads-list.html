@@ -1,5 +1,10 @@
-<section class="container">
-	<h1>Threads</h1>
-	<!-- TODO: list threads -->
-	<a routerLink="/threads/create">Create Thread</a>
-</section>
+@if (threads?.length) {
+	@for (t of threads; track t.id) {
+		<div>
+			<a [routerLink]="['/threads', t.id]">{{ t.title }}</a>
+			<span> · {{ t.replyCount || 0 }} replies</span>
+		</div>
+	}
+} @else {
+	<div>No threads found.</div>
+}
