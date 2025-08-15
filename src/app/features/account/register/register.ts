@@ -32,7 +32,7 @@ export class Register {
 		const {email, password, displayName} = this.form.value;
 
 		try {
-			await this.auth.register(email, password);
+			await this.auth.register(email, password, displayName);
 			await this.router.navigateByUrl('/threads');
 
 			this.form.reset();

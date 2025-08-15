@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, Injector, runInInjectionContext} from '@angular/core';
 import {Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile, User, UserCredential} from '@angular/fire/auth';
 import {doc, DocumentSnapshot, Firestore, getDoc, serverTimestamp, setDoc} from '@angular/fire/firestore';
 import {FirebaseError} from 'firebase/app';
@@ -8,6 +8,8 @@ import {filter, map, take} from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
+	private injector: Injector = inject(Injector);
+
 	private auth: Auth = inject(Auth);
 	private db: Firestore = inject(Firestore);
 
@@ -34,42 +36,48 @@ export class AuthService {
 	}
 
 	async register(email: string, password: string, displayName?: string): Promise<void> {
-		try {
-			const cred: UserCredential = await createUserWithEmailAndPassword(this.auth, email, password);
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
+			try {
+				const cred: UserCredential = await createUserWithEmailAndPassword(this.auth, email, password);
 
-			if (displayName) {
-				await updateProfile(cred.user, {displayName});
+				if (displayName) {
+					await updateProfile(cred.user, {displayName});
+				}
+
+				const appUser: AppUserModel = this.firebaseUserToAppUser(cred.user);
+				this.userSub.next(appUser);
+
+				await setDoc(
+					doc(this.db, 'users', cred.user.uid),
+					{...appUser, createdAt: serverTimestamp()},
+					{merge: true}
+				);
+			} catch (err) {
+				const code: string = (err as FirebaseError).code ?? '';
+				throw new Error(code);
 			}
-
-			const appUser: AppUserModel = this.firebaseUserToAppUser(cred.user);
-			this.userSub.next(appUser);
-
-			await setDoc(
-				doc(this.db, 'users', cred.user.uid),
-				{...appUser, createdAt: serverTimestamp()},
-				{merge: true}
-			);
-		} catch (err) {
-			const code: string = (err as FirebaseError).code ?? '';
-			throw new Error(code);
-		}
+		});
 	}
 
 	async login(email: string, password: string): Promise<void> {
-		try {
-			const cred: UserCredential = await signInWithEmailAndPassword(this.auth, email, password);
-			const appUser: AppUserModel = this.firebaseUserToAppUser(cred.user);
-			this.userSub.next(appUser);
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
 
-			await setDoc(
-				doc(this.db, 'users', cred.user.uid),
-				{...appUser, lastLogin: serverTimestamp()},
-				{merge: true}
-			);
-		} catch (err) {
-			const code: string = (err as FirebaseError).code ?? '';
-			throw new Error(code);
-		}
+			try {
+				const cred: UserCredential = await signInWithEmailAndPassword(this.auth, email, password);
+				const appUser: AppUserModel = this.firebaseUserToAppUser(cred.user);
+				this.userSub.next(appUser);
+
+				await setDoc(
+					doc(this.db, 'users', cred.user.uid),
+					{...appUser, lastLogin: serverTimestamp()},
+					{merge: true}
+				);
+			} catch (err) {
+				const code: string = (err as FirebaseError).code ?? '';
+				throw new Error(code);
+			}
+		});
+
 	}
 
 	async logout(): Promise<void> {
@@ -78,22 +86,26 @@ export class AuthService {
 	}
 
 	async getUser(id: string): Promise<AppUserModel | null> {
-		const s: DocumentSnapshot = await getDoc(doc(this.db, 'users', id));
-		if (!s.exists()) return null;
+		return runInInjectionContext(this.injector, async (): Promise<AppUserModel | null> => {
 
-		const raw = s.data() as Partial<AppUserModel>;
-		if (!raw.email) {
-			throw new Error('Invalid user document: missing email');
-		}
+			const s: DocumentSnapshot = await getDoc(doc(this.db, 'users', id));
+			if (!s.exists()) return null;
 
-		return {
-			uid: raw.uid ?? s.id,
-			email: raw.email,
-			displayName: raw.displayName ?? null,
-			photoURL: raw.photoURL ?? null,
-			createdAt: raw.createdAt,
-			lastLogin: raw.lastLogin
-		};
+			const raw = s.data() as Partial<AppUserModel>;
+			if (!raw.email) {
+				throw new Error('Invalid user document: missing email');
+			}
+
+			return {
+				uid: raw.uid ?? s.id,
+				email: raw.email,
+				displayName: raw.displayName ?? null,
+				photoURL: raw.photoURL ?? null,
+				createdAt: raw.createdAt,
+				lastLogin: raw.lastLogin
+			};
+		});
+
 	}
 
 	waitUntilInitialized(): Promise<void> {

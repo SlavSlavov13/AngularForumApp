@@ -1,4 +1,53 @@
 <section class="container">
 	<h1>Profile</h1>
-	<!-- TODO: show current user info and stats -->
+
+	<div class="profile-card">
+		@if (user.photoURL) {
+			<div class="avatar">
+				<img [src]="user.photoURL" alt="avatar">
+			</div>
+		} @else {
+			<div class="avatar placeholder">👤</div>
+		}
+
+		<div class="info">
+			<h2 class="name">{{ user.displayName }}</h2>
+			<p class="email">{{ user.email }}</p>
+		</div>
+	</div>
+
+	<div class="stats">
+		@if (user.createdAt) {
+			<div class="stat">
+				<div class="label">Joined</div>
+				<div class="value">
+					{{ user.createdAt.toDate() | date:'mediumDate' }}
+				</div>
+			</div>
+		}
+
+		@if (user.lastLogin) {
+			<div class="stat">
+				<div class="label">Last Login</div>
+				<div class="value">
+					{{ user.lastLogin.toDate() | date:'medium' }}
+				</div>
+			</div>
+		}
+	</div>
+
+	<button type="button" (click)="toggleThreads()">
+		{{ showThreads() ? 'Hide Threads' : 'Show Threads' }}
+	</button>
+
+	@if (showThreads()) {
+		<section class="my-threads-section">
+			<h2>{{ user.displayName }}'s Threads</h2>
+			@if (user.uid === this.currentUid) {
+				<app-my-threads></app-my-threads>
+			} @else {
+				<app-user-threads></app-user-threads>
+			}
+		</section>
+	}
 </section>
