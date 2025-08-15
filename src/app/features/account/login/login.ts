@@ -1,19 +1,20 @@
 import {Component, inject} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {Router} from '@angular/router';
-import {AuthService} from "../../../core/services/auth.service";
+import {ActivatedRoute, Router} from '@angular/router';
+import {AuthService} from '../../../core/services/auth.service';
 
 @Component({
 	selector: 'app-login',
 	standalone: true,
 	imports: [ReactiveFormsModule, CommonModule],
 	templateUrl: './login.html',
-	styleUrls: ['./login.css']
+	styleUrls: ['./login.css'],
 })
 export class Login {
 	loading: boolean = false;
 	error: string | null = null;
+
 	private fb: FormBuilder = inject(FormBuilder);
 	form: FormGroup = this.fb.group({
 		email: ['', [Validators.required, Validators.email]],
@@ -21,18 +22,21 @@ export class Login {
 	});
 	private auth: AuthService = inject(AuthService);
 	private router: Router = inject(Router);
+	private route: ActivatedRoute = inject(ActivatedRoute);
 
-	async submit() {
+	async submit(): Promise<void> {
 		if (this.form.invalid || this.loading) return;
 		this.error = null;
 		this.loading = true;
 
-		const {email, password} = this.form.value;
+		const {email, password} = this.form.value as { email: string; password: string };
 
 		try {
 			await this.auth.login(email, password);
-			// Navigate to a protected page or home after login
-			await this.router.navigateByUrl('/'); // change to your target route
+
+			const returnUrl: string = this.route.snapshot.queryParamMap.get('returnUrl') || '/threads';
+
+			await this.router.navigateByUrl(returnUrl);
 		} catch (e) {
 			this.error = (e as Error)?.message || 'Login failed.';
 		} finally {

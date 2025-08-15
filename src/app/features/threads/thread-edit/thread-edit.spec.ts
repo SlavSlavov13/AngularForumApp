@@ -1,23 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { ThreadEdit } from './thread-edit';
+import {ThreadEdit} from './thread-edit';
 
 describe('ThreadEdit', () => {
-  let component: ThreadEdit;
-  let fixture: ComponentFixture<ThreadEdit>;
+	let component: ThreadEdit;
+	let fixture: ComponentFixture<ThreadEdit>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ThreadEdit]
-    })
-    .compileComponents();
+	beforeEach(async () => {
+		await TestBed.configureTestingModule({
+			imports: [ThreadEdit]
+		})
+			.compileComponents();
 
-    fixture = TestBed.createComponent(ThreadEdit);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+		fixture = TestBed.createComponent(ThreadEdit);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	});
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
+	it('should create', () => {
+		expect(component).toBeTruthy();
+	});
 });

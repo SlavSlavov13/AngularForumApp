@@ -1,1 +1,17 @@
-<app-profile-threads-list></app-profile-threads-list>
+<section class="container">
+	<h1>My Threads</h1>
+
+	@let init = initialized$ | async;
+
+	@if (init === false) {
+		<p>Loading…</p>
+	} @else {
+		@let uid = uid$ | async;
+
+		@if (!uid) {
+			<p>Please log in to see your threads.</p>
+		} @else {
+			<app-profile-threads-list [uid]="uid"></app-profile-threads-list>
+		}
+	}
+</section>

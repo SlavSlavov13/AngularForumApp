@@ -1,5 +1,14 @@
-<section class="container">
-	<h1>Thread Details</h1>
-	<!-- TODO: show thread by id and list replies -->
-	<a routerLink="/threads">Back to list</a>
-</section>
+@let thread = thread$ | async;
+
+@if (thread) {
+	<section class="container">
+		<h2>{{ thread.title }}</h2>
+		<p>{{ thread.body }}</p>
+		@if (thread.authorId === (currentUid | async)) {
+			<button [routerLink]="['/threads', thread.id, 'edit']">Edit</button>
+			<button type="button" class="danger" (click)="delete(thread)">Delete</button>
+		}
+	</section>
+} @else {
+	<p>Loading…</p>
+}

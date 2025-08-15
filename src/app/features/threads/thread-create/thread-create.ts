@@ -39,14 +39,19 @@ export class ThreadCreate {
 
 		const {title, body, tags} = this.form.value;
 
-		// Prepare payload to match ThreadCreate interface
+		const uid: string | null = await this.auth.currentUid();
+
+		if (!uid) {
+			throw new Error('Not authenticated');
+		}
+
 		const payload: ThreadCreateModel = {
 			title,
 			body,
 			tags: tags
 				? tags.split(',').map((t: string): string => t.trim()).filter(Boolean)
 				: [],
-			authorId: this.auth.currentUid()!
+			authorId: uid
 		};
 
 		try {

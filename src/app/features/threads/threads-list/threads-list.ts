@@ -1,23 +1,30 @@
-import {Component, OnInit} from '@angular/core';
-import {RouterLink} from "@angular/router";
-import {Thread} from "../../../shared/models";
-import {ThreadService} from "../../../core/services/thread.service";
+import {Component, inject, OnInit} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {ThreadModel} from '../../../shared/models';
+import {ThreadService} from '../../../core/services/thread.service';
 
 @Component({
 	selector: 'app-threads-list',
-	imports: [
-		RouterLink
-	],
+	standalone: true,
+	imports: [RouterLink],
 	templateUrl: './threads-list.html',
 	styleUrl: './threads-list.css'
 })
 export class ThreadsList implements OnInit {
-	threads: Thread[] | null = null;
+	threads: ThreadModel[] | null = null;
+	loading = true;
+	error: string | null = null;
 
-	constructor(private threadService: ThreadService) {
-	}
+	private threadService = inject(ThreadService);
 
-	async ngOnInit() {
-		this.threads = await this.threadService.listThreads();
+	async ngOnInit(): Promise<void> {
+		try {
+			this.threads = await this.threadService.listThreads();
+		} catch (e) {
+			console.error('Failed to load threads', e);
+			this.error = 'Failed to load threads.';
+		} finally {
+			this.loading = false;
+		}
 	}
 }

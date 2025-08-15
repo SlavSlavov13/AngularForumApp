@@ -1,193 +1,129 @@
-import {inject, Injectable, Injector, runInInjectionContext, signal, WritableSignal} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {Auth, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile, User, UserCredential} from '@angular/fire/auth';
-import {FirebaseError} from 'firebase/app';
 import {doc, DocumentSnapshot, Firestore, getDoc, serverTimestamp, setDoc} from '@angular/fire/firestore';
-
-interface AuthUserState {
-	uid: string;
-	email: string | null;
-	displayName: string | null;
-	photoURL?: string | null;
-}
+import {FirebaseError} from 'firebase/app';
+import {AppUserModel} from '../../shared/models';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {filter, map, take} from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-	/** Reactive user state */
-	user: WritableSignal<AuthUserState | null> = signal(null);
-
-	/** Firebase Auth injection */
 	private auth: Auth = inject(Auth);
-
-	/** Injector for runInInjectionContext */
-	private injector: Injector = inject(Injector);
-
 	private db: Firestore = inject(Firestore);
 
+	private userSub: BehaviorSubject<AppUserModel | null> = new BehaviorSubject<AppUserModel | null>(null);
+	private initializedSub: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+	readonly user$: Observable<AppUserModel | null> = this.userSub.asObservable();
+	readonly initialized$: Observable<boolean> = this.initializedSub.asObservable();
+
+	readonly loggedIn$: Observable<boolean> = this.user$.pipe(map(u => u !== null));
+
 	constructor() {
-		// Keep the user state in sync with Firebase Auth
-		runInInjectionContext(this.injector, () => {
-			onAuthStateChanged(this.auth, (fbUser: User | null): void => {
-				if (fbUser) {
-					this.user.set({
-						uid: fbUser.uid,
-						email: fbUser.email,
-						displayName: fbUser.displayName,
-						photoURL: fbUser.photoURL
-					});
+		onAuthStateChanged(this.auth, (fbUser: User | null): void => {
+			try {
+				if (!fbUser || !fbUser.email) {
+					this.userSub.next(null);
 				} else {
-					this.user.set(null);
+					this.userSub.next(this.firebaseUserToAppUser(fbUser));
 				}
-			});
+			} finally {
+				this.initializedSub.next(true);
+			}
 		});
 	}
 
-	/** Registration with Firestore profile creation */
 	async register(email: string, password: string, displayName?: string): Promise<void> {
-		return runInInjectionContext(this.injector, async (): Promise<void> => {
-			const firestore = inject(Firestore);
-			try {
-				// 1. Create a user in Firebase Auth
-				const cred: UserCredential =
-					await createUserWithEmailAndPassword(this.auth, email, password);
+		try {
+			const cred: UserCredential = await createUserWithEmailAndPassword(this.auth, email, password);
 
-				// 2. Set Auth displayName if provided
-				if (displayName) {
-					await updateProfile(cred.user, {displayName});
-				}
-
-				// 3. Update local signal
-				this.user.set({
-					uid: cred.user.uid,
-					email: cred.user.email,
-					displayName: displayName || cred.user.displayName,
-					photoURL: cred.user.photoURL
-				});
-
-				// 4. Duplicate to Firestore
-				await setDoc(
-					doc(firestore, 'users', cred.user.uid),
-					{
-						uid: cred.user.uid,
-						email: cred.user.email,
-						displayName: displayName || cred.user.displayName || null,
-						photoURL: cred.user.photoURL || null,
-						createdAt: serverTimestamp()
-					},
-					{merge: true}
-				);
-
-			} catch (err) {
-				const code = (err as FirebaseError).code ?? '';
-				throw new Error(this.mapAuthError(code));
+			if (displayName) {
+				await updateProfile(cred.user, {displayName});
 			}
-		});
-	}
 
-	/** Login + ensure Firestore profile exists/updated */
-	async login(email: string, password: string): Promise<void> {
-		return runInInjectionContext(this.injector, async (): Promise<void> => {
-			const firestore = inject(Firestore);
-			try {
-				// 1. Sign in
-				const cred = await signInWithEmailAndPassword(this.auth, email, password);
+			const appUser: AppUserModel = this.firebaseUserToAppUser(cred.user);
+			this.userSub.next(appUser);
 
-				// 2. Ensure/Update Firestore user doc
-				if (cred.user) {
-					await setDoc(
-						doc(firestore, 'users', cred.user.uid),
-						{
-							uid: cred.user.uid,
-							email: cred.user.email,
-							displayName: cred.user.displayName || null,
-							photoURL: cred.user.photoURL || null,
-							lastLogin: serverTimestamp()
-						},
-						{merge: true}
-					);
-				}
-			} catch (err) {
-				const code = (err as FirebaseError).code ?? '';
-				throw new Error(this.mapAuthError(code));
-			}
-		});
-	}
-
-	/** Logout */
-	async logout(): Promise<void> {
-		return runInInjectionContext(this.injector, async (): Promise<void> => {
-			await signOut(this.auth);
-		});
-	}
-
-	async getUser(id: string): Promise<User | null> {
-		return runInInjectionContext(this.injector, async (): Promise<User | null> => {
-			const s: DocumentSnapshot = await getDoc(doc(this.db, 'users', id));
-			return s.exists() ? ({uid: s.id, ...s.data()} as User) : null;
-		});
-	}
-
-	/** State helpers */
-	currentUid(): string | null {
-		return this.user()?.uid || null;
-	}
-
-	isLoggedIn(): boolean {
-		return !!this.user();
-	}
-
-	/** Error mapper */
-	private mapAuthError(code: string): string {
-		switch (code) {
-			case 'auth/invalid-credential':
-				return 'Invalid credentials. Please try again.';
-			case 'auth/email-already-in-use':
-				return 'This email is already registered.';
-			case 'auth/invalid-email':
-				return 'Enter a valid email address.';
-			case 'auth/operation-not-allowed':
-				return 'This sign-in method is not available.';
-			case 'auth/weak-password':
-				return 'Choose a stronger password.';
-			case 'auth/user-not-found':
-				return 'No account found with this email.';
-			case 'auth/wrong-password':
-				return 'Incorrect password.';
-			case 'auth/user-disabled':
-				return 'This account has been disabled.';
-			case 'auth/account-exists-with-different-credential':
-				return 'An account with this email exists using a different sign-in method.';
-			case 'auth/popup-blocked':
-				return 'The sign-in popup was blocked. Allow popups and try again.';
-			case 'auth/popup-closed-by-user':
-				return 'The sign-in popup was closed before completing.';
-			case 'auth/cancelled-popup-request':
-				return 'Another sign-in popup was already open.';
-			case 'auth/unauthorized-domain':
-				return 'This domain is not authorized for sign-in.';
-			case 'auth/invalid-oauth-client-id':
-				return 'The sign-in client configuration is invalid.';
-			case 'auth/credential-already-in-use':
-				return 'These credentials are already linked to another account.';
-			case 'auth/multi-factor-auth-required':
-				return 'Additional verification is required to sign in.';
-			case 'auth/invalid-verification-code':
-				return 'Invalid verification code.';
-			case 'auth/invalid-verification-id':
-				return 'Your verification session has expired. Please try again.';
-			case 'auth/network-request-failed':
-				return 'Network error. Check the connection and try again.';
-			case 'auth/quota-exceeded':
-				return 'Too many attempts. Try again later.';
-			case 'auth/auth-domain-config-required':
-				return 'Sign-in configuration is incomplete.';
-			case 'auth/operation-not-supported-in-this-environment':
-				return 'This operation is not supported in the current environment.';
-			case 'auth/argument-error':
-				return 'Invalid authentication request.';
-			case 'auth/app-not-authorized':
-				return 'This app is not authorized for Authentication.';
-			default:
-				return 'An unexpected authentication error occurred.';
+			await setDoc(
+				doc(this.db, 'users', cred.user.uid),
+				{...appUser, createdAt: serverTimestamp()},
+				{merge: true}
+			);
+		} catch (err) {
+			const code: string = (err as FirebaseError).code ?? '';
+			throw new Error(code);
 		}
+	}
+
+	async login(email: string, password: string): Promise<void> {
+		try {
+			const cred: UserCredential = await signInWithEmailAndPassword(this.auth, email, password);
+			const appUser: AppUserModel = this.firebaseUserToAppUser(cred.user);
+			this.userSub.next(appUser);
+
+			await setDoc(
+				doc(this.db, 'users', cred.user.uid),
+				{...appUser, lastLogin: serverTimestamp()},
+				{merge: true}
+			);
+		} catch (err) {
+			const code: string = (err as FirebaseError).code ?? '';
+			throw new Error(code);
+		}
+	}
+
+	async logout(): Promise<void> {
+		await signOut(this.auth);
+		// onAuthStateChanged will push null into userSub
+	}
+
+	async getUser(id: string): Promise<AppUserModel | null> {
+		const s: DocumentSnapshot = await getDoc(doc(this.db, 'users', id));
+		if (!s.exists()) return null;
+
+		const raw = s.data() as Partial<AppUserModel>;
+		if (!raw.email) {
+			throw new Error('Invalid user document: missing email');
+		}
+
+		return {
+			uid: raw.uid ?? s.id,
+			email: raw.email,
+			displayName: raw.displayName ?? null,
+			photoURL: raw.photoURL ?? null,
+			createdAt: raw.createdAt,
+			lastLogin: raw.lastLogin
+		};
+	}
+
+	waitUntilInitialized(): Promise<void> {
+		if (this.initializedSub.value) return Promise.resolve();
+		return new Promise<void>((resolve): void => {
+			this.initialized$
+				.pipe(filter(v => v), take(1))
+				.subscribe((): void => resolve());
+		});
+	}
+
+	async currentUid(): Promise<string | null> {
+		await this.waitUntilInitialized();
+		return this.userSub.value?.uid ?? null;
+	}
+
+	async isLoggedIn(): Promise<boolean> {
+		await this.waitUntilInitialized();
+		return this.userSub.value !== null;
+	}
+
+	private firebaseUserToAppUser(u: User): AppUserModel {
+		if (!u.email) {
+			throw new Error('Missing email on Firebase User');
+		}
+		return {
+			uid: u.uid,
+			email: u.email,
+			displayName: u.displayName ?? null,
+			photoURL: u.photoURL ?? null
+		};
 	}
 }

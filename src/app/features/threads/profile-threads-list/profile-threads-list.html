@@ -1,4 +1,33 @@
-<section class="container">
-	<h1>Profile Threads</h1>
-	<!-- TODO: show current user threads -->
+<section class="threads-list">
+	@if (loading) {
+		<section class="page-skeleton">Loading…</section>
+	} @else {
+		@if (threads?.length) {
+			<ul>
+				@for (t of threads; track t.id) {
+					<li class="thread-item">
+						<a [routerLink]="['/threads', t.id]" class="title">{{ t.title }}</a>
+						<p class="excerpt">{{ t.body }}</p>
+						<small class="meta">
+							@if (t.updatedAt) {
+								• Updated: {{ t.updatedAt.toDate() | date:'medium' }}
+							}
+							@if (t.createdAt) {
+								• Created: {{ t.createdAt.toDate() | date:'medium' }}
+							}
+						</small>
+						@if (t.tags) {
+							<div class="tags">
+								@for (tag of t.tags; track tag) {
+									<span class="tag">{{ tag }}</span>
+								}
+							</div>
+						}
+					</li>
+				}
+			</ul>
+		} @else {
+			<p>No threads to display.</p>
+		}
+	}
 </section>

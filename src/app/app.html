@@ -1,20 +1,44 @@
+@let init = initialized$ | async;
+
 <header class="nav">
 	<a routerLink="/threads">Threads</a>
-	@if (loggedIn()) {
-		<a routerLink="/threads/create">Create</a>
-		<a routerLink="/my-profile/threads">My Threads</a>
-	}
-	<span class="spacer"></span>
-	@if (loggedIn()) {
-		<a routerLink="/my-profile">Profile</a>
-		<button (click)="logout()">Logout</button>
-	} @else {
-		<a routerLink="/login">Login</a>
-		<a routerLink="/register">Register</a>
-	}
 
+	@if (init === false) {
+		<!-- Auth initializing -->
+		<span class="spacer"></span>
+		<span class="loading">Loading…</span>
+	} @else if (init === true) {
+		@let logged = loggedIn$ | async;
+
+		@if (logged) {
+			<a routerLink="/threads/create">Create</a>
+			<a routerLink="/my-profile/threads">My Threads</a>
+		}
+
+		<span class="spacer"></span>
+
+		@if (logged) {
+			<a routerLink="/my-profile">Profile</a>
+			<button type="button" (click)="logout()" [disabled]="signingOut()">Logout</button>
+			@if (signingOut()) {
+				<span class="loading small">Signing out…</span>
+			}
+		} @else {
+			<a routerLink="/login">Login</a>
+			<a routerLink="/register">Register</a>
+		}
+	} @else {
+		<!-- Fallback for undefined/initial state -->
+		<span class="spacer"></span>
+		<span class="loading">Loading…</span>
+	}
 </header>
 
 <main>
-	<router-outlet/>
+	@if (init === false) {
+		<!-- Optional global page skeleton while auth initializes -->
+		<section class="page-skeleton">Loading…</section>
+	} @else {
+		<router-outlet/>
+	}
 </main>
