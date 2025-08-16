@@ -44,15 +44,10 @@
 		<section class="my-threads-section">
 			<h2>{{ user.displayName }}'s Threads</h2>
 			@if (user.uid === this.currentUid) {
-				<app-my-threads></app-my-threads>
+				<app-my-threads [profileCard]="true"></app-my-threads>
 			} @else {
-				<app-user-threads></app-user-threads>
+				<app-user-threads [profileCard]="true"></app-user-threads>
 			}
 		</section>
-		@if (user.uid === this.currentUid) {
-			<a [routerLink]="['/my-profile/threads']" class="title">View all of your threads</a>
-		} @else {
-			<a [routerLink]="['/profile', user.uid, 'threads']" class="title">View all threads from user</a>
-		}
 	}
 </section>

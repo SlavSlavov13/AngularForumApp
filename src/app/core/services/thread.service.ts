@@ -1,5 +1,5 @@
 import {inject, Injectable} from '@angular/core';
-import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getDoc, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
+import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getCountFromServer, getDoc, limit, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {ThreadCreateModel, ThreadModel} from '../../shared/models';
 
@@ -7,19 +7,43 @@ import {ThreadCreateModel, ThreadModel} from '../../shared/models';
 export class ThreadService {
 	private db: Firestore = inject(Firestore);
 
-	listThreads(): Observable<ThreadModel[]> {
-		const q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'));
+	listThreads(limitCount?: number): Observable<ThreadModel[]> {
+		let q;
+		if (limitCount !== undefined) {
+			q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'), limit(limitCount));
+		} else {
+			q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'));
+		}
 		return collectionData(q, {idField: 'id'}) as Observable<ThreadModel[]>;
 	}
 
-	listThreadsByUser(uid: string): Observable<ThreadModel[]> {
-		const q = query(
-			collection(this.db, 'threads'),
-			where('authorId', '==', uid),
-			orderBy('createdAt', 'desc')
-		);
+	listThreadsByUser(uid: string, limitCount?: number): Observable<ThreadModel[]> {
+		let q;
+		if (limitCount !== undefined) {
+			q = query(
+				collection(this.db, 'threads'),
+				where('authorId', '==', uid),
+				orderBy('createdAt', 'desc'),
+				limit(limitCount)
+			);
+		} else {
+			q = query(
+				collection(this.db, 'threads'),
+				where('authorId', '==', uid),
+				orderBy('createdAt', 'desc')
+			);
+		}
 		return collectionData(q, {idField: 'id'}) as Observable<ThreadModel[]>;
 	}
+
+	async getUserThreadCount(uid: string): Promise<number> {
+		const coll = collection(this.db, 'threads');
+		const q = query(coll, where('authorId', '==', uid));
+		const snapshot = await getCountFromServer(q);
+		console.log(snapshot)
+		return snapshot.data().count;
+	}
+
 
 	getThread(id: string): Observable<ThreadModel> {
 		const ref = doc(this.db, 'threads', id);

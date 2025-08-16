@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ProfileThreadsList} from '../profile-threads-list/profile-threads-list';
 import {AuthService} from '../../../core/services/auth.service';
 import {CommonModule} from "@angular/common";
@@ -17,6 +17,8 @@ export class MyThreads implements OnInit {
 
 	constructor(protected authService: AuthService) {
 	}
+
+	@Input() profileCard: boolean = false;
 
 	async ngOnInit(): Promise<void> {
 		try {

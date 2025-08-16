@@ -1,33 +1,59 @@
 @let threads = this.threads$ | async;
-
 <section class="threads-list">
 	@if (!threads) {
 		<section class="page-skeleton">Loading…</section>
 	} @else {
 		@if (threads?.length) {
 			<ul>
-				@for (t of threads; track t.id) {
-					<li class="thread-item">
-						<a [routerLink]="['/threads', t.id]" class="title">{{ t.title }}</a>
-						<p class="excerpt">{{ t.body }}</p>
-						<small class="meta">
-							@if (t.updatedAt) {
-								• Updated: {{ t.updatedAt.toDate() | date:'medium' }}
-							}
-							@if (t.createdAt) {
-								• Created: {{ t.createdAt.toDate() | date:'medium' }}
-							}
-						</small>
-						@if (t.tags) {
-							<div class="tags">
-								@for (tag of t.tags; track tag) {
-									<span class="tag">{{ tag }}</span>
+				@if (this.profileCard) {
+					@for (t of threads.slice(0, this.limitCount); track t.id) {
+						<li class="thread-item">
+							<a [routerLink]="['/threads', t.id]" class="title">{{ t.title }}</a>
+							<p class="excerpt">{{ t.body }}</p>
+							<small class="meta">
+								@if (t.updatedAt) {
+									• Updated: {{ t.updatedAt.toDate() | date:'medium' }}
 								}
-							</div>
-						}
-					</li>
+								@if (t.createdAt) {
+									• Created: {{ t.createdAt.toDate() | date:'medium' }}
+								}
+							</small>
+							@if (t.tags) {
+								<div class="tags">
+									@for (tag of t.tags; track tag) {
+										<span class="tag">{{ tag }}</span>
+									}
+								</div>
+							}
+						</li>
+					}
+				} @else {
+					@for (t of threads; track t.id) {
+						<li class="thread-item">
+							<a [routerLink]="['/threads', t.id]" class="title">{{ t.title }}</a>
+							<p class="excerpt">{{ t.body }}</p>
+							<small class="meta">
+								@if (t.updatedAt) {
+									• Updated: {{ t.updatedAt.toDate() | date:'medium' }}
+								}
+								@if (t.createdAt) {
+									• Created: {{ t.createdAt.toDate() | date:'medium' }}
+								}
+							</small>
+							@if (t.tags) {
+								<div class="tags">
+									@for (tag of t.tags; track tag) {
+										<span class="tag">{{ tag }}</span>
+									}
+								</div>
+							}
+						</li>
+					}
 				}
 			</ul>
+			@if (threads.length > this.limitCount && this.profileCard) {
+				<a [routerLink]="['/profile', this.uid, 'threads']" class="title">View all threads</a>
+			}
 		} @else {
 			<p>No threads to display.</p>
 		}

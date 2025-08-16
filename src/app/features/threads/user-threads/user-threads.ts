@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ProfileThreadsList} from '../profile-threads-list/profile-threads-list';
 import {AuthService} from "../../../core/services/auth.service";
@@ -13,6 +13,7 @@ import {AuthService} from "../../../core/services/auth.service";
 export class UserThreads implements OnInit {
 	uid!: string;
 	loading: boolean = true;
+	@Input() profileCard: boolean = false;
 
 	constructor(
 		private route: ActivatedRoute,
