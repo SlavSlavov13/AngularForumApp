@@ -3,11 +3,11 @@ import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlT
 import {AuthService} from '../services/auth.service';
 
 export const selfThreadRedirectGuard: CanActivateFn = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean | UrlTree> => {
-	const auth: AuthService = inject(AuthService);
+	const authService: AuthService = inject(AuthService);
 	const router: Router = inject(Router);
 
 	const profileId: string | null = route.paramMap.get('id');
-	const myId: string | null = await auth.currentUid();
+	const myId: string | null = await authService.currentUid();
 
 	if (myId && profileId === myId) {
 		return router.createUrlTree(['/my-profile/threads']);

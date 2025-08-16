@@ -1,10 +1,9 @@
-import {Component, inject} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ThreadService} from '../../../core/services/thread.service';
 import {ThreadModel} from '../../../shared/models';
-import {from} from 'rxjs';
-import {filter, map, switchMap, take} from 'rxjs/operators';
+import {firstValueFrom} from 'rxjs';
 
 @Component({
 	selector: 'app-thread-edit',
@@ -13,46 +12,41 @@ import {filter, map, switchMap, take} from 'rxjs/operators';
 	templateUrl: './thread-edit.html',
 	styleUrl: './thread-edit.css'
 })
-export class ThreadEdit {
-	private fb: FormBuilder = inject(FormBuilder);
-	private route: ActivatedRoute = inject(ActivatedRoute);
-	private router: Router = inject(Router);
-	private threadService: ThreadService = inject(ThreadService);
-
-	form: FormGroup = this.fb.group({
-		title: ['', [Validators.required, Validators.minLength(6)]],
-		body: ['', [Validators.required, Validators.minLength(20)]],
-		tags: [''],
-	});
-
+export class ThreadEdit implements OnInit {
+	form: FormGroup;
 	loading: boolean = true;
 	saving: boolean = false;
 	loadError: string | null = null;
 	thread!: ThreadModel;
 
-	ngOnInit(): void {
-		this.route.paramMap.pipe(
-			map(params => params.get('id')!),
-			switchMap(id => from(this.threadService.getThread(id))),
-			filter((t): t is ThreadModel => t !== null),
-			take(1)
-		).subscribe({
-			next: (t): void => {
-				this.thread = t;
-
-				this.form.patchValue({
-					title: t.title ?? '',
-					body: t.body ?? '',
-					tags: Array.isArray(t.tags) ? t.tags.join(', ') : (t.tags ?? ''),
-				});
-
-				this.loading = false;
-			},
-			error: (): void => {
-				this.loadError = 'Failed to load thread.';
-				this.loading = false;
-			}
+	constructor(
+		private fb: FormBuilder,
+		private route: ActivatedRoute,
+		private router: Router,
+		private threadService: ThreadService,
+	) {
+		this.form = this.fb.group({
+			title: ['', [Validators.required, Validators.minLength(6)]],
+			body: ['', [Validators.required, Validators.minLength(20)]],
+			tags: [''],
 		});
+	}
+
+	async ngOnInit(): Promise<void> {
+		try {
+			const id: string = this.route.snapshot.paramMap.get('id')!;
+			this.thread = await firstValueFrom(this.threadService.getThread(id));
+
+			this.form.patchValue({
+				title: this.thread.title ?? '',
+				body: this.thread.body ?? '',
+				tags: Array.isArray(this.thread.tags) ? this.thread.tags.join(', ') : (this.thread.tags ?? ''),
+			});
+
+			this.loading = false;
+		} catch (e) {
+			console.error('Failed to load thread', e);
+		}
 	}
 
 	async submit(): Promise<void> {
@@ -73,7 +67,7 @@ export class ThreadEdit {
 				tags: tagsArray,
 			};
 
-			await this.threadService.updateThread(this.thread.id, patch);
+			this.threadService.updateThread(this.thread.id, patch);
 			await this.router.navigate(['/threads', this.thread.id]);
 		} catch (e) {
 			console.error('Failed to update thread', e);

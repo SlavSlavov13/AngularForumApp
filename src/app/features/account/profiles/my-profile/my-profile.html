@@ -2,8 +2,6 @@
 	<p>Loading…</p>
 } @else if (error) {
 	<p class="error">{{ error }}</p>
-} @else if (!user) {
-	<p>Please log in.</p>
 } @else {
-	<app-profile-card [user]="user!"></app-profile-card>
+	<app-profile-card [user]="user"></app-profile-card>
 }

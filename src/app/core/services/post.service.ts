@@ -1,83 +1,56 @@
-import {inject, Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, deleteDoc, doc, DocumentReference, DocumentSnapshot, Firestore, getDoc, getDocs, orderBy, query, QuerySnapshot, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
+import {inject, Injectable} from '@angular/core';
+import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, orderBy, query, serverTimestamp, updateDoc, where,} from '@angular/fire/firestore';
+import {from, Observable} from 'rxjs';
 import {PostCreateModel, PostModel} from '../../shared/models';
 
 @Injectable({providedIn: 'root'})
 export class PostService {
 	private db: Firestore = inject(Firestore);
-	private injector: Injector = inject(Injector);
 
-	/**
-	 * Get all posts for a specific thread, ordered by newest first.
-	 */
-	async listPostsByThread(threadId: string): Promise<PostModel[]> {
-		return runInInjectionContext(this.injector, async (): Promise<PostModel[]> => {
-			const q = query(
-				collection(this.db, 'posts'),
-				where('threadId', '==', threadId),
-				orderBy('createdAt', 'asc') // oldest first; use 'desc' if you want newest first
-			);
-			const snap: QuerySnapshot = await getDocs(q);
-			return snap.docs.map(d => ({id: d.id, ...d.data()} as PostModel));
-		});
+	listPostsByThread(threadId: string): Observable<PostModel[]> {
+		const q = query(
+			collection(this.db, 'posts'),
+			where('threadId', '==', threadId),
+			orderBy('createdAt', 'desc')
+		);
+		return collectionData(q, {idField: 'id'}) as Observable<PostModel[]>;
 	}
 
-	/**
-	 * Get posts by a specific user (e.g., for profile or My Posts).
-	 */
-	async listPostsByUser(uid: string): Promise<PostModel[]> {
-		return runInInjectionContext(this.injector, async (): Promise<PostModel[]> => {
-			const q = query(
-				collection(this.db, 'posts'),
-				where('authorId', '==', uid),
-				orderBy('createdAt', 'desc')
-			);
-			const snap: QuerySnapshot = await getDocs(q);
-			return snap.docs.map(d => ({id: d.id, ...d.data()} as PostModel));
-		});
+	listPostsByUser(uid: string): Observable<PostModel[]> {
+		const q = query(
+			collection(this.db, 'posts'),
+			where('authorId', '==', uid),
+			orderBy('createdAt', 'desc')
+		);
+		return collectionData(q, {idField: 'id'}) as Observable<PostModel[]>;
 	}
 
-	/**
-	 * Get a single post by ID.
-	 */
-	async getPost(id: string): Promise<PostModel | null> {
-		return runInInjectionContext(this.injector, async (): Promise<PostModel | null> => {
-			const s: DocumentSnapshot = await getDoc(doc(this.db, 'posts', id));
-			return s.exists() ? ({id: s.id, ...s.data()} as PostModel) : null;
-		});
+	getPost(id: string): Observable<PostModel> {
+		const ref = doc(this.db, 'posts', id);
+		return docData(ref, {idField: 'id'}) as Observable<PostModel>;
 	}
 
-	/**
-	 * Create a new post (reply).
-	 */
-	async createPost(data: PostCreateModel): Promise<DocumentReference> {
-		return runInInjectionContext(this.injector, (): Promise<DocumentReference> =>
+	createPost(data: PostCreateModel): Observable<any> {
+		return from(
 			addDoc(collection(this.db, 'posts'), {
 				...data,
 				createdAt: serverTimestamp(),
-				updatedAt: serverTimestamp()
+				updatedAt: serverTimestamp(),
 			})
 		);
 	}
 
-	/**
-	 * Update an existing post.
-	 */
-	async updatePost(id: string, patch: Partial<PostModel>): Promise<void> {
-		return runInInjectionContext(this.injector, (): Promise<void> =>
-			updateDoc(doc(this.db, 'posts', id), {
+	updatePost(id: string, patch: Partial<PostModel>): Observable<void> {
+		const ref = doc(this.db, 'posts', id);
+		return from(
+			updateDoc(ref, {
 				...patch,
-				updatedAt: serverTimestamp()
+				updatedAt: serverTimestamp(),
 			})
 		);
 	}
 
-	/**
-	 * Delete a post.
-	 */
-	async deletePost(id: string): Promise<void> {
-		return runInInjectionContext(this.injector, (): Promise<void> =>
-			deleteDoc(doc(this.db, 'posts', id))
-		);
+	deletePost(id: string): Observable<void> {
+		return from(deleteDoc(doc(this.db, 'posts', id)));
 	}
 }

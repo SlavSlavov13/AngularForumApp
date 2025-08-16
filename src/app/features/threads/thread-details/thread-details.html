@@ -1,13 +1,12 @@
-@let thread = thread$ | async;
-
-@if (thread) {
+@if (this.thread !== undefined && this.author !== undefined) {
 	<section class="container">
-		<h2>{{ thread.title }}</h2>
-		<p>{{ thread.body }}</p>
-		@if (thread.authorId === (currentUid | async)) {
+		<h2>{{ this.thread.title }}</h2>
+		<p>{{ this.thread.body }}</p>
+		@if (this.thread.authorId === (this.currentUid | async)) {
 			<button [routerLink]="['/threads', thread.id, 'edit']">Edit</button>
-			<button type="button" class="danger" (click)="delete(thread)">Delete</button>
+			<button type="button" class="danger" (click)="delete()">Delete</button>
 		}
+		<a [routerLink]="['/profile', this.thread.authorId]" class="title">Author: {{ this.author.displayName }}</a>
 	</section>
 } @else {
 	<p>Loading…</p>

@@ -1,41 +1,36 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
-import {ThreadModel} from "../../../shared/models";
-import {DatePipe} from "@angular/common";
-import {ThreadService} from "../../../core/services/thread.service";
+import {Component, Input} from '@angular/core';
+import {ThreadService} from '../../../core/services/thread.service';
+import {AsyncPipe, DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
+import {Observable} from "rxjs";
+import {ThreadModel} from "../../../shared/models";
 
 @Component({
 	selector: 'app-profile-threads-list',
+	standalone: true,
 	imports: [
-		DatePipe,
-		RouterLink
+		AsyncPipe,
+		RouterLink,
+		DatePipe
 	],
-	templateUrl: './profile-threads-list.html',
-	styleUrl: './profile-threads-list.css'
+	templateUrl: './profile-threads-list.html'
 })
-export class ProfileThreadsList implements OnInit {
-	@Input() uid: string | null = '';
+export class ProfileThreadsList {
+	threads$: Observable<ThreadModel[] | null> = new Observable<ThreadModel[] | null>();
+	private _uid!: string;
 
-	threads: ThreadModel[] | null = null;
-	loading: boolean = true;
-	error: string | null = null;
-
-	private threadService: ThreadService = inject(ThreadService);
-
-	async ngOnInit(): Promise<void> {
-		try {
-			(this.uid)
-			if (!this.uid) {
-				this.threads = [];
-				this.loading = false;
-				return;
-			}
-			this.threads = await this.threadService.listThreadsByUser(this.uid);
-			this.loading = false;
-		} catch (e) {
-			(e);
-			this.error = 'Failed to load threads.';
-			this.loading = false;
+	@Input({required: true})
+	set uid(value: string) {
+		this._uid = value;
+		if (this._uid) {
+			this.threads$ = this.threadService.listThreadsByUser(this._uid);
 		}
+	}
+
+	get uid(): string {
+		return this._uid;
+	}
+
+	constructor(protected threadService: ThreadService) {
 	}
 }

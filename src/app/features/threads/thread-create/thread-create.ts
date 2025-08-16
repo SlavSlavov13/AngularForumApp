@@ -1,10 +1,11 @@
-import {Component, inject} from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ThreadService} from "../../../core/services/thread.service";
 import {ThreadCreateModel} from "../../../shared/models";
 import {AuthService} from "../../../core/services/auth.service";
-import {DocumentReference} from "@angular/fire/firestore";
 import {Router} from "@angular/router";
+import {DocumentReference} from '@angular/fire/firestore';
+import {firstValueFrom} from "rxjs";
 
 @Component({
 	selector: 'app-thread-create',
@@ -13,16 +14,16 @@ import {Router} from "@angular/router";
 		ReactiveFormsModule
 	],
 	templateUrl: './thread-create.html',
-	styleUrls: ['./thread-create.css'] // Fixed plural form
+	styleUrl: './thread-create.css'
 })
 export class ThreadCreate {
 	form: FormGroup;
-	private router: Router = inject(Router);
 
 	constructor(
 		private fb: FormBuilder,
 		private threadService: ThreadService,
 		private auth: AuthService,
+		private router: Router,
 	) {
 		this.form = this.fb.group({
 			title: ['', [Validators.required, Validators.minLength(6)]],
@@ -39,12 +40,7 @@ export class ThreadCreate {
 
 		const {title, body, tags} = this.form.value;
 
-		const uid: string | null = await this.auth.currentUid();
-
-		if (!uid) {
-			throw new Error('Not authenticated');
-		}
-
+		const uid: string = (await this.auth.currentUid())!;
 		const payload: ThreadCreateModel = {
 			title,
 			body,
@@ -55,7 +51,7 @@ export class ThreadCreate {
 		};
 
 		try {
-			const docRef: DocumentReference = await this.threadService.createThread(payload);
+			const docRef: DocumentReference = await firstValueFrom(this.threadService.createThread(payload));
 			this.form.reset();
 			await this.router.navigate([`/threads/${docRef.id}`]);
 		} catch (error) {

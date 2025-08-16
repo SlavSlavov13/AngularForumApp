@@ -3,10 +3,10 @@ import {ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlT
 import {AuthService} from '../services/auth.service';
 
 export const authGuard: CanActivateFn = async (route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<true | UrlTree> => {
-	const auth: AuthService = inject(AuthService);
+	const authService: AuthService = inject(AuthService);
 	const router: Router = inject(Router);
 
-	if (await auth.isLoggedIn()) return true;
+	if (await authService.isLoggedIn()) return true;
 
 	return router.createUrlTree(
 		['/login'],

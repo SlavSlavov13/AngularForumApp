@@ -49,5 +49,10 @@
 				<app-user-threads></app-user-threads>
 			}
 		</section>
+		@if (user.uid === this.currentUid) {
+			<a [routerLink]="['/my-profile/threads']" class="title">View all of your threads</a>
+		} @else {
+			<a [routerLink]="['/profile', user.uid, 'threads']" class="title">View all threads from user</a>
+		}
 	}
 </section>

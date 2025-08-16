@@ -1,14 +1,13 @@
-@let init = initialized$ | async;
+@let init = this.authService.initialized$ | async;
 
 <header class="nav">
 	<a routerLink="/threads">Threads</a>
 
 	@if (init === false) {
-		<!-- Auth initializing -->
 		<span class="spacer"></span>
 		<span class="loading">Loading…</span>
-	} @else if (init === true) {
-		@let logged = loggedIn$ | async;
+	} @else {
+		@let logged = this.authService.user$ | async;
 
 		@if (logged) {
 			<a routerLink="/threads/create">Create</a>
@@ -27,10 +26,6 @@
 			<a routerLink="/login">Login</a>
 			<a routerLink="/register">Register</a>
 		}
-	} @else {
-		<!-- Fallback for undefined/initial state -->
-		<span class="spacer"></span>
-		<span class="loading">Loading…</span>
 	}
 </header>
 

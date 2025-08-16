@@ -1,12 +1,8 @@
 <section class="container">
 	<h1>User Threads</h1>
-
-	@let vm = vm$ | async;
-
-	@if (!vm || vm.init === false) {
+	@if (loading) {
 		<p>Loading…</p>
 	} @else {
-		<!-- vm.init is true and we have a uid from the route -->
-		<app-profile-threads-list [uid]="vm.uid"></app-profile-threads-list>
+		<app-profile-threads-list [uid]="this.uid!"></app-profile-threads-list>
 	}
 </section>

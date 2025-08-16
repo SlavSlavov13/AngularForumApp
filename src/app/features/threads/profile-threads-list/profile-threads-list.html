@@ -1,5 +1,7 @@
+@let threads = this.threads$ | async;
+
 <section class="threads-list">
-	@if (loading) {
+	@if (!threads) {
 		<section class="page-skeleton">Loading…</section>
 	} @else {
 		@if (threads?.length) {

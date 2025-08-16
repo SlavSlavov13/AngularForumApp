@@ -1,7 +1,6 @@
 import {inject} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivateFn, Router, UrlTree} from '@angular/router';
 import {ThreadService} from '../services/thread.service';
-import {AppUserModel, ThreadModel} from "../../shared/models";
 import {AuthService} from "../services/auth.service";
 
 export const existsGuard: CanActivateFn = async (route: ActivatedRouteSnapshot): Promise<true | UrlTree> => {
@@ -17,16 +16,14 @@ export const existsGuard: CanActivateFn = async (route: ActivatedRouteSnapshot):
 	const parentPath: string = route.parent?.routeConfig?.path ?? route.routeConfig?.path ?? '';
 
 	if (parentPath.startsWith('profile')) {
-		const user: AppUserModel | null = await authService.getUser(id);
-		if (!user) {
+		if (!(await authService.userExists(id))) {
 			return router.createUrlTree(['/threads']);
 		}
 		return true;
 	}
 
 	if (parentPath.startsWith('threads')) {
-		const thread: ThreadModel | null = await threadService.getThread(id);
-		if (!thread) {
+		if (!(await threadService.threadExists(id))) {
 			return router.createUrlTree(['/threads']);
 		}
 		return true;

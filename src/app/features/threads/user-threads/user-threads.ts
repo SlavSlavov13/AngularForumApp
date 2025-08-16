@@ -1,34 +1,27 @@
-import {Component, inject} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {AsyncPipe} from '@angular/common';
-import {combineLatest, Observable} from 'rxjs';
-import {filter, map} from 'rxjs/operators';
 import {ProfileThreadsList} from '../profile-threads-list/profile-threads-list';
-import {AuthService} from '../../../core/services/auth.service';
+import {AuthService} from "../../../core/services/auth.service";
 
 @Component({
 	selector: 'app-user-threads',
 	standalone: true,
-	imports: [ProfileThreadsList, AsyncPipe],
+	imports: [ProfileThreadsList],
 	templateUrl: './user-threads.html',
 	styleUrl: './user-threads.css'
 })
-export class UserThreads {
-	private route = inject(ActivatedRoute);
-	private auth = inject(AuthService);
+export class UserThreads implements OnInit {
+	uid!: string;
+	loading: boolean = true;
 
-	// Route uid (from /users/:id or similar)
-	routeUid$: Observable<string> = this.route.paramMap.pipe(
-		map(params => params.get('id')!),
-		filter(id => !!id)
-	);
+	constructor(
+		private route: ActivatedRoute,
+		protected authService: AuthService,
+	) {
+	}
 
-	// Auth initialization flag from your service
-	initialized$ = this.auth.initialized$;
-
-	// View-model stream to drive the template (optional but tidy)
-	// Emits { init: boolean, uid: string }
-	vm$ = combineLatest([this.initialized$, this.routeUid$]).pipe(
-		map(([init, uid]) => ({init, uid}))
-	);
+	ngOnInit(): void {
+		this.uid = this.route.snapshot.paramMap.get('id')!;
+		this.loading = false;
+	}
 }

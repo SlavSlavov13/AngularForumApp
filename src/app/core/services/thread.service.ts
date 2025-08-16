@@ -1,45 +1,39 @@
-import {inject, Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, deleteDoc, doc, DocumentReference, DocumentSnapshot, Firestore, getDoc, getDocs, orderBy, query, QuerySnapshot, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
+import {inject, Injectable} from '@angular/core';
+import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getDoc, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
+import {from, Observable} from 'rxjs';
 import {ThreadCreateModel, ThreadModel} from '../../shared/models';
 
 @Injectable({providedIn: 'root'})
 export class ThreadService {
 	private db: Firestore = inject(Firestore);
-	private injector: Injector = inject(Injector);
 
-	/** Get all threads ordered by newest first */
-	async listThreads(): Promise<ThreadModel[]> {
-		return runInInjectionContext(this.injector, async (): Promise<ThreadModel[]> => {
-			const q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'));
-			const snap = await getDocs(q);
-			return snap.docs.map(d => ({id: d.id, ...d.data()} as ThreadModel));
-		});
+	listThreads(): Observable<ThreadModel[]> {
+		const q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'));
+		return collectionData(q, {idField: 'id'}) as Observable<ThreadModel[]>;
 	}
 
-	/** Get threads by a specific user */
-	async listThreadsByUser(uid: string): Promise<ThreadModel[]> {
-		return runInInjectionContext(this.injector, async (): Promise<ThreadModel[]> => {
-			const q = query(
-				collection(this.db, 'threads'),
-				where('authorId', '==', uid),
-				orderBy('createdAt', 'desc')
-			);
-			const snap: QuerySnapshot = await getDocs(q);
-			return snap.docs.map(d => ({id: d.id, ...d.data()} as ThreadModel));
-		});
+	listThreadsByUser(uid: string): Observable<ThreadModel[]> {
+		const q = query(
+			collection(this.db, 'threads'),
+			where('authorId', '==', uid),
+			orderBy('createdAt', 'desc')
+		);
+		return collectionData(q, {idField: 'id'}) as Observable<ThreadModel[]>;
 	}
 
-	/** Get a single thread by ID */
-	async getThread(id: string): Promise<ThreadModel | null> {
-		return runInInjectionContext(this.injector, async (): Promise<ThreadModel | null> => {
-			const s: DocumentSnapshot = await getDoc(doc(this.db, 'threads', id));
-			return s.exists() ? ({id: s.id, ...s.data()} as ThreadModel) : null;
-		});
+	getThread(id: string): Observable<ThreadModel> {
+		const ref = doc(this.db, 'threads', id);
+		return docData(ref, {idField: 'id'}) as Observable<ThreadModel>;
 	}
 
-	/** Create a new thread */
-	async createThread(data: ThreadCreateModel): Promise<DocumentReference> {
-		return runInInjectionContext(this.injector, (): Promise<DocumentReference> =>
+	async threadExists(id: string): Promise<boolean> {
+		const ref = doc(this.db, 'threads', id);
+		const snapshot = await getDoc(ref);
+		return snapshot.exists();
+	}
+
+	createThread(data: ThreadCreateModel): Observable<any> {
+		return from(
 			addDoc(collection(this.db, 'threads'), {
 				...data,
 				createdAt: serverTimestamp(),
@@ -49,20 +43,17 @@ export class ThreadService {
 		);
 	}
 
-	/** Update an existing thread */
-	async updateThread(id: string, patch: Partial<ThreadModel>): Promise<void> {
-		return runInInjectionContext(this.injector, (): Promise<void> =>
-			updateDoc(doc(this.db, 'threads', id), {
+	updateThread(id: string, patch: Partial<ThreadModel>): Observable<void> {
+		const ref = doc(this.db, 'threads', id);
+		return from(
+			updateDoc(ref, {
 				...patch,
 				updatedAt: serverTimestamp()
 			})
 		);
 	}
 
-	/** Delete a thread */
-	async deleteThread(id: string): Promise<void> {
-		return runInInjectionContext(this.injector, (): Promise<void> =>
-			deleteDoc(doc(this.db, 'threads', id))
-		);
+	deleteThread(id: string): Observable<void> {
+		return from(deleteDoc(doc(this.db, 'threads', id)));
 	}
 }

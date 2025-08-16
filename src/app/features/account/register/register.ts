@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {AuthService} from "../../../core/services/auth.service";
@@ -14,9 +14,8 @@ export class Register {
 	form: FormGroup;
 	loading: boolean = false;
 	error: string | null = null;
-	private router: Router = inject(Router);
 
-	constructor(private fb: FormBuilder, private auth: AuthService) {
+	constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
 		this.form = this.fb.group({
 			email: ['', [Validators.required, Validators.email]],
 			password: ['', [Validators.required, Validators.minLength(6)]],
@@ -24,7 +23,7 @@ export class Register {
 		});
 	}
 
-	async submit() {
+	async submit(): Promise<void> {
 		if (this.form.invalid || this.loading) return;
 
 		this.error = null;
@@ -32,7 +31,7 @@ export class Register {
 		const {email, password, displayName} = this.form.value;
 
 		try {
-			await this.auth.register(email, password, displayName);
+			await this.authService.register(email, password, displayName);
 			await this.router.navigateByUrl('/threads');
 
 			this.form.reset();

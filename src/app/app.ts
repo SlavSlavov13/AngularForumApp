@@ -1,7 +1,6 @@
-import {Component, inject, signal, WritableSignal} from '@angular/core';
+import {Component, signal, WritableSignal} from '@angular/core';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import {AuthService} from './core/services/auth.service';
-import {Observable} from 'rxjs';
 import {AsyncPipe} from '@angular/common';
 
 @Component({
@@ -12,21 +11,15 @@ import {AsyncPipe} from '@angular/common';
 	styleUrl: './app.css'
 })
 export class App {
-	protected readonly title: WritableSignal<string> = signal('forum');
+	constructor(protected authService: AuthService, private router: Router) {
+	}
 
-	private auth = inject(AuthService);
-	private router = inject(Router);
-
-	initialized$: Observable<boolean> = this.auth.initialized$;
-	loggedIn$: Observable<boolean> = this.auth.loggedIn$;
-
-	// UI-only signal to show logout progress
-	signingOut = signal(false);
+	signingOut: WritableSignal<boolean> = signal(false);
 
 	async logout(): Promise<void> {
 		try {
 			this.signingOut.set(true);
-			await this.auth.logout();
+			await this.authService.logout();
 			await this.router.navigate(['/threads']);
 		} catch (e) {
 			console.error('Sign out error:', e);

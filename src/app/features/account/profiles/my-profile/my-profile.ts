@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ProfileCard} from '../profile-card/profile-card';
 import {AuthService} from '../../../../core/services/auth.service';
 import {AppUserModel} from '../../../../shared/models';
@@ -11,20 +11,17 @@ import {AppUserModel} from '../../../../shared/models';
 	styleUrl: './my-profile.css'
 })
 export class MyProfile implements OnInit {
-	private auth = inject(AuthService);
-
-	loading = true;
+	loading: boolean = true;
 	error: string | null = null;
-	user: AppUserModel | null = null;
+	user!: AppUserModel;
+
+	constructor(private authService: AuthService) {
+	}
 
 	async ngOnInit(): Promise<void> {
 		try {
-			const uid = await this.auth.currentUid();
-			if (!uid) {
-				this.user = null; // not logged in
-				return;
-			}
-			this.user = await this.auth.getUser(uid);
+			const uid: string = (await this.authService.currentUid())!;
+			this.user = await this.authService.getUser(uid);
 		} catch (e) {
 			console.error('Failed to load profile', e);
 			this.error = 'Failed to load profile.';
@@ -32,4 +29,5 @@ export class MyProfile implements OnInit {
 			this.loading = false;
 		}
 	}
+
 }
