@@ -23,8 +23,7 @@ export class ProfileDetails implements OnInit {
 			const uid: string = this.route.snapshot.paramMap.get('id')!;
 			this.user = await this.authService.getUser(uid);
 		} catch (e) {
-			console.error('Failed to load profile', e);
-			this.error = 'Failed to load profile.';
+			this.error = (e as Error)?.message || 'Failed to load profile.';
 		} finally {
 			this.loading = false;
 		}

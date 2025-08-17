@@ -17,6 +17,7 @@ import {firstValueFrom} from "rxjs";
 	styleUrl: './thread-create.css'
 })
 export class ThreadCreate {
+	error: string | null = null;
 	form: FormGroup;
 
 	constructor(
@@ -54,8 +55,8 @@ export class ThreadCreate {
 			const docRef: DocumentReference = await firstValueFrom(this.threadService.createThread(payload));
 			this.form.reset();
 			await this.router.navigate([`/threads/${docRef.id}`]);
-		} catch (error) {
-			console.error('Error creating thread:', error);
+		} catch (e) {
+			this.error = (e as Error)?.message || 'Failed to create thread.';
 		}
 	}
 }

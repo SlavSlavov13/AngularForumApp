@@ -24,7 +24,10 @@ export class Register {
 	}
 
 	async submit(): Promise<void> {
-		if (this.form.invalid || this.loading) return;
+		if (this.form.invalid || this.loading) {
+			this.form.markAllAsTouched();
+			return;
+		}
 
 		this.error = null;
 		this.loading = true;
@@ -33,10 +36,9 @@ export class Register {
 		try {
 			await this.authService.register(email, password, displayName);
 			await this.router.navigateByUrl('/threads');
-
 			this.form.reset();
 		} catch (e) {
-			this.error = (e as Error).message || 'Registration failed.';
+			this.error = (e as Error)?.message || 'Registration failed.';
 		} finally {
 			this.loading = false;
 		}

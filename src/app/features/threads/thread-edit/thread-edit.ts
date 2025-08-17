@@ -13,6 +13,7 @@ import {firstValueFrom} from 'rxjs';
 	styleUrl: './thread-edit.css'
 })
 export class ThreadEdit implements OnInit {
+	error: string | null = null;
 	form: FormGroup;
 	loading: boolean = true;
 	saving: boolean = false;
@@ -45,7 +46,9 @@ export class ThreadEdit implements OnInit {
 
 			this.loading = false;
 		} catch (e) {
-			console.error('Failed to load thread', e);
+			this.error = (e as Error)?.message || 'Failed to load thread.';
+		} finally {
+			this.loading = false;
 		}
 	}
 
@@ -53,27 +56,25 @@ export class ThreadEdit implements OnInit {
 		if (this.form.invalid || this.saving) return;
 
 		this.saving = true;
-		try {
-			const raw = this.form.value as { title: string; body: string; tags?: string };
+		const raw = this.form.value as { title: string; body: string; tags?: string };
 
-			const tagsArray: string[] =
-				raw.tags && raw.tags.trim().length
-					? raw.tags.split(',').map(t => t.trim()).filter(Boolean)
-					: [];
+		const tagsArray: string[] =
+			raw.tags && raw.tags.trim().length
+				? raw.tags.split(',').map(t => t.trim()).filter(Boolean)
+				: [];
 
-			const patch: Partial<ThreadModel> = {
-				title: raw.title,
-				body: raw.body,
-				tags: tagsArray,
-			};
+		const patch: Partial<ThreadModel> = {
+			title: raw.title,
+			body: raw.body,
+			tags: tagsArray,
+		};
 
-			this.threadService.updateThread(this.thread.id, patch);
-			await this.router.navigate(['/threads', this.thread.id]);
-		} catch (e) {
-			console.error('Failed to update thread', e);
-			this.form.setErrors({submitFailed: true});
-		} finally {
-			this.saving = false;
-		}
+		this.threadService.updateThread(this.thread.id, patch).subscribe({
+			error: (e): void => {
+				this.error = (e as Error)?.message || 'Failed to save thread.';
+			}
+		});
+		await this.router.navigate(['/threads', this.thread.id]);
+		this.loading = false;
 	}
 }

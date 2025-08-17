@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ThreadModel} from '../../../shared/models';
 import {ThreadService} from '../../../core/services/thread.service';
-import {Observable} from "rxjs";
+import {catchError, Observable, of} from "rxjs";
 import {AsyncPipe} from "@angular/common";
 
 @Component({
@@ -21,13 +21,12 @@ export class ThreadsList implements OnInit {
 	}
 
 	async ngOnInit(): Promise<void> {
-		try {
-			this.threads$ = this.threadService.listThreads();
-		} catch (e) {
-			console.error('Failed to load threads', e);
-			this.error = 'Failed to load threads.';
-		} finally {
-			this.loading = false;
-		}
+		this.threads$ = this.threadService.listThreads().pipe(
+			catchError(e => {
+				this.error = (e as Error)?.message || 'Failed to list threads.';
+				return of([]);
+			})
+		);
+		this.loading = false;
 	}
 }

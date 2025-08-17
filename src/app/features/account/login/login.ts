@@ -24,7 +24,10 @@ export class Login {
 	}
 
 	async submit(): Promise<void> {
-		if (this.form.invalid || this.loading) return;
+		if (this.form.invalid || this.loading) {
+			this.form.markAllAsTouched();
+			return;
+		}
 		this.error = null;
 		this.loading = true;
 
@@ -32,9 +35,7 @@ export class Login {
 
 		try {
 			await this.authService.login(email, password);
-
 			const returnUrl: string = this.route.snapshot.queryParamMap.get('returnUrl') || '/threads';
-
 			await this.router.navigateByUrl(returnUrl);
 		} catch (e) {
 			this.error = (e as Error)?.message || 'Login failed.';

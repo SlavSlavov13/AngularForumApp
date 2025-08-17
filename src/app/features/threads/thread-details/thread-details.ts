@@ -14,6 +14,8 @@ import {AsyncPipe} from "@angular/common";
 	styleUrl: './thread-details.css'
 })
 export class ThreadDetails implements OnInit {
+	error: string | null = null;
+	loading: boolean = true;
 	thread!: ThreadModel;
 	author!: AppUserModel;
 	currentUid: Promise<string | null> = this.authService.currentUid()
@@ -33,7 +35,9 @@ export class ThreadDetails implements OnInit {
 			const authorUid: string = this.thread!.authorId;
 			this.author = await this.authService.getUser(authorUid);
 		} catch (e) {
-			console.error('Failed to load thread', e);
+			this.error = (e as Error)?.message || 'Failed to load data.';
+		} finally {
+			this.loading = false;
 		}
 	}
 
@@ -41,12 +45,12 @@ export class ThreadDetails implements OnInit {
 		const ok: boolean = confirm(`Delete thread "${this.thread!.title}"? This cannot be undone.`);
 		if (!ok) return;
 
-		try {
-			this.threadService.deleteThread(this.thread!.id);
-			await this.router.navigate(['/threads']);
-		} catch (e) {
-			console.error('Failed to delete thread', e);
-			alert('Failed to delete thread. Please try again.');
-		}
+		this.threadService.deleteThread(this.thread!.id).subscribe({
+			error: (e): void => {
+				this.error = (e as Error)?.message || 'Failed to save thread.';
+			}
+		});
+		await this.router.navigate(['/threads']);
+		this.loading = false;
 	}
 }

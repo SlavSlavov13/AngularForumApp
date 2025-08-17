@@ -5,53 +5,30 @@
 	} @else {
 		@if (threads?.length) {
 			<ul>
-				@if (this.profileCard) {
-					@for (t of threads.slice(0, this.limitCount); track t.id) {
-						<li class="thread-item">
-							<a [routerLink]="['/threads', t.id]" class="title">{{ t.title }}</a>
-							<p class="excerpt">{{ t.body }}</p>
-							<small class="meta">
-								@if (t.updatedAt) {
-									• Updated: {{ t.updatedAt.toDate() | date:'medium' }}
-								}
-								@if (t.createdAt) {
-									• Created: {{ t.createdAt.toDate() | date:'medium' }}
-								}
-							</small>
-							@if (t.tags) {
-								<div class="tags">
-									@for (tag of t.tags; track tag) {
-										<span class="tag">{{ tag }}</span>
-									}
-								</div>
+				@for (t of threads; track t.id) {
+					<li class="thread-item">
+						<a [routerLink]="['/threads', t.id]" class="title">{{ t.title }}</a>
+						<p class="excerpt">{{ t.body }}</p>
+						<small class="meta">
+							@if (t.updatedAt) {
+								• Updated: {{ t.updatedAt.toDate() | date:'medium' }}
 							}
-						</li>
-					}
-				} @else {
-					@for (t of threads; track t.id) {
-						<li class="thread-item">
-							<a [routerLink]="['/threads', t.id]" class="title">{{ t.title }}</a>
-							<p class="excerpt">{{ t.body }}</p>
-							<small class="meta">
-								@if (t.updatedAt) {
-									• Updated: {{ t.updatedAt.toDate() | date:'medium' }}
-								}
-								@if (t.createdAt) {
-									• Created: {{ t.createdAt.toDate() | date:'medium' }}
-								}
-							</small>
-							@if (t.tags) {
-								<div class="tags">
-									@for (tag of t.tags; track tag) {
-										<span class="tag">{{ tag }}</span>
-									}
-								</div>
+							@if (t.createdAt) {
+								• Created: {{ t.createdAt.toDate() | date:'medium' }}
 							}
-						</li>
-					}
+						</small>
+						@if (t.tags) {
+							<div class="tags">
+								@for (tag of t.tags; track tag) {
+									<span class="tag">{{ tag }}</span>
+								}
+							</div>
+						}
+					</li>
 				}
+
 			</ul>
-			@if (threads.length > this.limitCount && this.profileCard) {
+			@if (this.profileCard && this.userThreadsCount > this.limitCount) {
 				<a [routerLink]="['/profile', this.uid, 'threads']" class="title">View all threads</a>
 			}
 		} @else {

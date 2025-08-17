@@ -14,6 +14,8 @@ import {CommonModule} from "@angular/common";
 export class MyThreads implements OnInit {
 	uid!: string;
 	loading: boolean = true;
+	error: string | null = null;
+
 
 	constructor(protected authService: AuthService) {
 	}
@@ -24,7 +26,7 @@ export class MyThreads implements OnInit {
 		try {
 			this.uid = (await this.authService.currentUid())!;
 		} catch (e) {
-			console.error('Failed to load profile', e);
+			this.error = (e as Error)?.message || 'Failed to load user.';
 		} finally {
 			this.loading = false;
 		}

@@ -18,8 +18,8 @@
 
 		@if (logged) {
 			<a routerLink="/my-profile">Profile</a>
-			<button type="button" (click)="logout()" [disabled]="signingOut()">Logout</button>
-			@if (signingOut()) {
+			<button type="button" (click)="logout()" [disabled]="this.signingOut">Logout</button>
+			@if (this.signingOut) {
 				<span class="loading small">Signing out…</span>
 			}
 		} @else {

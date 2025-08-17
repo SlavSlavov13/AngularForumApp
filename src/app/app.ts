@@ -1,4 +1,4 @@
-import {Component, signal, WritableSignal} from '@angular/core';
+import {Component} from '@angular/core';
 import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import {AuthService} from './core/services/auth.service';
 import {AsyncPipe} from '@angular/common';
@@ -11,20 +11,21 @@ import {AsyncPipe} from '@angular/common';
 	styleUrl: './app.css'
 })
 export class App {
+	error: string | null = null;
+	signingOut: boolean = false;
+
 	constructor(protected authService: AuthService, private router: Router) {
 	}
 
-	signingOut: WritableSignal<boolean> = signal(false);
-
 	async logout(): Promise<void> {
 		try {
-			this.signingOut.set(true);
+			this.signingOut = true;
 			await this.authService.logout();
 			await this.router.navigate(['/threads']);
 		} catch (e) {
-			console.error('Sign out error:', e);
+			this.error = (e as Error)?.message || 'Logout failed.';
 		} finally {
-			this.signingOut.set(false);
+			this.signingOut = false;
 		}
 	}
 }
