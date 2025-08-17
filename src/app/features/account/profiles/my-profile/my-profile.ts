@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../../../core/services/auth.service';
 import {AppUserModel} from '../../../../shared/models';
-import {EditProfile} from "../edit-profile/edit-profile";
+import {ProfileCard} from "../profile-card/profile-card";
 
 @Component({
 	selector: 'app-my-profile',
 	standalone: true,
-	imports: [EditProfile],
+	imports: [ProfileCard],
 	templateUrl: './my-profile.html',
 	styleUrl: './my-profile.css'
 })

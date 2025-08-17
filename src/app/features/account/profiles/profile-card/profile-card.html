@@ -36,6 +36,10 @@
 		}
 	</div>
 
+	@if (user.uid === this.currentUid) {
+		<a routerLink="/my-profile/edit">Edit Profile</a>
+	}
+
 	<button type="button" (click)="toggleThreads()">
 		{{ showThreads() ? 'Hide Threads' : 'Show Threads' }}
 	</button>

@@ -4,11 +4,12 @@ import {AppUserModel} from '../../../../shared/models';
 import {MyThreads} from "../../../threads/my-threads/my-threads";
 import {AuthService} from "../../../../core/services/auth.service";
 import {UserThreads} from "../../../threads/user-threads/user-threads";
+import {RouterLink} from "@angular/router";
 
 @Component({
 	selector: 'app-profile-card',
 	standalone: true,
-	imports: [CommonModule, MyThreads, UserThreads],
+	imports: [CommonModule, MyThreads, UserThreads, RouterLink],
 	templateUrl: './profile-card.html',
 	styleUrl: './profile-card.css'
 })

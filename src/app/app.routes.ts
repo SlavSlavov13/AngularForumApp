@@ -58,6 +58,11 @@ export const routes: Routes = [
 				loadComponent: () =>
 					import('./features/threads/my-threads/my-threads').then(m => m.MyThreads),
 			},
+			{
+				path: 'edit',
+				loadComponent: () =>
+					import('./features/account/profiles/edit-profile/edit-profile').then(m => m.EditProfile),
+			},
 		],
 	},
 
