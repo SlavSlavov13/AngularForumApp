@@ -34,6 +34,12 @@
 				</div>
 			</div>
 		}
+		
+		@if (user.location) {
+			<div>
+				<small>Location: {{ user.location!.name || (user.location!.lat + ', ' + user.location!.lng) }}</small>
+			</div>
+		}
 	</div>
 
 	@if (user.uid === this.currentUid) {

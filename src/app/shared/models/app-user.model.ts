@@ -7,4 +7,5 @@ export interface AppUserModel {
 	readonly photoURL?: string | null;
 	readonly createdAt?: Timestamp;
 	readonly lastLogin?: Timestamp;
+	readonly location?: { name?: string; lat: number; lng: number } | null;
 }

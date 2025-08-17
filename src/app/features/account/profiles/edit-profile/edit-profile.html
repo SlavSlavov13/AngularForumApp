@@ -95,6 +95,26 @@
 				</div>
 			}
 
+			<div class="form-group mt-3">
+				<label>Location</label>
+				<button type="button" class="btn btn-secondary" (click)="onAddLocation()" [disabled]="locationLoading">Add Location</button>
+				@if (this.location) {
+					<div>
+						<small>Location: {{ this.location!.name || (this.location!.lat + ', ' + this.location!.lng) }}</small>
+					</div>
+				} @else if (user.location) {
+					<div>
+						<small>Location: {{ user.location!.name || (user.location!.lat + ', ' + user.location!.lng) }}</small>
+					</div>
+				}
+				@if (locationError) {
+					<div class="text-danger mt-2">
+						{{ locationError }}
+					</div>
+				}
+			</div>
+
+
 			<!-- Error Message -->
 			@if (error) {
 				<div class="alert alert-danger mt-3">

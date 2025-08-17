@@ -110,7 +110,8 @@ export class AuthService {
 				displayName: raw.displayName ?? null,
 				photoURL: raw.photoURL ?? null,
 				createdAt: raw.createdAt,
-				lastLogin: raw.lastLogin
+				lastLogin: raw.lastLogin,
+				location: raw.location ?? null
 			};
 		});
 	}
@@ -121,6 +122,11 @@ export class AuthService {
 		currentPassword?: string,
 		newPassword?: string,
 		photoFile?: File | null,
+		location: {
+			lat: number,
+			lng: number,
+			name?: string
+		} | null
 	}): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
 
@@ -156,6 +162,7 @@ export class AuthService {
 			const firestoreData: Partial<AppUserModel> = {
 				displayName: data.displayName,
 				email: data.email,
+				...(data.location != null ? {location: data.location} : {}),
 			};
 
 			await setDoc(
