@@ -5,10 +5,12 @@ import {FirebaseError} from 'firebase/app';
 import {AppUserModel} from '../../shared/models';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {filter, take} from 'rxjs/operators';
+import {FirebaseStorage, getDownloadURL, getStorage, ref, StorageReference, uploadBytes} from "@angular/fire/storage";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
 	private injector: Injector = inject(Injector);
+	private storage: FirebaseStorage = getStorage();
 
 	private auth: Auth = inject(Auth);
 	private db: Firestore = inject(Firestore);
@@ -106,6 +108,24 @@ export class AuthService {
 			};
 		});
 	}
+
+	async uploadProfilePhoto(file: File): Promise<void> {
+		const uid: string = (await this.currentUid())!;
+
+		const storageRef: StorageReference = ref(this.storage, `profile-pictures/${uid}/${file.name}`);
+
+		await uploadBytes(storageRef, file);
+
+		const url: string = await getDownloadURL(storageRef);
+
+		await setDoc(doc(this.db, 'users', uid), {photoURL: url}, {merge: true});
+
+		const appUser: AppUserModel = this.userSub.value!;
+		if (appUser) {
+			this.userSub.next({...appUser, photoURL: url});
+		}
+	}
+
 
 	async userExists(id: string): Promise<boolean> {
 		return await runInInjectionContext(this.injector, async (): Promise<boolean> => {
