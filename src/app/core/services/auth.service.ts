@@ -121,7 +121,7 @@ export class AuthService {
 		email: string,
 		currentPassword?: string,
 		newPassword?: string,
-		photoFile?: File | null,
+		photoFile: File | null,
 		location: {
 			lat: number,
 			lng: number,
@@ -131,14 +131,11 @@ export class AuthService {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
 
 			await this.waitUntilInitialized();
-
 			const firebaseUser: User = this.auth.currentUser!;
 
 			const profileData: { displayName?: string; photoURL?: string | null } = {};
 			if (data.displayName !== firebaseUser.displayName) profileData.displayName = data.displayName;
-			if (data.photoFile != null) {
-				await this.uploadProfilePhoto(data.photoFile)
-			}
+			await this.uploadProfilePhoto(data.photoFile)
 			if (Object.keys(profileData).length > 0) {
 				await updateProfile(firebaseUser, profileData);
 			}
@@ -162,7 +159,8 @@ export class AuthService {
 			const firestoreData: Partial<AppUserModel> = {
 				displayName: data.displayName,
 				email: data.email,
-				...(data.location != null ? {location: data.location} : {}),
+				location: data.location ?? null
+				,
 			};
 
 			await setDoc(
@@ -181,10 +179,16 @@ export class AuthService {
 		});
 	}
 
-	async uploadProfilePhoto(file: File): Promise<void> {
+	async uploadProfilePhoto(file: File | null): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
-
 			const uid: string = (await this.currentUid())!;
+
+			if (file == null) {
+				await setDoc(doc(this.db, 'users', uid), {photoURL: null}, {merge: true});
+				const appUser: AppUserModel = this.userSub.value!;
+				this.userSub.next({...appUser, photoURL: null});
+				return;
+			}
 
 			const storageRef: StorageReference = ref(this.storage, `profile-pictures/${uid}/${file.name}`);
 

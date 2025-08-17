@@ -37,6 +37,7 @@ export class EditProfile implements OnInit {
 				{
 					currentPassword: [''],
 					newPassword: [''],
+					repeatNewPassword: [''],
 				},
 				passwordGroupOptions
 			)
@@ -54,6 +55,7 @@ export class EditProfile implements OnInit {
 				email: this.user.email
 			});
 			this.photoPreviewUrl = this.user.photoURL ?? null;
+			this.location = this.user.location ?? null;
 		} catch (e) {
 			this.error = (e as Error)?.message || 'Failed to load user info.';
 		} finally {
@@ -109,6 +111,15 @@ export class EditProfile implements OnInit {
 			return result.results[0].formatted_address;
 		}
 		return null;
+	}
+
+	clearPhoto(): void {
+		this.photoPreviewUrl = null;
+		this.photoFile = null;
+	}
+
+	clearLocation(): void {
+		this.location = null;
 	}
 
 

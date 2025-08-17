@@ -1,6 +1,5 @@
-<!-- edit-profile.component.html -->
-
 <div class="edit-profile-container">
+
 	@if (!loading) {
 		<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
 
@@ -14,7 +13,6 @@
 						class="form-control"
 						[class.is-invalid]="form.get('displayName')?.invalid && form.get('displayName')?.touched"
 				/>
-
 				@if (form.get('displayName')?.invalid && form.get('displayName')?.touched) {
 					<div class="invalid-feedback">
 						@if (form.get('displayName')?.errors?.['required']) {
@@ -37,7 +35,6 @@
 						class="form-control"
 						[class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
 				/>
-
 				@if (form.get('email')?.invalid && form.get('email')?.touched) {
 					<div class="invalid-feedback">
 						@if (form.get('email')?.errors?.['required']) {
@@ -52,27 +49,27 @@
 
 			<!-- Passwords Group -->
 			<div formGroupName="passwords" class="form-group password-group">
-
 				<label for="currentPassword">Current Password</label>
-				<input
-						id="currentPassword"
-						type="password"
-						formControlName="currentPassword"
-						class="form-control"
-				/>
+				<input id="currentPassword" type="password" formControlName="currentPassword" class="form-control"/>
 
 				<label for="newPassword" class="mt-2">New Password</label>
-				<input
-						id="newPassword"
-						type="password"
-						formControlName="newPassword"
-						class="form-control"
-				/>
+				<input id="newPassword" type="password" formControlName="newPassword" class="form-control"/>
 
-				@if (form.get('passwords')?.errors && (form.get('passwords.newPassword')?.touched || form.get('passwords.currentPassword')?.touched)) {
+				<label for="repeatNewPassword" class="mt-2">Repeat New Password</label>
+				<input id="repeatNewPassword" type="password" formControlName="repeatNewPassword" class="form-control"/>
+
+				@if (form.get('passwords')?.errors &&
+				(form.get('passwords.newPassword')?.touched || form.get('passwords.repeatNewPassword')?.touched || form.get('passwords.currentPassword')?.touched)) {
+
 					<div class="invalid-feedback d-block">
 						@if (form.get('passwords')?.errors?.['passwordMismatch']) {
-							<div>New password and current password do not match.</div>
+							<div>New password and repeated password do not match.</div>
+						}
+						@if (form.get('passwords')?.errors?.['passwordTooShort']) {
+							<div>Password must be at least 6 characters long.</div>
+						}
+						@if (form.get('passwords')?.errors?.['samePassword']) {
+							<div>New password must be different from the current password.</div>
 						}
 					</div>
 				}
@@ -82,6 +79,7 @@
 			<div class="form-group mt-3">
 				<label>Profile Photo</label>
 				<input type="file" accept="image/*" (change)="onPhotoSelected($event)"/>
+				<button type="button" class="btn btn-secondary mt-2" (click)="clearPhoto()" [disabled]="!photoPreviewUrl">Remove Photo</button>
 			</div>
 
 			@if (photoPreviewUrl) {
@@ -95,54 +93,43 @@
 				</div>
 			}
 
+			<!-- Location -->
 			<div class="form-group mt-3">
 				<label>Location</label>
 				<button type="button" class="btn btn-secondary" (click)="onAddLocation()" [disabled]="locationLoading">Add Location</button>
-				@if (this.location) {
+				<button type="button" class="btn btn-secondary" (click)="clearLocation()" [disabled]="!location">Remove Location</button>
+
+				@if (location) {
 					<div>
-						<small>Location: {{ this.location!.name || (this.location!.lat + ', ' + this.location!.lng) }}</small>
-					</div>
-				} @else if (user.location) {
-					<div>
-						<small>Location: {{ user.location!.name || (user.location!.lat + ', ' + user.location!.lng) }}</small>
+						<small>Location: {{ location.name || (location.lat + ', ' + location.lng) }}</small>
 					</div>
 				}
+
 				@if (locationError) {
-					<div class="text-danger mt-2">
-						{{ locationError }}
-					</div>
+					<div class="text-danger mt-2">{{ locationError }}</div>
 				}
 			</div>
 
-
 			<!-- Error Message -->
 			@if (error) {
-				<div class="alert alert-danger mt-3">
-					{{ error }}
-				</div>
+				<div class="alert alert-danger mt-3">{{ error }}</div>
 			}
 
-			<!-- Buttons -->
-			<button
-					type="submit"
-					class="btn btn-primary mt-3"
-					[disabled]="saving"
-			>
+			<!-- Submit Button -->
+			<button type="submit" class="btn btn-primary mt-3" [disabled]="saving">
 				@if (saving) {
-					<span
-							class="spinner-border spinner-border-sm"
-							role="status"
-							aria-hidden="true"
-					></span>
+					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+				} @else {
+					Save Changes
 				}
-				Save Changes
 			</button>
-
 		</form>
 	} @else {
+		<!-- Loading Template -->
 		<div class="loading-spinner text-center p-5">
 			<div class="spinner-border" role="status" aria-hidden="true"></div>
 			<span class="sr-only">Loading...</span>
 		</div>
 	}
+
 </div>

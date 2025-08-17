@@ -4,8 +4,9 @@ export const passwordsValidator: ValidatorFn = (control: AbstractControl): Valid
 	const group = control as FormGroup;
 	const currentPassword: string = group.get('currentPassword')?.value;
 	const newPassword: string = group.get('newPassword')?.value;
+	const repeatNewPassword: string = group.get('repeatNewPassword')?.value;
 
-	if (!currentPassword && !newPassword) {
+	if (!currentPassword && !newPassword && !repeatNewPassword) {
 		return null;
 	}
 
@@ -16,8 +17,12 @@ export const passwordsValidator: ValidatorFn = (control: AbstractControl): Valid
 		return {passwordTooShort: true};
 	}
 
-	if (newPassword === currentPassword) {
+	if (newPassword === currentPassword && newPassword !== '') {
 		return {samePassword: true};
+	}
+
+	if (newPassword !== repeatNewPassword) {
+		return {passwordMismatch: true};
 	}
 
 	return null;
