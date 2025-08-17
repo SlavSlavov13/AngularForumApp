@@ -3,6 +3,8 @@ import {AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Val
 import {AppUserModel} from "../../../../shared/models";
 import {AuthService} from "../../../../core/services/auth.service";
 import {passwordsMatchAndSameAsOldValidator} from "./passwordsMatchAndSameAsOld.validator";
+import {displayNameTakenValidator} from "../../../../shared/validators";
+import {emailTakenValidator} from "../../../../shared/validators/emailTaken.validator";
 
 @Component({
 	selector: 'app-edit-profile',
@@ -31,8 +33,16 @@ export class EditProfile implements OnInit {
 		};
 
 		this.form = this.fb.group({
-			displayName: ['', [Validators.required, Validators.minLength(2)]],
-			email: ['', [Validators.required, Validators.email]],
+			displayName: [
+				'',
+				[Validators.required, Validators.minLength(2)],
+				[displayNameTakenValidator()]
+			],
+			email: [
+				'',
+				[Validators.required, Validators.email],
+				[emailTakenValidator()]
+			],
 			passwords: this.fb.group(
 				{
 					currentPassword: [''],

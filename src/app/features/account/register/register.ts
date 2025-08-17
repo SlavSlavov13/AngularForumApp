@@ -4,7 +4,7 @@ import {CommonModule} from '@angular/common';
 import {AuthService} from '../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {passwordMatchValidator} from "./passwordMatch.validator";
-import {displayNameTakenValidator} from "./displayNameTaken.validator";
+import {displayNameTakenValidator} from "../../../shared/validators";
 
 @Component({
 	selector: 'app-register',
@@ -14,7 +14,7 @@ import {displayNameTakenValidator} from "./displayNameTaken.validator";
 })
 export class Register {
 	form: FormGroup;
-	loading = false;
+	loading: boolean = false;
 	error: string | null = null;
 
 	constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {

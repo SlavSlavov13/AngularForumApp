@@ -132,6 +132,16 @@ export class AuthService {
 		);
 	}
 
+	isEmailTaken(email: string): Observable<boolean> {
+		const q = query(
+			collection(this.db, 'users'),
+			where('email', '==', email)
+		);
+		return from(getDocs(q)).pipe(
+			map(snapshot => !snapshot.empty)
+		);
+	}
+
 
 	async updateUser(data: {
 		displayName: string,

@@ -21,6 +21,9 @@
 						@if (form.get('displayName')?.errors?.['minlength']) {
 							<div>Minimum length is 2 characters.</div>
 						}
+						@if (form.get('displayName')?.errors?.['displayNameTaken']) {
+							<span>This display name is already taken.</span>
+						}
 					</div>
 				}
 			</div>
@@ -42,6 +45,9 @@
 						}
 						@if (form.get('email')?.errors?.['email']) {
 							<div>Please enter a valid email address.</div>
+						}
+						@if (form.get('email')?.errors?.['emailTaken']) {
+							<span>This email is already taken.</span>
 						}
 					</div>
 				}
@@ -116,7 +122,7 @@
 			}
 
 			<!-- Submit Button -->
-			<button type="submit" class="btn btn-primary mt-3" [disabled]="saving">
+			<button type="submit" class="btn btn-primary mt-3" [disabled]="loading || form.invalid || form.get('displayName')?.pending || form.get('email')?.pending || saving">
 				@if (saving) {
 					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
 				} @else {
