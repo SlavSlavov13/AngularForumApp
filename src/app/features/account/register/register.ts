@@ -1,27 +1,36 @@
 import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {AuthService} from "../../../core/services/auth.service";
-import {Router} from "@angular/router";
+import {AuthService} from '../../../core/services/auth.service';
+import {Router} from '@angular/router';
+import {passwordMatchValidator} from "./passwordMatchValidator";
 
 @Component({
 	selector: 'app-register',
-	imports: [ReactiveFormsModule, CommonModule],
+	imports: [CommonModule, ReactiveFormsModule],
 	templateUrl: './register.html',
 	styleUrls: ['./register.css']
 })
 export class Register {
 	form: FormGroup;
-	loading: boolean = false;
+	loading = false;
 	error: string | null = null;
 
 	constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
 		this.form = this.fb.group({
 			email: ['', [Validators.required, Validators.email]],
-			password: ['', [Validators.required, Validators.minLength(6)]],
-			displayName: ['', [Validators.required, Validators.minLength(2)]]
+			displayName: ['', [Validators.required, Validators.minLength(2)]],
+			passwords: this.fb.group({
+				password: ['', [Validators.required, Validators.minLength(6)]],
+				repeat: ['', [Validators.required]]
+			}, {validators: passwordMatchValidator})
 		});
 	}
+
+	get passwords(): FormGroup {
+		return this.form.get('passwords') as FormGroup;
+	}
+
 
 	async submit(): Promise<void> {
 		if (this.form.invalid || this.loading) {
@@ -31,7 +40,8 @@ export class Register {
 
 		this.error = null;
 		this.loading = true;
-		const {email, password, displayName} = this.form.value;
+		const {email, displayName, passwords} = this.form.value;
+		const password: string = passwords.password;
 
 		try {
 			await this.authService.register(email, password, displayName);

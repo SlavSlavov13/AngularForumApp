@@ -1,36 +1,74 @@
 <form (ngSubmit)="submit()" [formGroup]="form">
+
 	<div>
 		<label>Email</label>
 		<input formControlName="email" type="email"/>
-		<small *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
-			<span *ngIf="form.get('email')?.errors?.['required']">Email is required.</span>
-			<span *ngIf="form.get('email')?.errors?.['email']">Enter a valid email.</span>
-		</small>
-	</div>
-
-	<div>
-		<label>Password</label>
-		<input formControlName="password" type="password"/>
-		<small *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
-			<span *ngIf="form.get('password')?.errors?.['required']">Password is required.</span>
-			<span *ngIf="form.get('password')?.errors?.['minlength']">
-        Minimum {{ form.get('password')?.errors?.['minlength']?.requiredLength }} characters.
-      </span>
-		</small>
+		@if (form.get('email')?.touched && form.get('email')?.invalid) {
+			<small>
+				@if (form.get('email')?.errors?.['required']) {
+					<span>Email is required.</span>
+				}
+				@if (form.get('email')?.errors?.['email']) {
+					<span>Enter a valid email.</span>
+				}
+			</small>
+		}
 	</div>
 
 	<div>
 		<label>Display name</label>
 		<input formControlName="displayName" type="text"/>
-		<small *ngIf="form.get('displayName')?.touched && form.get('displayName')?.invalid">
-			<span *ngIf="form.get('displayName')?.errors?.['required']">Display name is required.</span>
-			<span *ngIf="form.get('displayName')?.errors?.['minlength']">Minimum length is 2 characters.</span>
-		</small>
+		@if (form.get('displayName')?.touched && form.get('displayName')?.invalid) {
+			<small>
+				@if (form.get('displayName')?.errors?.['required']) {
+					<span>Display name is required.</span>
+				}
+				@if (form.get('displayName')?.errors?.['minlength']) {
+					<span>Minimum length is 2 characters.</span>
+				}
+			</small>
+		}
+	</div>
+
+	<div [formGroup]="passwords">
+		<label>Password</label>
+		<input formControlName="password" type="password"/>
+		@if (form.get('passwords.password')?.touched && form.get('passwords.password')?.invalid) {
+			<small>
+				@if (form.get('passwords.password')?.errors?.['required']) {
+					<span>Password is required.</span>
+				}
+				@if (form.get('passwords.password')?.errors?.['minlength']) {
+					<span>
+            Minimum {{ form.get('passwords.password')?.errors?.['minlength']?.requiredLength }} characters.
+          </span>
+				}
+			</small>
+		}
+
+		<label>Repeat Password</label>
+		<input formControlName="repeat" type="password"/>
+		@if (form.get('passwords.repeat')?.touched && form.get('passwords.repeat')?.invalid) {
+			<small>
+				@if (form.get('passwords.repeat')?.errors?.['required']) {
+					<span>Repeat password is required.</span>
+				}
+			</small>
+		}
+
+		@if (form.get('passwords')?.errors?.['noMatch'] &&
+		(form.get('passwords.repeat')?.touched || form.get('passwords.password')?.touched)) {
+			<small>
+				<span>Passwords do not match.</span>
+			</small>
+		}
 	</div>
 
 	<button [disabled]="loading || form.invalid" type="submit">
 		{{ loading ? 'Creating account...' : 'Register' }}
 	</button>
 
-	<p *ngIf="error" style="color:#b00020">{{ error }}</p>
+	@if (error) {
+		<p style="color:#b00020">{{ error }}</p>
+	}
 </form>
