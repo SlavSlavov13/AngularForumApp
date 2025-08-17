@@ -1,6 +1,6 @@
 <div class="edit-profile-container">
 
-	@if (!loading) {
+	@if (!loading && form) {
 		<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
 
 			<!-- Display Name -->

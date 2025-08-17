@@ -1,16 +1,18 @@
 import {AbstractControl, AsyncValidatorFn, ValidationErrors} from '@angular/forms';
 import {Observable, of, Subject} from 'rxjs';
 import {catchError, debounceTime, first, map, switchMap} from 'rxjs/operators';
-import {inject} from "@angular/core";
 import {AuthService} from "../../core/services/auth.service";
 
 const controlSubjects = new WeakMap<AbstractControl, Subject<string>>();
 
-export function displayNameTakenValidator(): AsyncValidatorFn {
-	const authService: AuthService = inject(AuthService);
-
+export function displayNameTakenValidator(
+	currentDisplayName: string | null,
+	authService: AuthService
+): AsyncValidatorFn {
 	return (control: AbstractControl): Observable<ValidationErrors | null> => {
 		if (!control.value) return of(null);
+
+		if (currentDisplayName === control.value) return of(null)
 
 		let subject: Subject<string> | undefined = controlSubjects.get(control);
 		if (!subject) {

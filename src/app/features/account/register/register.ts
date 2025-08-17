@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../../../core/services/auth.service';
@@ -12,25 +12,27 @@ import {displayNameTakenValidator} from "../../../shared/validators";
 	templateUrl: './register.html',
 	styleUrls: ['./register.css']
 })
-export class Register {
-	form: FormGroup;
+export class Register implements OnInit {
+	form!: FormGroup;
 	loading: boolean = false;
 	error: string | null = null;
 
 	constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+	}
+
+	ngOnInit(): void {
 		this.form = this.fb.group({
 			email: ['', [Validators.required, Validators.email]],
 			displayName: [
 				'',
 				[Validators.required, Validators.minLength(2)],
-				[displayNameTakenValidator()]
+				[displayNameTakenValidator(null, this.authService)]
 			],
 			passwords: this.fb.group({
 				password: ['', [Validators.required, Validators.minLength(6)]],
 				repeat: ['', [Validators.required]],
 			}, {validators: passwordMatchValidator}),
 		});
-
 	}
 
 	get passwords(): FormGroup {

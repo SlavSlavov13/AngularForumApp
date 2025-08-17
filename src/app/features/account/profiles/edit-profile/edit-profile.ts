@@ -3,8 +3,7 @@ import {AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Val
 import {AppUserModel} from "../../../../shared/models";
 import {AuthService} from "../../../../core/services/auth.service";
 import {passwordsMatchAndSameAsOldValidator} from "./passwordsMatchAndSameAsOld.validator";
-import {displayNameTakenValidator} from "../../../../shared/validators";
-import {emailTakenValidator} from "../../../../shared/validators/emailTaken.validator";
+import {displayNameTakenValidator, emailTakenValidator} from "../../../../shared/validators";
 
 @Component({
 	selector: 'app-edit-profile',
@@ -15,7 +14,7 @@ import {emailTakenValidator} from "../../../../shared/validators/emailTaken.vali
 	styleUrl: './edit-profile.css'
 })
 export class EditProfile implements OnInit {
-	form: FormGroup;
+	form!: FormGroup;
 	uid!: string;
 	user!: AppUserModel;
 	loading: boolean = true;
@@ -28,42 +27,38 @@ export class EditProfile implements OnInit {
 	locationError: string | null = null;
 
 	constructor(private fb: FormBuilder, private authService: AuthService) {
-		const passwordGroupOptions: AbstractControlOptions = {
-			validators: [passwordsMatchAndSameAsOldValidator]
-		};
-
-		this.form = this.fb.group({
-			displayName: [
-				'',
-				[Validators.required, Validators.minLength(2)],
-				[displayNameTakenValidator()]
-			],
-			email: [
-				'',
-				[Validators.required, Validators.email],
-				[emailTakenValidator()]
-			],
-			passwords: this.fb.group(
-				{
-					currentPassword: [''],
-					newPassword: [''],
-					repeatNewPassword: [''],
-				},
-				passwordGroupOptions
-			)
-		});
-
 	}
 
 	async ngOnInit(): Promise<void> {
-		this.loading = true;
 		try {
 			this.uid = (await this.authService.currentUid())!;
 			this.user = await this.authService.getUser(this.uid);
-			this.form.patchValue({
-				displayName: this.user.displayName,
-				email: this.user.email
+
+			const passwordGroupOptions: AbstractControlOptions = {
+				validators: [passwordsMatchAndSameAsOldValidator]
+			};
+
+			this.form = this.fb.group({
+				displayName: [
+					this.user.displayName,
+					[Validators.required, Validators.minLength(2)],
+					[displayNameTakenValidator(this.user.displayName, this.authService)]
+				],
+				email: [
+					this.user.email,
+					[Validators.required, Validators.email],
+					[emailTakenValidator(this.user.email, this.authService)]
+				],
+				passwords: this.fb.group(
+					{
+						currentPassword: [''],
+						newPassword: [''],
+						repeatNewPassword: [''],
+					},
+					passwordGroupOptions
+				)
 			});
+
 			this.photoPreviewUrl = this.user.photoURL ?? null;
 			this.location = this.user.location ?? null;
 		} catch (e) {
