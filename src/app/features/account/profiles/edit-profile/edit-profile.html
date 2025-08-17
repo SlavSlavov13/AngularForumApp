@@ -1,0 +1,128 @@
+<!-- edit-profile.component.html -->
+
+<div class="edit-profile-container">
+	@if (!loading) {
+		<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+
+			<!-- Display Name -->
+			<div class="form-group">
+				<label for="displayName">Display Name</label>
+				<input
+						id="displayName"
+						type="text"
+						formControlName="displayName"
+						class="form-control"
+						[class.is-invalid]="form.get('displayName')?.invalid && form.get('displayName')?.touched"
+				/>
+
+				@if (form.get('displayName')?.invalid && form.get('displayName')?.touched) {
+					<div class="invalid-feedback">
+						@if (form.get('displayName')?.errors?.['required']) {
+							<div>Display Name is required.</div>
+						}
+						@if (form.get('displayName')?.errors?.['minlength']) {
+							<div>Minimum length is 2 characters.</div>
+						}
+					</div>
+				}
+			</div>
+
+			<!-- Email -->
+			<div class="form-group">
+				<label for="email">Email</label>
+				<input
+						id="email"
+						type="email"
+						formControlName="email"
+						class="form-control"
+						[class.is-invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+				/>
+
+				@if (form.get('email')?.invalid && form.get('email')?.touched) {
+					<div class="invalid-feedback">
+						@if (form.get('email')?.errors?.['required']) {
+							<div>Email is required.</div>
+						}
+						@if (form.get('email')?.errors?.['email']) {
+							<div>Please enter a valid email address.</div>
+						}
+					</div>
+				}
+			</div>
+
+			<!-- Passwords Group -->
+			<div formGroupName="passwords" class="form-group password-group">
+
+				<label for="currentPassword">Current Password</label>
+				<input
+						id="currentPassword"
+						type="password"
+						formControlName="currentPassword"
+						class="form-control"
+				/>
+
+				<label for="newPassword" class="mt-2">New Password</label>
+				<input
+						id="newPassword"
+						type="password"
+						formControlName="newPassword"
+						class="form-control"
+				/>
+
+				@if (form.get('passwords')?.errors && (form.get('passwords.newPassword')?.touched || form.get('passwords.currentPassword')?.touched)) {
+					<div class="invalid-feedback d-block">
+						@if (form.get('passwords')?.errors?.['passwordMismatch']) {
+							<div>New password and current password do not match.</div>
+						}
+					</div>
+				}
+			</div>
+
+			<!-- Profile Photo -->
+			<div class="form-group mt-3">
+				<label>Profile Photo</label>
+				<input type="file" accept="image/*" (change)="onPhotoSelected($event)"/>
+			</div>
+
+			@if (photoPreviewUrl) {
+				<div class="photo-preview mt-2">
+					<img
+							[src]="photoPreviewUrl"
+							alt="Profile Photo Preview"
+							class="rounded"
+							style="max-width: 150px; max-height: 150px;"
+					/>
+				</div>
+			}
+
+			<!-- Error Message -->
+			@if (error) {
+				<div class="alert alert-danger mt-3">
+					{{ error }}
+				</div>
+			}
+
+			<!-- Buttons -->
+			<button
+					type="submit"
+					class="btn btn-primary mt-3"
+					[disabled]="saving"
+			>
+				@if (saving) {
+					<span
+							class="spinner-border spinner-border-sm"
+							role="status"
+							aria-hidden="true"
+					></span>
+				}
+				Save Changes
+			</button>
+
+		</form>
+	} @else {
+		<div class="loading-spinner text-center p-5">
+			<div class="spinner-border" role="status" aria-hidden="true"></div>
+			<span class="sr-only">Loading...</span>
+		</div>
+	}
+</div>
