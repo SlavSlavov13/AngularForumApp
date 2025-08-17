@@ -11,8 +11,6 @@ export function emailTakenValidator(
 ): AsyncValidatorFn {
 	return (control: AbstractControl): Observable<ValidationErrors | null> => {
 		if (!control.value) return of(null);
-		console.log(control.value)
-		console.log(currentEmail);
 		if (currentEmail === control.value) return of(null)
 
 		let subject: Subject<string> | undefined = controlSubjects.get(control);
