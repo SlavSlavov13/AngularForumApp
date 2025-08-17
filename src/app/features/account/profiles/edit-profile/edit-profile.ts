@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AppUserModel} from "../../../../shared/models";
 import {AuthService} from "../../../../core/services/auth.service";
-import {passwordsValidator} from "./passwords-validator";
+import {passwordsMatchAndSameAsOldValidator} from "./passwordsMatchAndSameAsOld.validator";
 
 @Component({
 	selector: 'app-edit-profile',
@@ -27,7 +27,7 @@ export class EditProfile implements OnInit {
 
 	constructor(private fb: FormBuilder, private authService: AuthService) {
 		const passwordGroupOptions: AbstractControlOptions = {
-			validators: [passwordsValidator]
+			validators: [passwordsMatchAndSameAsOldValidator]
 		};
 
 		this.form = this.fb.group({

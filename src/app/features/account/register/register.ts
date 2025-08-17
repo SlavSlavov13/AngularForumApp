@@ -3,7 +3,8 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../../../core/services/auth.service';
 import {Router} from '@angular/router';
-import {passwordMatchValidator} from "./passwordMatchValidator";
+import {passwordMatchValidator} from "./passwordMatch.validator";
+import {displayNameTakenValidator} from "./displayNameTaken.validator";
 
 @Component({
 	selector: 'app-register',
@@ -19,12 +20,17 @@ export class Register {
 	constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
 		this.form = this.fb.group({
 			email: ['', [Validators.required, Validators.email]],
-			displayName: ['', [Validators.required, Validators.minLength(2)]],
+			displayName: [
+				'',
+				[Validators.required, Validators.minLength(2)],
+				[displayNameTakenValidator()]
+			],
 			passwords: this.fb.group({
 				password: ['', [Validators.required, Validators.minLength(6)]],
-				repeat: ['', [Validators.required]]
-			}, {validators: passwordMatchValidator})
+				repeat: ['', [Validators.required]],
+			}, {validators: passwordMatchValidator}),
 		});
+
 	}
 
 	get passwords(): FormGroup {

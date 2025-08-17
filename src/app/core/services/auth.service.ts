@@ -1,10 +1,10 @@
 import {Injectable, Injector, runInInjectionContext} from '@angular/core';
 import {Auth, createUserWithEmailAndPassword, EmailAuthCredential, EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword, updateProfile, User, UserCredential, verifyBeforeUpdateEmail} from '@angular/fire/auth';
-import {doc, DocumentSnapshot, Firestore, getDoc, serverTimestamp, setDoc} from '@angular/fire/firestore';
+import {collection, doc, DocumentSnapshot, Firestore, getDoc, getDocs, query, serverTimestamp, setDoc, where} from '@angular/fire/firestore';
 import {FirebaseError} from 'firebase/app';
 import {AppUserModel} from '../../shared/models';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {filter, take} from 'rxjs/operators';
+import {BehaviorSubject, from, Observable} from 'rxjs';
+import {filter, map, take} from 'rxjs/operators';
 import {getDownloadURL, ref, Storage, StorageReference, uploadBytes} from "@angular/fire/storage";
 
 @Injectable({providedIn: 'root'})
@@ -23,12 +23,19 @@ export class AuthService {
 	) {
 		runInInjectionContext(this.injector, async (): Promise<void> => {
 
-			onAuthStateChanged(this.auth, (fbUser: User | null): void => {
+			onAuthStateChanged(this.auth, async (fbUser: User | null): Promise<void> => {
 				try {
 					if (!fbUser || !fbUser.email) {
 						this.userSub.next(null);
 					} else {
-						this.userSub.next(this.firebaseUserToAppUser(fbUser));
+						const appUser: AppUserModel = this.firebaseUserToAppUser(fbUser);
+						this.userSub.next(appUser);
+						const userDocRef = doc(this.db, 'users', fbUser.uid);
+						const snap = await getDoc(userDocRef);
+						const currentEmail = snap.get('email');
+						if (currentEmail !== fbUser.email) {
+							await setDoc(userDocRef, {email: fbUser.email}, {merge: true});
+						}
 					}
 				} catch (err) {
 					const code: string = (err as FirebaseError).code ?? '';
@@ -89,7 +96,6 @@ export class AuthService {
 
 	async logout(): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
-
 			this.userSub.next(null);
 			await signOut(this.auth);
 		});
@@ -115,6 +121,17 @@ export class AuthService {
 			};
 		});
 	}
+
+	isDisplayNameTaken(displayName: string): Observable<boolean> {
+		const q = query(
+			collection(this.db, 'users'),
+			where('displayName', '==', displayName)
+		);
+		return from(getDocs(q)).pipe(
+			map(snapshot => !snapshot.empty)
+		);
+	}
+
 
 	async updateUser(data: {
 		displayName: string,
@@ -158,9 +175,7 @@ export class AuthService {
 
 			const firestoreData: Partial<AppUserModel> = {
 				displayName: data.displayName,
-				email: data.email,
-				location: data.location ?? null
-				,
+				location: data.location ?? null,
 			};
 
 			await setDoc(

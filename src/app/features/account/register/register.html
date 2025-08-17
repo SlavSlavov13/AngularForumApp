@@ -26,6 +26,10 @@
 				@if (form.get('displayName')?.errors?.['minlength']) {
 					<span>Minimum length is 2 characters.</span>
 				}
+				@if (form.get('displayName')?.errors?.['displayNameTaken']) {
+					<span>This display name is already taken.</span>
+				}
+
 			</small>
 		}
 	</div>
@@ -64,9 +68,14 @@
 		}
 	</div>
 
-	<button [disabled]="loading || form.invalid" type="submit">
+	<button
+			[disabled]="
+    loading || form.invalid || form.get('displayName')?.pending
+  "
+			type="submit">
 		{{ loading ? 'Creating account...' : 'Register' }}
 	</button>
+
 
 	@if (error) {
 		<p style="color:#b00020">{{ error }}</p>
