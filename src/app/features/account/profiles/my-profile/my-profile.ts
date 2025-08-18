@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../../../../core/services/auth.service';
 import {AppUserModel} from '../../../../shared/models';
 import {ProfileCard} from "../profile-card/profile-card";
+import {handleError} from "../../../../shared/helpers";
 
 @Component({
 	selector: 'app-my-profile',
@@ -23,7 +24,7 @@ export class MyProfile implements OnInit {
 			const uid: string = (await this.authService.currentUid())!;
 			this.user = await this.authService.getUser(uid);
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to load profile.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}

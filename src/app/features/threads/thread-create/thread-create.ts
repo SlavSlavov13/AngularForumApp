@@ -6,6 +6,7 @@ import {AuthService} from "../../../core/services/auth.service";
 import {Router} from "@angular/router";
 import {DocumentReference} from '@angular/fire/firestore';
 import {firstValueFrom} from "rxjs";
+import {handleError} from "../../../shared/helpers";
 
 @Component({
 	selector: 'app-thread-create',
@@ -56,7 +57,7 @@ export class ThreadCreate {
 			this.form.reset();
 			await this.router.navigate([`/threads/${docRef.id}`]);
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to create thread.';
+			this.error = handleError(e);
 		}
 	}
 }

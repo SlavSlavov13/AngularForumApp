@@ -4,6 +4,7 @@ import {AppUserModel} from "../../../../shared/models";
 import {AuthService} from "../../../../core/services/auth.service";
 import {passwordsMatchAndSameAsOldValidator} from "./passwordsMatchAndSameAsOld.validator";
 import {displayNameTakenValidator, emailTakenValidator} from "../../../../shared/validators";
+import {handleError} from "../../../../shared/helpers";
 
 @Component({
 	selector: 'app-edit-profile',
@@ -62,7 +63,7 @@ export class EditProfile implements OnInit {
 			this.photoPreviewUrl = this.user.photoURL ?? null;
 			this.location = this.user.location ?? null;
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to load user info.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}
@@ -151,7 +152,7 @@ export class EditProfile implements OnInit {
 				alert('For email change you will receive an email on the new email address (check spam). For changes to take affect you must click the link in the email and then log out and back in in the website.')
 			}
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to update profile.';
+			this.error = handleError(e);
 		} finally {
 			this.saving = false;
 		}

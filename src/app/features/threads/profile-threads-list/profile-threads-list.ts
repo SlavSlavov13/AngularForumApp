@@ -4,6 +4,7 @@ import {AsyncPipe, DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
 import {catchError, Observable, of} from "rxjs";
 import {ThreadModel} from "../../../shared/models";
+import {handleError} from "../../../shared/helpers";
 
 @Component({
 	selector: 'app-profile-threads-list',
@@ -33,20 +34,20 @@ export class ProfileThreadsList implements OnInit {
 			if (this.profileCard) {
 				this.threads$ = this.threadService.listThreadsByUser(this.uid, this.limitCount).pipe(
 					catchError(e => {
-						this.error = (e as Error)?.message || 'Failed to list threads.';
+						this.error = handleError(e);
 						return of([]);
 					})
 				);
 			} else {
 				this.threads$ = this.threadService.listThreadsByUser(this.uid).pipe(
 					catchError(e => {
-						this.error = (e as Error)?.message || 'Failed to list threads.';
+						this.error = handleError(e);
 						return of([]);
 					})
 				);
 			}
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to list threads.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}

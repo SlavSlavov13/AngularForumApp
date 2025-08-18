@@ -1,11 +1,11 @@
 import {Injectable, Injector, runInInjectionContext} from '@angular/core';
 import {Auth, createUserWithEmailAndPassword, EmailAuthCredential, EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword, updateProfile, User, UserCredential, verifyBeforeUpdateEmail} from '@angular/fire/auth';
 import {collection, doc, DocumentSnapshot, Firestore, getDoc, getDocs, query, serverTimestamp, setDoc, where} from '@angular/fire/firestore';
-import {FirebaseError} from 'firebase/app';
 import {AppUserModel} from '../../shared/models';
 import {BehaviorSubject, from, Observable} from 'rxjs';
 import {filter, map, take} from 'rxjs/operators';
 import {getDownloadURL, ref, Storage, StorageReference, uploadBytes} from "@angular/fire/storage";
+import {mapFirebaseError} from "../../shared/helpers";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -47,9 +47,7 @@ export class AuthService {
 						}
 					}
 				} catch (err) {
-					const code: string = (err as FirebaseError).code ?? '';
-					const message: string = (err as FirebaseError).message ?? '';
-					throw new Error(`${code}: ${message}`.trim());
+					throw new Error(mapFirebaseError(err));
 				} finally {
 					this.initializedSub.next(true);
 				}
@@ -77,9 +75,7 @@ export class AuthService {
 					{merge: true}
 				);
 			} catch (err) {
-				const code: string = (err as FirebaseError).code ?? '';
-				const message: string = (err as FirebaseError).message ?? '';
-				throw new Error(`${code}: ${message}`.trim());
+				throw new Error(mapFirebaseError(err));
 			}
 		});
 
@@ -95,9 +91,7 @@ export class AuthService {
 					{merge: true}
 				);
 			} catch (err) {
-				const code: string = (err as FirebaseError).code ?? '';
-				const message: string = (err as FirebaseError).message ?? '';
-				throw new Error(`${code}: ${message}`.trim());
+				throw new Error(mapFirebaseError(err));
 			}
 		});
 
@@ -274,4 +268,5 @@ export class AuthService {
 			photoURL: u.photoURL ?? null
 		};
 	}
+
 }

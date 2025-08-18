@@ -4,6 +4,7 @@ import {ThreadModel} from '../../../shared/models';
 import {ThreadService} from '../../../core/services/thread.service';
 import {catchError, Observable, of} from "rxjs";
 import {AsyncPipe} from "@angular/common";
+import {handleError} from "../../../shared/helpers";
 
 @Component({
 	selector: 'app-threads-list',
@@ -23,7 +24,7 @@ export class ThreadsList implements OnInit {
 	async ngOnInit(): Promise<void> {
 		this.threads$ = this.threadService.listThreads().pipe(
 			catchError(e => {
-				this.error = (e as Error)?.message || 'Failed to list threads.';
+				this.error = handleError(e);
 				return of([]);
 			})
 		);

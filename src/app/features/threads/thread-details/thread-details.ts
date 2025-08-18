@@ -5,6 +5,7 @@ import {AppUserModel, ThreadModel} from '../../../shared/models';
 import {ThreadService} from '../../../core/services/thread.service';
 import {AuthService} from "../../../core/services/auth.service";
 import {AsyncPipe} from "@angular/common";
+import {handleError} from "../../../shared/helpers";
 
 @Component({
 	selector: 'app-thread-details',
@@ -35,7 +36,7 @@ export class ThreadDetails implements OnInit {
 			const authorUid: string = this.thread!.authorId;
 			this.author = await this.authService.getUser(authorUid);
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to load data.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}
@@ -47,7 +48,7 @@ export class ThreadDetails implements OnInit {
 
 		this.threadService.deleteThread(this.thread!.id).subscribe({
 			error: (e): void => {
-				this.error = (e as Error)?.message || 'Failed to save thread.';
+				this.error = handleError(e);
 			}
 		});
 		await this.router.navigate(['/threads']);

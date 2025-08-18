@@ -5,6 +5,7 @@ import {AuthService} from '../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {passwordMatchValidator} from "./passwordMatch.validator";
 import {displayNameTakenValidator} from "../../../shared/validators";
+import {handleError} from "../../../shared/helpers";
 
 @Component({
 	selector: 'app-register',
@@ -56,7 +57,7 @@ export class Register implements OnInit {
 			await this.router.navigateByUrl('/threads');
 			this.form.reset();
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Registration failed.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}

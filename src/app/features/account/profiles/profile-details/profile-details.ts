@@ -3,6 +3,7 @@ import {ProfileCard} from "../profile-card/profile-card";
 import {AuthService} from "../../../../core/services/auth.service";
 import {AppUserModel} from "../../../../shared/models";
 import {ActivatedRoute} from "@angular/router";
+import {handleError} from "../../../../shared/helpers";
 
 @Component({
 	selector: 'app-profile-details',
@@ -23,7 +24,7 @@ export class ProfileDetails implements OnInit {
 			const uid: string = this.route.snapshot.paramMap.get('id')!;
 			this.user = await this.authService.getUser(uid);
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to load profile.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}

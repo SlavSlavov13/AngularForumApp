@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {CommonModule} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../core/services/auth.service';
+import {handleError} from "../../../shared/helpers";
 
 @Component({
 	selector: 'app-login',
@@ -38,7 +39,7 @@ export class Login {
 			const returnUrl: string = this.route.snapshot.queryParamMap.get('returnUrl') || '/threads';
 			await this.router.navigateByUrl(returnUrl);
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Login failed.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}

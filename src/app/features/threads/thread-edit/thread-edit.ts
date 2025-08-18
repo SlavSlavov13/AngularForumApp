@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ThreadService} from '../../../core/services/thread.service';
 import {ThreadModel} from '../../../shared/models';
 import {firstValueFrom} from 'rxjs';
+import {handleError} from "../../../shared/helpers";
 
 @Component({
 	selector: 'app-thread-edit',
@@ -46,7 +47,7 @@ export class ThreadEdit implements OnInit {
 
 			this.loading = false;
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to load thread.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}
@@ -71,7 +72,7 @@ export class ThreadEdit implements OnInit {
 
 		this.threadService.updateThread(this.thread.id, patch).subscribe({
 			error: (e): void => {
-				this.error = (e as Error)?.message || 'Failed to save thread.';
+				this.error = handleError(e);
 			}
 		});
 		await this.router.navigate(['/threads', this.thread.id]);

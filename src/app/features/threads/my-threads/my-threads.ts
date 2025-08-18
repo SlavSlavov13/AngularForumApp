@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ProfileThreadsList} from '../profile-threads-list/profile-threads-list';
 import {AuthService} from '../../../core/services/auth.service';
 import {CommonModule} from "@angular/common";
+import {handleError} from "../../../shared/helpers";
 
 
 @Component({
@@ -26,7 +27,7 @@ export class MyThreads implements OnInit {
 		try {
 			this.uid = (await this.authService.currentUid())!;
 		} catch (e) {
-			this.error = (e as Error)?.message || 'Failed to load user.';
+			this.error = handleError(e);
 		} finally {
 			this.loading = false;
 		}
