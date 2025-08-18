@@ -6,6 +6,7 @@ export interface ThreadModel {
 	readonly body: string;
 	readonly tags: readonly string[];
 	readonly authorId: string;
+	readonly authorName: string;
 	readonly createdAt: Timestamp;
 	readonly updatedAt?: Timestamp;
 	readonly replyCount?: number;

@@ -38,6 +38,12 @@ export const routes: Routes = [
 						loadComponent: () =>
 							import('./features/threads/thread-edit/thread-edit').then(m => m.ThreadEdit),
 					},
+					{
+						path: 'add-post',
+						canActivate: [authGuard],
+						loadComponent: () =>
+							import('./features/posts/post-create/post-create').then(m => m.PostCreate),
+					},
 				],
 
 			},

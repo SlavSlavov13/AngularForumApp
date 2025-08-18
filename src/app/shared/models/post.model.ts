@@ -5,6 +5,7 @@ export interface PostModel {
 	readonly threadId: string;
 	readonly body: string;
 	readonly authorId: string;
+	readonly authorName: string;
 	readonly createdAt: Timestamp;
 	readonly updatedAt?: Timestamp;
 }

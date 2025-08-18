@@ -1,11 +1,59 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {AuthService} from "../../../core/services/auth.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {AppUserModel, PostCreateModel} from "../../../shared/models";
+import {handleError} from "../../../shared/helpers";
+import {PostService} from "../../../core/services/post.service";
 
 @Component({
-  selector: 'app-post-create',
-  imports: [],
-  templateUrl: './post-create.html',
-  styleUrl: './post-create.css'
+	selector: 'app-post-create',
+	imports: [
+		ReactiveFormsModule
+	],
+	templateUrl: './post-create.html',
+	styleUrl: './post-create.css'
 })
 export class PostCreate {
+	error: string | null = null;
+	form: FormGroup;
 
+	constructor(
+		private fb: FormBuilder,
+		private postService: PostService,
+		private authService: AuthService,
+		private router: Router,
+		private route: ActivatedRoute,
+	) {
+		this.form = this.fb.group({
+			body: ['', [Validators.required, Validators.minLength(20)]],
+		});
+	}
+
+	async submit(): Promise<void> {
+		if (this.form.invalid) {
+			this.form.markAllAsTouched();
+			return;
+		}
+
+		const {body} = this.form.value;
+
+		const uid: string = (await this.authService.currentUid())!;
+		const author: AppUserModel = (await this.authService.getUser(uid))!;
+		const threadId: string = this.route.snapshot.paramMap.get('id')!;
+		const payload: PostCreateModel = {
+			threadId: threadId,
+			body: body,
+			authorId: uid,
+			authorName: author.displayName!
+		};
+
+		try {
+			this.postService.createPost(payload);
+			this.form.reset();
+			await this.router.navigate([`/threads/${threadId}`]);
+		} catch (e) {
+			this.error = handleError(e);
+		}
+	}
 }

@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ThreadService} from "../../../core/services/thread.service";
-import {ThreadCreateModel} from "../../../shared/models";
+import {AppUserModel, ThreadCreateModel} from "../../../shared/models";
 import {AuthService} from "../../../core/services/auth.service";
 import {Router} from "@angular/router";
 import {DocumentReference} from '@angular/fire/firestore';
@@ -24,7 +24,7 @@ export class ThreadCreate {
 	constructor(
 		private fb: FormBuilder,
 		private threadService: ThreadService,
-		private auth: AuthService,
+		private authService: AuthService,
 		private router: Router,
 	) {
 		this.form = this.fb.group({
@@ -42,14 +42,16 @@ export class ThreadCreate {
 
 		const {title, body, tags} = this.form.value;
 
-		const uid: string = (await this.auth.currentUid())!;
+		const uid: string = (await this.authService.currentUid())!;
+		const author: AppUserModel = (await this.authService.getUser(uid))!;
 		const payload: ThreadCreateModel = {
 			title,
 			body,
 			tags: tags
 				? tags.split(',').map((t: string): string => t.trim()).filter(Boolean)
 				: [],
-			authorId: uid
+			authorId: uid,
+			authorName: author.displayName!
 		};
 
 		try {

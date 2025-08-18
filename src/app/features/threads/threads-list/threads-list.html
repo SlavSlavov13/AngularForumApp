@@ -8,6 +8,7 @@
 		<div>
 			<a [routerLink]="['/threads', t.id]">{{ t.title }}</a>
 			<span> · {{ t.replyCount || 0 }} replies</span>
+			<a [routerLink]="['/profile', t.authorId]" class="title"> · Author: {{ t.authorName }}</a>
 		</div>
 	}
 } @else {

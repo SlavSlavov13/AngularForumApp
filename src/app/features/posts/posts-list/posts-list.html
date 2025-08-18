@@ -1,1 +1,23 @@
-<p>posts-list works!</p>
+<div class="posts-list-container">
+	@if (loading) {
+		<p>Loading posts...</p>
+	} @else if (error) {
+		<p class="error-message">{{ error }}</p>
+	} @else {
+		@if (posts$ | async; as posts) {
+			@if (posts.length > 0) {
+				@for (post of posts; track post.id) {
+					<div class="post-item">
+						<p>{{ post.body }}</p>
+						<small>
+							Posted on: {{ post.createdAt.toDate() | date:'medium' }}
+						</small>
+						<a [routerLink]="['/profile', post.authorId]" class="title"> · Author: {{ post.authorName }}</a>
+					</div>
+				}
+			} @else {
+				<p>No posts found.</p>
+			}
+		}
+	}
+</div>

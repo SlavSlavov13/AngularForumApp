@@ -6,11 +6,12 @@ import {ThreadService} from '../../../core/services/thread.service';
 import {AuthService} from "../../../core/services/auth.service";
 import {AsyncPipe} from "@angular/common";
 import {handleError} from "../../../shared/helpers";
+import {PostsList} from "../../posts/posts-list/posts-list";
 
 @Component({
 	selector: 'app-thread-details',
 	standalone: true,
-	imports: [RouterLink, AsyncPipe],
+	imports: [RouterLink, AsyncPipe, PostsList],
 	templateUrl: './thread-details.html',
 	styleUrl: './thread-details.css'
 })

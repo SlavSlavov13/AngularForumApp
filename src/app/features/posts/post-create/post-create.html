@@ -1,1 +1,38 @@
-<p>post-create works!</p>
+<!-- post-create.html -->
+<div class="post-create-container">
+	<h2>Create a Post</h2>
+
+	<!-- Error message -->
+	@if (error) {
+		<p class="error-message">{{ error }}</p>
+	}
+
+	<!-- Form -->
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		<div class="form-field">
+			<label for="body">Post Content</label>
+			<textarea
+					id="body"
+					formControlName="body"
+					rows="6"
+					placeholder="Write your post here...">
+      </textarea>
+
+			<!-- Validation messages -->
+			@if (form.get('body')?.touched && form.get('body')?.invalid) {
+				<div class="validation-errors">
+					@if (form.get('body')?.errors?.['required']) {
+						<p>Post content is required.</p>
+					}
+					@if (form.get('body')?.errors?.['minlength']) {
+						<p>Post content must be at least 20 characters long.</p>
+					}
+				</div>
+			}
+		</div>
+
+		<button type="submit" [disabled]="form.invalid">
+			Submit
+		</button>
+	</form>
+</div>
