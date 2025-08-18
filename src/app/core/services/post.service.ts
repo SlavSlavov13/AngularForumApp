@@ -1,5 +1,5 @@
 import {Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, orderBy, query, serverTimestamp, updateDoc, where,} from '@angular/fire/firestore';
+import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getDoc, orderBy, query, serverTimestamp, updateDoc, where,} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {PostCreateModel, PostModel} from '../../shared/models';
 import {ThreadService} from "./thread.service";
@@ -75,5 +75,14 @@ export class PostService {
 		return runInInjectionContext(this.injector, (): Observable<void> => {
 			return from(deleteDoc(doc(this.db, 'posts', id)));
 		});
+	}
+
+	async postExists(id: string): Promise<boolean> {
+		return await runInInjectionContext(this.injector, async (): Promise<boolean> => {
+			const ref = doc(this.db, 'posts', id);
+			const snapshot = await getDoc(ref);
+			return snapshot.exists();
+		});
+
 	}
 }

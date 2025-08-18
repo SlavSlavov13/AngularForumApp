@@ -15,10 +15,9 @@ import {handleError} from "../../../shared/helpers";
 })
 export class ThreadEdit implements OnInit {
 	error: string | null = null;
-	form: FormGroup;
+	form!: FormGroup;
 	loading: boolean = true;
 	saving: boolean = false;
-	loadError: string | null = null;
 	thread!: ThreadModel;
 
 	constructor(
@@ -27,11 +26,6 @@ export class ThreadEdit implements OnInit {
 		private router: Router,
 		private threadService: ThreadService,
 	) {
-		this.form = this.fb.group({
-			title: ['', [Validators.required, Validators.minLength(6)]],
-			body: ['', [Validators.required, Validators.minLength(20)]],
-			tags: [''],
-		});
 	}
 
 	async ngOnInit(): Promise<void> {
@@ -39,10 +33,10 @@ export class ThreadEdit implements OnInit {
 			const id: string = this.route.snapshot.paramMap.get('id')!;
 			this.thread = await firstValueFrom(this.threadService.getThread(id));
 
-			this.form.patchValue({
-				title: this.thread.title ?? '',
-				body: this.thread.body ?? '',
-				tags: Array.isArray(this.thread.tags) ? this.thread.tags.join(', ') : (this.thread.tags ?? ''),
+			this.form = this.fb.group({
+				title: [this.thread.title, [Validators.required, Validators.minLength(6)]],
+				body: [this.thread.body, [Validators.required, Validators.minLength(20)]],
+				tags: [Array.isArray(this.thread.tags) ? this.thread.tags.join(', ') : (this.thread.tags ?? '')],
 			});
 
 			this.loading = false;
@@ -54,7 +48,10 @@ export class ThreadEdit implements OnInit {
 	}
 
 	async submit(): Promise<void> {
-		if (this.form.invalid || this.saving) return;
+		if (this.form.invalid) {
+			this.form.markAllAsTouched();
+			return;
+		}
 
 		this.saving = true;
 		const raw = this.form.value as { title: string; body: string; tags?: string };
