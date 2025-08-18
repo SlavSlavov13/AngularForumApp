@@ -9,7 +9,7 @@ export interface ThreadModel {
 	readonly authorName: string;
 	readonly createdAt: Timestamp;
 	readonly updatedAt?: Timestamp;
-	readonly replyCount?: number;
+	readonly replyCount: number;
 }
 
 export type ThreadCreateModel = Omit<ThreadModel, 'id' | 'createdAt' | 'updatedAt' | 'replyCount'>;

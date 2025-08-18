@@ -1,12 +1,18 @@
-import {inject, Injectable, Injector, runInInjectionContext} from '@angular/core';
+import {Injectable, Injector, runInInjectionContext} from '@angular/core';
 import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, orderBy, query, serverTimestamp, updateDoc, where,} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {PostCreateModel, PostModel} from '../../shared/models';
+import {ThreadService} from "./thread.service";
+import {map, switchMap} from "rxjs/operators";
 
 @Injectable({providedIn: 'root'})
 export class PostService {
-	private db: Firestore = inject(Firestore);
-	private injector: Injector = inject(Injector);
+	constructor(
+		private db: Firestore,
+		private injector: Injector,
+		private threadService: ThreadService,
+	) {
+	}
 
 	listPostsByThread(threadId: string): Observable<PostModel[]> {
 		return runInInjectionContext(this.injector, (): Observable<PostModel[]> => {
@@ -45,6 +51,10 @@ export class PostService {
 					createdAt: serverTimestamp(),
 					updatedAt: serverTimestamp(),
 				})
+			).pipe(
+				switchMap((postRef) => this.threadService.incrementReplyCount(data.threadId).pipe(
+					map(() => postRef)
+				))
 			);
 		});
 	}

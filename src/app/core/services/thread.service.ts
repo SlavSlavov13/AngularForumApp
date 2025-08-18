@@ -1,5 +1,5 @@
 import {inject, Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getCountFromServer, getDoc, limit, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
+import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getCountFromServer, getDoc, increment, limit, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {ThreadCreateModel, ThreadModel} from '../../shared/models';
 
@@ -98,4 +98,15 @@ export class ThreadService {
 			return from(deleteDoc(doc(this.db, 'threads', id)));
 		});
 	}
+
+	incrementReplyCount(threadId: string): Observable<void> {
+		return runInInjectionContext(this.injector, (): Observable<void> => {
+			const ref = doc(this.db, 'threads', threadId);
+			return from(updateDoc(ref, {
+				replyCount: increment(1),
+				updatedAt: serverTimestamp()
+			}));
+		});
+	}
+
 }
