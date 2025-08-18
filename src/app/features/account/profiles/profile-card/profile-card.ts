@@ -6,6 +6,9 @@ import {AuthService} from "../../../../core/services/auth.service";
 import {UserThreads} from "../../../threads/user-threads/user-threads";
 import {RouterLink} from "@angular/router";
 import {PostsList} from "../../../posts/posts-list/posts-list";
+import {Observable} from "rxjs";
+import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../../store";
+import {Store} from "@ngrx/store";
 
 @Component({
 	selector: 'app-profile-card',
@@ -16,18 +19,29 @@ import {PostsList} from "../../../posts/posts-list/posts-list";
 })
 export class ProfileCard implements OnInit {
 	@Input({required: true}) user!: AppUserModel;
-	loading: boolean = true;
-
+	photoPending: boolean = false;
+	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	showThreads: boolean = false;
 	showPosts: boolean = false;
 	currentUid: string | null = null;
 
-	constructor(protected authService: AuthService) {
+	constructor(
+		protected authService: AuthService,
+		private store: Store<AppState>,
+	) {
 	}
 
 	async ngOnInit(): Promise<void> {
+		this.store.dispatch(showLoading());
 		this.currentUid = await this.authService.currentUid();
-		this.loading = false;
+		this.photoPending = !!this.user.photoURL;
+		if (!this.photoPending) {
+			this.store.dispatch(hideLoading());
+		}
+	}
+
+	onPhotoLoaded(): void {
+		this.store.dispatch(hideLoading());
 	}
 
 	toggleThreads(): void {

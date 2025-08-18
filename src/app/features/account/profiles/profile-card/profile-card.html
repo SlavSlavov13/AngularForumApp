@@ -1,74 +1,85 @@
-<section class="container">
-	<h1>Profile</h1>
+@if (this.user.photoURL && (this.loading$ | async)) {
+	<img
+			[src]="this.user.photoURL"
+			style="display: none;"
+			(load)="onPhotoLoaded()"
+			(error)="onPhotoLoaded()"
+	/>
+}
 
-	<div class="profile-card">
-		@if (user.photoURL) {
-			<div class="avatar">
-				<img [src]="user.photoURL" alt="avatar">
-			</div>
-		} @else {
-			<div class="avatar placeholder">👤</div>
-		}
+@if (!(loading$ | async)) {
+	<section class="container">
+		<h1>Profile</h1>
 
-		<div class="info">
-			<h2 class="name">{{ user.displayName }}</h2>
-			<p class="email">{{ user.email }}</p>
-		</div>
-	</div>
-
-	<div class="stats">
-		@if (user.createdAt) {
-			<div class="stat">
-				<div class="label">Joined</div>
-				<div class="value">
-					{{ user.createdAt.toDate() | date:'mediumDate' }}
+		<div class="profile-card">
+			@if (user.photoURL) {
+				<div class="avatar">
+					<img [src]="user.photoURL" alt="avatar">
 				</div>
-			</div>
-		}
-
-		@if (user.lastLogin) {
-			<div class="stat">
-				<div class="label">Last Login</div>
-				<div class="value">
-					{{ user.lastLogin.toDate() | date:'medium' }}
-				</div>
-			</div>
-		}
-
-		@if (user.location) {
-			<div>
-				<small>Location: {{ user.location!.name || (user.location!.lat + ', ' + user.location!.lng) }}</small>
-			</div>
-		}
-	</div>
-
-	@if (user.uid === this.currentUid) {
-		<a routerLink="/my-profile/edit">Edit Profile</a>
-	}
-
-	<button type="button" (click)="toggleThreads()">
-		{{ showThreads ? 'Hide Threads' : 'Show Threads' }}
-	</button>
-
-	<button type="button" (click)="togglePosts()">
-		{{ showPosts ? 'Hide Posts' : 'Show Posts' }}
-	</button>
-
-	@if (showThreads) {
-		<section class="my-threads-section">
-			<h2>{{ user.displayName }}'s Threads</h2>
-			@if (user.uid === this.currentUid) {
-				<app-my-threads [profileCard]="true"></app-my-threads>
 			} @else {
-				<app-user-threads [profileCard]="true"></app-user-threads>
+				<div class="avatar placeholder">👤</div>
 			}
-		</section>
-	}
 
-	@if (showPosts) {
-		<section class="my-threads-section">
-			<h2>{{ user.displayName }}'s Posts</h2>
-			<app-posts-list [uid]="user.uid"></app-posts-list>
-		</section>
-	}
-</section>
+			<div class="info">
+				<h2 class="name">{{ user.displayName }}</h2>
+				<p class="email">{{ user.email }}</p>
+			</div>
+		</div>
+
+		<div class="stats">
+			@if (user.createdAt) {
+				<div class="stat">
+					<div class="label">Joined</div>
+					<div class="value">
+						{{ user.createdAt.toDate() | date:'mediumDate' }}
+					</div>
+				</div>
+			}
+
+			@if (user.lastLogin) {
+				<div class="stat">
+					<div class="label">Last Login</div>
+					<div class="value">
+						{{ user.lastLogin.toDate() | date:'medium' }}
+					</div>
+				</div>
+			}
+
+			@if (user.location) {
+				<div>
+					<small>Location: {{ user.location!.name || (user.location!.lat + ', ' + user.location!.lng) }}</small>
+				</div>
+			}
+		</div>
+
+		@if (user.uid === this.currentUid) {
+			<a routerLink="/my-profile/edit">Edit Profile</a>
+		}
+
+		<button type="button" (click)="toggleThreads()">
+			{{ showThreads ? 'Hide Threads' : 'Show Threads' }}
+		</button>
+
+		<button type="button" (click)="togglePosts()">
+			{{ showPosts ? 'Hide Posts' : 'Show Posts' }}
+		</button>
+
+		@if (showThreads) {
+			<section class="my-threads-section">
+				<h2>{{ user.displayName }}'s Threads</h2>
+				@if (user.uid === this.currentUid) {
+					<app-my-threads [profileCard]="true"></app-my-threads>
+				} @else {
+					<app-user-threads [profileCard]="true"></app-user-threads>
+				}
+			</section>
+		}
+
+		@if (showPosts) {
+			<section class="my-threads-section">
+				<h2>{{ user.displayName }}'s Posts</h2>
+				<app-posts-list [uid]="user.uid"></app-posts-list>
+			</section>
+		}
+	</section>
+}
