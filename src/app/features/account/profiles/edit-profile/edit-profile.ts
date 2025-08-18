@@ -5,6 +5,7 @@ import {AuthService} from "../../../../core/services/auth.service";
 import {passwordsMatchAndSameAsOldValidator} from "./passwordsMatchAndSameAsOld.validator";
 import {displayNameTakenValidator, emailTakenValidator} from "../../../../shared/validators";
 import {handleError} from "../../../../shared/helpers";
+import {Router} from "@angular/router";
 
 @Component({
 	selector: 'app-edit-profile',
@@ -27,7 +28,11 @@ export class EditProfile implements OnInit {
 	location: { lat: number, lng: number, name?: string, } | null = null;
 	locationError: string | null = null;
 
-	constructor(private fb: FormBuilder, private authService: AuthService) {
+	constructor(
+		private fb: FormBuilder,
+		private authService: AuthService,
+		private router: Router,
+	) {
 	}
 
 	async ngOnInit(): Promise<void> {
@@ -151,6 +156,7 @@ export class EditProfile implements OnInit {
 			if (data.email !== this.user.email) {
 				alert('For email change you will receive an email on the new email address (check spam). For changes to take affect you must click the link in the email and then log out and back in in the website.')
 			}
+			await this.router.navigateByUrl('/my-profile');
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {

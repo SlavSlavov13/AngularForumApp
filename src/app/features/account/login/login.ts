@@ -17,7 +17,12 @@ export class Login {
 	error: string | null = null;
 	form: FormGroup;
 
-	constructor(private authService: AuthService, private router: Router, private route: ActivatedRoute, private fb: FormBuilder) {
+	constructor(
+		private authService: AuthService,
+		private router: Router,
+		private route: ActivatedRoute,
+		private fb: FormBuilder
+	) {
 		this.form = this.fb.group({
 			email: ['', [Validators.required, Validators.email]],
 			password: ['', [Validators.required, Validators.minLength(6)]],
