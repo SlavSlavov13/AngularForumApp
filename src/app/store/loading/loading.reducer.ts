@@ -1,0 +1,14 @@
+import {createReducer, on} from '@ngrx/store';
+import {hideLoading, showLoading} from './loading.actions';
+
+export interface LoadingState {
+	count: number;
+}
+
+export const initialState: LoadingState = {count: 0};
+
+export const loadingReducer = createReducer(
+	initialState,
+	on(showLoading, (state: LoadingState): { count: number } => ({count: state.count + 1})),
+	on(hideLoading, (state: LoadingState): { count: number } => ({count: Math.max(state.count - 1, 0)}))
+);

@@ -7,6 +7,8 @@ import {Auth, getAuth, provideAuth} from "@angular/fire/auth";
 import {Firestore, getFirestore, provideFirestore} from "@angular/fire/firestore";
 import {environment} from "../environments/environment";
 import {FirebaseStorage, getStorage, provideStorage} from "@angular/fire/storage";
+import {provideStore} from "@ngrx/store";
+import {loadingReducer} from "./store";
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -16,6 +18,7 @@ export const appConfig: ApplicationConfig = {
 		provideFirebaseApp((): FirebaseApp => initializeApp(environment.firebase)),
 		provideAuth((): Auth => getAuth()),
 		provideFirestore((): Firestore => getFirestore()),
-		provideStorage((): FirebaseStorage => getStorage())
+		provideStorage((): FirebaseStorage => getStorage()),
+		provideStore({loading: loadingReducer}),
 	]
 };

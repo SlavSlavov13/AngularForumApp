@@ -1,12 +1,12 @@
-@let init = this.authService.initialized$ | async;
+@let loading = this.loading$ | async;
 
-<header class="nav">
-	<a routerLink="/threads">Threads</a>
-
-	@if (init === false) {
-		<span class="spacer"></span>
+@if (loading) {
+	<section class="page-skeleton">
 		<span class="loading">Loading…</span>
-	} @else {
+	</section>
+} @else {
+	<header class="nav">
+		<a routerLink="/threads">Threads</a>
 		@let logged = this.authService.user$ | async;
 
 		@if (logged) {
@@ -14,26 +14,20 @@
 			<a routerLink="/my-profile/threads">My Threads</a>
 			<a routerLink="/my-profile/posts">My Posts</a>
 		}
-
 		<span class="spacer"></span>
-
 		@if (logged) {
 			<a routerLink="/my-profile">Profile</a>
-			<button type="button" (click)="logout()" [disabled]="this.signingOut">Logout</button>
-			@if (this.signingOut) {
+			<button type="button" (click)="logout()" [disabled]="signingOut">Logout</button>
+			@if (signingOut) {
 				<span class="loading small">Signing out…</span>
 			}
 		} @else {
 			<a routerLink="/login">Login</a>
 			<a routerLink="/register">Register</a>
 		}
-	}
-</header>
+	</header>
 
-<main>
-	@if (init === false) {
-		<section class="page-skeleton">Loading…</section>
-	} @else {
+	<main>
 		<router-outlet/>
-	}
-</main>
+	</main>
+}
