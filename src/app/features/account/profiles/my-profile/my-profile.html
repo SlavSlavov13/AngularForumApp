@@ -1,4 +1,4 @@
-@if (!this.userLoaded && !(loading$ | async)) {
+@if (!this.userLoaded && !(this.loading$ | async)) {
 	@if (error) {
 		<p class="error">{{ error }}</p>
 	}
