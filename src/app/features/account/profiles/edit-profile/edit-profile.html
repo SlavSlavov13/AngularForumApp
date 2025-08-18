@@ -102,7 +102,7 @@
 			<!-- Location -->
 			<div class="form-group mt-3">
 				<label>Location</label>
-				<button type="button" class="btn btn-secondary" (click)="onAddLocation()" [disabled]="locationLoading">Add Location</button>
+				<button type="button" class="btn btn-secondary" (click)="onAddLocation()" [disabled]="locationLoading || location">Add Location</button>
 				<button type="button" class="btn btn-secondary" (click)="clearLocation()" [disabled]="!location">Remove Location</button>
 
 				@if (location) {

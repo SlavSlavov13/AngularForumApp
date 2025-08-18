@@ -106,17 +106,19 @@ export class EditProfile implements OnInit {
 
 
 	async reverseGeocode(latitude: number, longitude: number): Promise<string | null> {
-		const apiKey = 'AIzaSyA2_yHQyXqtZmicPecRvLN75J0c6D4TLd4';
-		const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
-
-		const response: Response = await fetch(url);
-		const result: any = await response.json();
-
-		if (result.status === 'OK' && result.results.length) {
-			return result.results[0].formatted_address;
-		}
-		return null;
+		return new Promise((resolve, reject): void => {
+			const geocoder = new (window as any).google.maps.Geocoder();
+			const latlng = {lat: latitude, lng: longitude};
+			geocoder.geocode({location: latlng}, (results: any, status: string): void => {
+				if (status === 'OK' && results.length) {
+					resolve(results[0].formatted_address);
+				} else {
+					reject('Geocoder failed: ' + status);
+				}
+			});
+		});
 	}
+
 
 	clearPhoto(): void {
 		this.photoPreviewUrl = null;
