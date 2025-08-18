@@ -32,8 +32,10 @@ export class PostsList {
 	}
 
 	async ngOnInit(): Promise<void> {
-		const threadId: string = this.route.snapshot.paramMap.get('id')!;
+		const threadId: string | null = this.route.snapshot.paramMap.get('id');
+		const parentPath: string = this.route.parent?.parent?.routeConfig?.path ?? this.route.routeConfig?.path ?? '';
 		this.currentUid = await this.authService.currentUid();
+		// Listing posts in profile
 		if (this.uid) {
 			this.posts$ = this.postService.listPostsByUser(this.uid).pipe(
 				catchError(e => {
@@ -41,8 +43,29 @@ export class PostsList {
 					return of([]);
 				})
 			);
-		} else {
-			this.posts$ = this.postService.listPostsByThread(threadId).pipe(
+		}
+		// Listing posts by thread
+		else if (parentPath === 'threads') {
+			this.posts$ = this.postService.listPostsByThread(threadId!).pipe(
+				catchError(e => {
+					this.error = handleError(e);
+					return of([]);
+				})
+			);
+		}
+		// Listing posts by going to profile/posts for other users
+		else if (parentPath === 'profile') {
+			const userId: string = this.route.snapshot.paramMap.get('id')!;
+			this.posts$ = this.postService.listPostsByUser(userId).pipe(
+				catchError(e => {
+					this.error = handleError(e);
+					return of([]);
+				})
+			);
+		}
+		// Listing posts by going to my-profile/posts
+		else {
+			this.posts$ = this.postService.listPostsByUser(this.currentUid!).pipe(
 				catchError(e => {
 					this.error = handleError(e);
 					return of([]);

@@ -1,10 +1,9 @@
 import {Routes} from '@angular/router';
 import {authGuard} from "./core/guards/auth-guard";
 import {ownerGuard} from "./core/guards/owner-guard";
-import {selfProfileRedirectGuard} from "./core/guards/self-profile-redirect-guard";
-import {selfThreadRedirectGuard} from "./core/guards/self-thread-redirect-guard";
 import {guestGuard} from "./core/guards/guest-guard";
 import {existsGuard} from "./core/guards/exists-guard";
+import {selfRedirectGuard} from "./core/guards/self-redirect-guard";
 
 export const routes: Routes = [
 	{path: '', pathMatch: 'full', redirectTo: 'threads'},
@@ -72,6 +71,11 @@ export const routes: Routes = [
 					import('./features/threads/my-threads/my-threads').then(m => m.MyThreads),
 			},
 			{
+				path: 'posts',
+				loadComponent: () =>
+					import('./features/posts/posts-list/posts-list').then(m => m.PostsList),
+			},
+			{
 				path: 'edit',
 				loadComponent: () =>
 					import('./features/account/profiles/edit-profile/edit-profile').then(m => m.EditProfile),
@@ -91,19 +95,22 @@ export const routes: Routes = [
 			},
 			{
 				path: ':id',
-				canActivate: [existsGuard],
+				canActivate: [existsGuard, selfRedirectGuard],
 				children: [
 					{
 						path: '',
-						canActivate: [selfProfileRedirectGuard],
 						loadComponent: () =>
 							import('./features/account/profiles/profile-details/profile-details').then(m => m.ProfileDetails),
 					},
 					{
 						path: 'threads',
-						canActivate: [selfThreadRedirectGuard],
 						loadComponent: () =>
 							import('./features/threads/user-threads/user-threads').then(m => m.UserThreads),
+					},
+					{
+						path: 'posts',
+						loadComponent: () =>
+							import('./features/posts/posts-list/posts-list').then(m => m.PostsList),
 					},
 				],
 			},

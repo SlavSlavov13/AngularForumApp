@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { CanActivateFn } from '@angular/router';
 
-import { selfProfileRedirectGuard } from './self-profile-redirect-guard';
+import { selfRedirectGuard } from './self-redirect-guard';
 
-describe('selfProfileRedirectGuard', () => {
+describe('selfRedirectGuard', () => {
   const executeGuard: CanActivateFn = (...guardParameters) => 
-      TestBed.runInInjectionContext(() => selfProfileRedirectGuard(...guardParameters));
+      TestBed.runInInjectionContext(() => selfRedirectGuard(...guardParameters));
 
   beforeEach(() => {
     TestBed.configureTestingModule({});

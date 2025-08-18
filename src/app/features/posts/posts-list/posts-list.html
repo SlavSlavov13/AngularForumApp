@@ -12,7 +12,9 @@
 						<small>
 							Posted on: {{ post.createdAt.toDate() | date:'medium' }}
 						</small>
-						<a [routerLink]="['/profile', post.authorId]" class="title"> · Author: {{ post.authorName }}</a>
+						@if (!this.uid) {
+							<a [routerLink]="['/profile', post.authorId]" class="title"> · Author: {{ post.authorName }}</a>
+						}
 						@if (post.authorId === currentUid) {
 							<a [routerLink]="['/posts', post.id, 'edit']" class="title">Edit post</a>
 							<button type="button" class="danger" (click)="delete(post.id)">Delete</button>

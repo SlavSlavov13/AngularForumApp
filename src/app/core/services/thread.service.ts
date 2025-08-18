@@ -109,4 +109,14 @@ export class ThreadService {
 		});
 	}
 
+	decrementReplyCount(threadId: string): Observable<void> {
+		return runInInjectionContext(this.injector, (): Observable<void> => {
+			const ref = doc(this.db, 'threads', threadId);
+			return from(updateDoc(ref, {
+				replyCount: increment(-1),
+				updatedAt: serverTimestamp()
+			}));
+		});
+	}
+
 }
