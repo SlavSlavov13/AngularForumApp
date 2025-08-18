@@ -1,35 +1,35 @@
-<div class="posts-list-container">
-	@if (loading) {
-		<p>Loading posts...</p>
-	} @else if (error) {
-		<p class="error-message">{{ error }}</p>
-	} @else {
-		@if (posts$ | async; as posts) {
-			@if (posts.length > 0) {
-				@for (post of posts; track post.id) {
-					<div class="post-item">
-						<p>{{ post.body }}</p>
-						<small>
-							Posted on: {{ post.createdAt.toDate() | date:'medium' }}
-						</small>
-						@if (!this.uid) {
-							<a [routerLink]="['/profile', post.authorId]" class="title"> · Author: {{ post.authorName }}</a>
-						}
-						@if (post.authorId === currentUid) {
-							<a [routerLink]="['/posts', post.id, 'edit']" class="title">Edit post</a>
-							<button type="button" class="danger" (click)="delete(post.id)">Delete</button>
-						}
-						@if (this.uid) {
-							<a [routerLink]="['/threads', post.threadId]" class="title">Go to thread</a>
-						}
-					</div>
+@if (!(this.loading$ | async)) {
+	<div class="posts-list-container">
+		@if (error) {
+			<p class="error-message">{{ error }}</p>
+		} @else {
+			@if (posts) {
+				@if (posts.length > 0) {
+					@for (post of posts; track post.id) {
+						<div class="post-item">
+							<p>{{ post.body }}</p>
+							<small>
+								Posted on: {{ post.createdAt.toDate() | date:'medium' }}
+							</small>
+							@if (!this.uid) {
+								<a [routerLink]="['/profile', post.authorId]" class="title"> · Author: {{ post.authorName }}</a>
+							}
+							@if (post.authorId === currentUid) {
+								<a [routerLink]="['/posts', post.id, 'edit']" class="title">Edit post</a>
+								<button type="button" class="danger" (click)="delete(post.id)">Delete</button>
+							}
+							@if (this.uid) {
+								<a [routerLink]="['/threads', post.threadId]" class="title">Go to thread</a>
+							}
+						</div>
+					}
+					@if (this.userPostsCount && this.userPostsCount > posts.length) {
+						<a [routerLink]="['/profile', this.finalUid, 'posts']" class="title">View all posts by user</a>
+					}
+				} @else {
+					<p>No posts found.</p>
 				}
-				@if (this.userPostsCount && this.userPostsCount > posts.length) {
-					<a [routerLink]="['/profile', this.finalUid, 'posts']" class="title">View all posts by user</a>
-				}
-			} @else {
-				<p>No posts found.</p>
 			}
 		}
-	}
-</div>
+	</div>
+}

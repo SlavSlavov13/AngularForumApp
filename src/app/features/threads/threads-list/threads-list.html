@@ -1,14 +1,15 @@
-@let state = this.threadsState$ | async;
-@if (state?.error) {
-	<div class="error">{{ state?.error }}</div>
-} @else if (state?.threads?.length) {
-	@for (t of state?.threads; track t.id) {
-		<div>
-			<a [routerLink]="['/threads', t.id]">{{ t.title }}</a>
-			<span> · {{ t.replyCount || 0 }} replies</span>
-			<a [routerLink]="['/profile', t.authorId]" class="title"> · Author: {{ t.authorName }}</a>
-		</div>
+@if (!(loading$ | async)) {
+	@if (error) {
+		<div class="error">{{ error }}</div>
+	} @else if (threads?.length) {
+		@for (t of threads; track t.id) {
+			<div>
+				<a [routerLink]="['/threads', t.id]">{{ t.title }}</a>
+				<span> · {{ t.replyCount || 0 }} replies</span>
+				<a [routerLink]="['/profile', t.authorId]" class="title"> · Author: {{ t.authorName }}</a>
+			</div>
+		}
+	} @else {
+		<div>No threads found.</div>
 	}
-} @else {
-	<div>No threads found.</div>
 }

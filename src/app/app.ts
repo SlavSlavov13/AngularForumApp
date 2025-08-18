@@ -17,12 +17,13 @@ export class App {
 	error: string | null = null;
 	signingOut: boolean = false;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	initialized$: Observable<boolean> = this.authService.initialized$;
 
 
 	constructor(
 		protected authService: AuthService,
 		private router: Router,
-		private store: Store<AppState>
+		private store: Store<AppState>,
 	) {
 	}
 

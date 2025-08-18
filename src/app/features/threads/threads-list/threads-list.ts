@@ -1,11 +1,12 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ThreadModel} from '../../../shared/models';
 import {ThreadService} from '../../../core/services/thread.service';
-import {Observable, of} from "rxjs";
-import {AsyncPipe} from "@angular/common";
+import {firstValueFrom, Observable} from "rxjs";
 import {handleError} from "../../../shared/helpers";
-import {catchError, map, startWith} from "rxjs/operators";
+import {Store} from "@ngrx/store";
+import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
 	selector: 'app-threads-list',
@@ -14,14 +15,28 @@ import {catchError, map, startWith} from "rxjs/operators";
 	templateUrl: './threads-list.html',
 	styleUrl: './threads-list.css'
 })
-export class ThreadsList {
-	threadsState$: Observable<{ threads: ThreadModel[]; error: string | null }>;
+export class ThreadsList implements OnInit {
+	threads!: ThreadModel[];
+	error: string | null = null;
+	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 
-	constructor(private threadService: ThreadService) {
-		this.threadsState$ = this.threadService.listThreads().pipe(
-			map(threads => ({threads, error: null})),
-			catchError(e => of({threads: [], error: handleError(e)})),
-			startWith({threads: [], error: null}) // Initial blank/no-error state for template stability
-		);
+	constructor(
+		private threadService: ThreadService,
+		private store: Store<AppState>
+	) {
 	}
+
+	async ngOnInit(): Promise<void> {
+		this.store.dispatch(showLoading());
+		try {
+			this.threads = await firstValueFrom(
+				this.threadService.listThreads()
+			);
+		} catch (e) {
+			this.error = handleError(e);
+		} finally {
+			this.store.dispatch(hideLoading());
+		}
+	}
+
 }

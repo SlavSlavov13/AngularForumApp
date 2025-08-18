@@ -1,12 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import {firstValueFrom} from 'rxjs';
+import {firstValueFrom, Observable} from 'rxjs';
 import {AppUserModel, ThreadModel} from '../../../shared/models';
 import {ThreadService} from '../../../core/services/thread.service';
 import {AuthService} from "../../../core/services/auth.service";
 import {AsyncPipe} from "@angular/common";
 import {handleError} from "../../../shared/helpers";
 import {PostsList} from "../../posts/posts-list/posts-list";
+import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
+import {Store} from "@ngrx/store";
 
 @Component({
 	selector: 'app-thread-details',
@@ -17,21 +19,23 @@ import {PostsList} from "../../posts/posts-list/posts-list";
 })
 export class ThreadDetails implements OnInit {
 	error: string | null = null;
-	loading: boolean = true;
 	thread!: ThreadModel;
 	author!: AppUserModel;
 	currentUid: Promise<string | null> = this.authService.currentUid()
+	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 
 	constructor(
 		private route: ActivatedRoute,
 		private router: Router,
 		private threadService: ThreadService,
-		private authService: AuthService
+		private authService: AuthService,
+		private store: Store<AppState>,
 	) {
 	}
 
 	async ngOnInit(): Promise<void> {
 		try {
+			this.store.dispatch(showLoading());
 			const id: string = this.route.snapshot.paramMap.get('id')!;
 			this.thread = await firstValueFrom(this.threadService.getThread(id));
 			const authorUid: string = this.thread!.authorId;
@@ -39,7 +43,7 @@ export class ThreadDetails implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.loading = false;
+			this.store.dispatch(hideLoading());
 		}
 	}
 
@@ -53,6 +57,5 @@ export class ThreadDetails implements OnInit {
 			}
 		});
 		await this.router.navigate(['/threads']);
-		this.loading = false;
 	}
 }

@@ -3,11 +3,9 @@ import {Auth, createUserWithEmailAndPassword, EmailAuthCredential, EmailAuthProv
 import {collection, doc, DocumentSnapshot, Firestore, getDoc, getDocs, query, serverTimestamp, setDoc, where} from '@angular/fire/firestore';
 import {AppUserModel} from '../../shared/models';
 import {BehaviorSubject, from, Observable} from 'rxjs';
-import {filter, finalize, map, take} from 'rxjs/operators';
-import {getDownloadURL, ref, Storage, StorageReference, uploadBytes} from '@angular/fire/storage';
-import {mapFirebaseError} from '../../shared/helpers';
-import {Store} from '@ngrx/store';
-import {AppState, hideLoading, showLoading} from '../../store';
+import {filter, map, take} from 'rxjs/operators';
+import {getDownloadURL, ref, Storage, StorageReference, uploadBytes} from "@angular/fire/storage";
+import {mapFirebaseError} from "../../shared/helpers";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -22,11 +20,10 @@ export class AuthService {
 		private storage: Storage,
 		private auth: Auth,
 		private db: Firestore,
-		private store: Store<AppState>
 	) {
 		runInInjectionContext(this.injector, async (): Promise<void> => {
+
 			onAuthStateChanged(this.auth, async (fbUser: User | null): Promise<void> => {
-				this.store.dispatch(showLoading());
 				try {
 					if (!fbUser || !fbUser.email) {
 						this.userSub.next(null);
@@ -41,7 +38,7 @@ export class AuthService {
 							photoURL: fbUser.photoURL ?? firestoreData?.['photoURL'] ?? null,
 							location: firestoreData?.['location'] ?? null,
 							createdAt: firestoreData?.['createdAt'],
-							lastLogin: firestoreData?.['lastLogin']
+							lastLogin: firestoreData?.['lastLogin'],
 						};
 						this.userSub.next(appUser);
 						const currentEmail: string = snap.get('email');
@@ -53,7 +50,6 @@ export class AuthService {
 					throw new Error(mapFirebaseError(err));
 				} finally {
 					this.initializedSub.next(true);
-					this.store.dispatch(hideLoading());
 				}
 			});
 		});
@@ -61,8 +57,9 @@ export class AuthService {
 
 	async register(email: string, password: string, displayName?: string): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
-			this.store.dispatch(showLoading());
+
 			try {
+
 				const cred: UserCredential = await createUserWithEmailAndPassword(this.auth, email, password);
 
 				if (displayName) {
@@ -79,15 +76,13 @@ export class AuthService {
 				);
 			} catch (err) {
 				throw new Error(mapFirebaseError(err));
-			} finally {
-				this.store.dispatch(hideLoading());
 			}
 		});
+
 	}
 
 	async login(email: string, password: string): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
-			this.store.dispatch(showLoading());
 			try {
 				const cred: UserCredential = await signInWithEmailAndPassword(this.auth, email, password);
 				await setDoc(
@@ -97,184 +92,158 @@ export class AuthService {
 				);
 			} catch (err) {
 				throw new Error(mapFirebaseError(err));
-			} finally {
-				this.store.dispatch(hideLoading());
 			}
 		});
+
 	}
 
 	async logout(): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
-			this.store.dispatch(showLoading());
-			try {
-				await signOut(this.auth);
-			} finally {
-				this.store.dispatch(hideLoading());
-			}
+			await signOut(this.auth);
 		});
 	}
 
 	async getUser(id: string): Promise<AppUserModel> {
-		this.store.dispatch(showLoading());
-		try {
-			return await runInInjectionContext(this.injector, async (): Promise<AppUserModel> => {
-				const s: DocumentSnapshot = await getDoc(doc(this.db, 'users', id));
+		return await runInInjectionContext(this.injector, async (): Promise<AppUserModel> => {
+			const s: DocumentSnapshot = await getDoc(doc(this.db, 'users', id));
 
-				const raw = s.data() as Partial<AppUserModel>;
-				if (!raw.email) {
-					throw new Error('Invalid user document: missing email');
-				}
+			const raw = s.data() as Partial<AppUserModel>;
+			if (!raw.email) {
+				throw new Error('Invalid user document: missing email');
+			}
 
-				return {
-					uid: raw.uid ?? s.id,
-					email: raw.email,
-					displayName: raw.displayName ?? null,
-					photoURL: raw.photoURL ?? null,
-					createdAt: raw.createdAt,
-					lastLogin: raw.lastLogin,
-					location: raw.location ?? null
-				};
-			});
-		} finally {
-			this.store.dispatch(hideLoading());
-		}
+			return {
+				uid: raw.uid ?? s.id,
+				email: raw.email,
+				displayName: raw.displayName ?? null,
+				photoURL: raw.photoURL ?? null,
+				createdAt: raw.createdAt,
+				lastLogin: raw.lastLogin,
+				location: raw.location ?? null
+			};
+		});
 	}
 
 	isDisplayNameTaken(displayName: string): Observable<boolean> {
-		this.store.dispatch(showLoading());
-		const q = query(collection(this.db, 'users'), where('displayName', '==', displayName));
+		const q = query(
+			collection(this.db, 'users'),
+			where('displayName', '==', displayName)
+		);
 		return from(getDocs(q)).pipe(
-			finalize(() => this.store.dispatch(hideLoading())),
 			map(snapshot => !snapshot.empty)
 		);
 	}
 
 	isEmailTaken(email: string): Observable<boolean> {
-		this.store.dispatch(showLoading());
-		const q = query(collection(this.db, 'users'), where('email', '==', email));
+		const q = query(
+			collection(this.db, 'users'),
+			where('email', '==', email)
+		);
 		return from(getDocs(q)).pipe(
-			finalize(() => this.store.dispatch(hideLoading())),
 			map(snapshot => !snapshot.empty)
 		);
 	}
 
+
 	async updateUser(data: {
-		displayName: string;
-		email: string;
-		currentPassword?: string;
-		newPassword?: string;
-		photoFile: File | null;
+		displayName: string,
+		email: string,
+		currentPassword?: string,
+		newPassword?: string,
+		photoFile: File | null,
 		location: {
-			lat: number;
-			lng: number;
-			name?: string;
-		} | null;
+			lat: number,
+			lng: number,
+			name?: string
+		} | null
 	}): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
-			this.store.dispatch(showLoading());
-			try {
-				await this.waitUntilInitialized();
-				const firebaseUser: User = this.auth.currentUser!;
 
-				const profileData: { displayName?: string } = {};
-				if (data.displayName !== firebaseUser.displayName) profileData.displayName = data.displayName;
-				await this.uploadProfilePhoto(data.photoFile);
-				if (Object.keys(profileData).length > 0) {
-					await updateProfile(firebaseUser, profileData);
+			await this.waitUntilInitialized();
+			const firebaseUser: User = this.auth.currentUser!;
+
+			const profileData: { displayName?: string; } = {};
+			if (data.displayName !== firebaseUser.displayName) profileData.displayName = data.displayName;
+			await this.uploadProfilePhoto(data.photoFile)
+			if (Object.keys(profileData).length > 0) {
+				await updateProfile(firebaseUser, profileData);
+			}
+
+			if (data.email !== firebaseUser.email) {
+				if (!data.currentPassword || data.currentPassword.length === 0) {
+					throw new Error("Current password is required to change email.");
 				}
 
-				if (data.email !== firebaseUser.email) {
-					if (!data.currentPassword || data.currentPassword.length === 0) {
-						throw new Error('Current password is required to change email.');
-					}
+				const credential: EmailAuthCredential = EmailAuthProvider.credential(firebaseUser.email!, data.currentPassword);
+				await reauthenticateWithCredential(firebaseUser, credential);
+				await verifyBeforeUpdateEmail(firebaseUser, data.email);
+			}
 
-					const credential: EmailAuthCredential = EmailAuthProvider.credential(
-						firebaseUser.email!,
-						data.currentPassword
-					);
-					await reauthenticateWithCredential(firebaseUser, credential);
-					await verifyBeforeUpdateEmail(firebaseUser, data.email);
-				}
+			if (data.newPassword != null && data.newPassword.length > 0 && data.currentPassword != null && data.currentPassword.length > 0 && data.newPassword !== data.currentPassword) {
+				const credential: EmailAuthCredential = EmailAuthProvider.credential(firebaseUser.email!, data.currentPassword!);
+				await reauthenticateWithCredential(firebaseUser, credential);
+				await updatePassword(firebaseUser, data.newPassword);
+			}
 
-				if (
-					data.newPassword != null &&
-					data.newPassword.length > 0 &&
-					data.currentPassword != null &&
-					data.currentPassword.length > 0 &&
-					data.newPassword !== data.currentPassword
-				) {
-					const credential: EmailAuthCredential = EmailAuthProvider.credential(
-						firebaseUser.email!,
-						data.currentPassword!
-					);
-					await reauthenticateWithCredential(firebaseUser, credential);
-					await updatePassword(firebaseUser, data.newPassword);
-				}
+			const firestoreData: Partial<AppUserModel> = {
+				displayName: data.displayName,
+				location: data.location ?? null,
+			};
 
-				const firestoreData: Partial<AppUserModel> = {
-					displayName: data.displayName,
-					location: data.location ?? null
-				};
+			await setDoc(
+				doc(this.db, 'users', firebaseUser.uid),
+				firestoreData,
+				{merge: true}
+			);
 
-				await setDoc(doc(this.db, 'users', firebaseUser.uid), firestoreData, {merge: true});
-
-				const appUser: AppUserModel = this.userSub.value!;
-				if (appUser) {
-					this.userSub.next({
-						...appUser,
-						...firestoreData
-					});
-				}
-			} finally {
-				this.store.dispatch(hideLoading());
+			const appUser: AppUserModel = this.userSub.value!;
+			if (appUser) {
+				this.userSub.next({
+					...appUser,
+					...firestoreData
+				});
 			}
 		});
 	}
 
 	async uploadProfilePhoto(file: File | null): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
-			this.store.dispatch(showLoading());
-			try {
-				const uid: string = (await this.currentUid())!;
+			const uid: string = (await this.currentUid())!;
 
-				if (file == null) {
-					await setDoc(doc(this.db, 'users', uid), {photoURL: null}, {merge: true});
-					const appUser: AppUserModel = this.userSub.value!;
-					this.userSub.next({...appUser, photoURL: null});
-					return;
-				}
-
-				const storageRef: StorageReference = ref(this.storage, `profile-pictures/${uid}/${file.name}`);
-
-				await uploadBytes(storageRef, file);
-
-				const url: string = await getDownloadURL(storageRef);
-				await setDoc(doc(this.db, 'users', uid), {photoURL: url}, {merge: true});
-
+			if (file == null) {
+				await setDoc(doc(this.db, 'users', uid), {photoURL: null}, {merge: true});
 				const appUser: AppUserModel = this.userSub.value!;
-				this.userSub.next({...appUser, photoURL: url});
-			} finally {
-				this.store.dispatch(hideLoading());
+				this.userSub.next({...appUser, photoURL: null});
+				return;
 			}
+
+			const storageRef: StorageReference = ref(this.storage, `profile-pictures/${uid}/${file.name}`);
+
+			await uploadBytes(storageRef, file);
+
+			const url: string = await getDownloadURL(storageRef);
+			await setDoc(doc(this.db, 'users', uid), {photoURL: url}, {merge: true});
+
+			const appUser: AppUserModel = this.userSub.value!;
+			this.userSub.next({...appUser, photoURL: url});
 		});
+
 	}
 
+
 	async userExists(id: string): Promise<boolean> {
-		this.store.dispatch(showLoading());
-		try {
-			return await runInInjectionContext(this.injector, async (): Promise<boolean> => {
-				const snapshot = await getDoc(doc(this.db, 'users', id));
-				return snapshot.exists();
-			});
-		} finally {
-			this.store.dispatch(hideLoading());
-		}
+		return await runInInjectionContext(this.injector, async (): Promise<boolean> => {
+			const snapshot = await getDoc(doc(this.db, 'users', id));
+			return snapshot.exists();
+		});
 	}
 
 	waitUntilInitialized(): Promise<void> {
 		if (this.initializedSub.value) return Promise.resolve();
 		return new Promise<void>((resolve): void => {
-			this.initialized$.pipe(filter(v => v), take(1)).subscribe(() => resolve());
+			this.initialized$
+				.pipe(filter(v => v), take(1))
+				.subscribe((): void => resolve());
 		});
 	}
 
@@ -299,4 +268,5 @@ export class AuthService {
 			photoURL: u.photoURL ?? null
 		};
 	}
+
 }

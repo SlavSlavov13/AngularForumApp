@@ -1,10 +1,5 @@
-@let loading = this.loading$ | async;
-
-@if (loading) {
-	<section class="page-skeleton">
-		<span class="loading">Loading…</span>
-	</section>
-} @else {
+@let initialized = this.initialized$ | async;
+@if (initialized) {
 	<header class="nav">
 		<a routerLink="/threads">Threads</a>
 		@let logged = this.authService.user$ | async;

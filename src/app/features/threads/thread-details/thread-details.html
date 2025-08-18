@@ -1,4 +1,4 @@
-@if (this.thread !== undefined && this.author !== undefined) {
+@if (!(loading$ | async)) {
 	<section class="container">
 		<h2>{{ this.thread.title }}</h2>
 		<p>{{ this.thread.body }}</p>
@@ -9,7 +9,5 @@
 		<a [routerLink]="['/profile', this.thread.authorId]" class="title">Author: {{ this.author.displayName }}</a>
 	</section>
 	<a [routerLink]="['/threads', this.thread.id, 'add-post']" class="title">Add post to thread</a>
-	<app-posts-list></app-posts-list>
-} @else {
-	<p>Loading…</p>
 }
+<app-posts-list></app-posts-list>
