@@ -9,6 +9,10 @@ export const initialState: LoadingState = {count: 0};
 
 export const loadingReducer = createReducer(
 	initialState,
-	on(showLoading, (state: LoadingState): { count: number } => ({count: state.count + 1})),
-	on(hideLoading, (state: LoadingState): { count: number } => ({count: Math.max(state.count - 1, 0)}))
+	on(showLoading, state => {
+		return {count: state.count + 1};
+	}),
+	on(hideLoading, state => {
+		return {count: Math.max(state.count - 1, 0)};
+	})
 );

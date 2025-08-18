@@ -6,6 +6,7 @@ import {passwordsMatchAndSameAsOldValidator} from "./passwordsMatchAndSameAsOld.
 import {displayNameTakenValidator, emailTakenValidator} from "../../../../shared/validators";
 import {handleError} from "../../../../shared/helpers";
 import {Router} from "@angular/router";
+import {Loader} from '@googlemaps/js-api-loader';
 
 @Component({
 	selector: 'app-edit-profile',
@@ -28,6 +29,18 @@ export class EditProfile implements OnInit {
 	location: { lat: number, lng: number, name?: string, } | null = null;
 	locationError: string | null = null;
 
+	private mapsLoader: Loader = new Loader({
+		apiKey: 'AIzaSyA2_yHQyXqtZmicPecRvLN75J0c6D4TLd4',
+		version: 'weekly',
+	});
+
+	async initMaps(): Promise<void> {
+		await this.mapsLoader.importLibrary('core');
+		await this.mapsLoader.importLibrary('maps');
+		await this.mapsLoader.importLibrary('geocoding');
+	}
+
+
 	constructor(
 		private fb: FormBuilder,
 		private authService: AuthService,
@@ -37,6 +50,8 @@ export class EditProfile implements OnInit {
 
 	async ngOnInit(): Promise<void> {
 		try {
+			await this.initMaps();
+
 			this.uid = (await this.authService.currentUid())!;
 			this.user = await this.authService.getUser(this.uid);
 
@@ -112,10 +127,12 @@ export class EditProfile implements OnInit {
 
 
 	async reverseGeocode(latitude: number, longitude: number): Promise<string | null> {
+		const {Geocoder} = await (window as any).google.maps.importLibrary('geocoding');
+		const geocoder = new Geocoder();
+
 		return new Promise((resolve, reject): void => {
-			const geocoder = new (window as any).google.maps.Geocoder();
 			const latlng = {lat: latitude, lng: longitude};
-			geocoder.geocode({location: latlng}, (results: any, status: string): void => {
+			geocoder.geocode({location: latlng}, (results: any, status: string) => {
 				if (status === 'OK' && results.length) {
 					resolve(results[0].formatted_address);
 				} else {

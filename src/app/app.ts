@@ -9,7 +9,7 @@ import {Observable} from "rxjs";
 @Component({
 	selector: 'app-root',
 	standalone: true,
-	imports: [RouterLink, RouterOutlet, AsyncPipe],
+	imports: [RouterLink, AsyncPipe, RouterOutlet],
 	templateUrl: './app.html',
 	styleUrl: './app.css'
 })

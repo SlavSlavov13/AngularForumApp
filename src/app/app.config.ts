@@ -9,6 +9,7 @@ import {environment} from "../environments/environment";
 import {FirebaseStorage, getStorage, provideStorage} from "@angular/fire/storage";
 import {provideStore} from "@ngrx/store";
 import {loadingReducer} from "./store";
+import {provideStoreDevtools} from "@ngrx/store-devtools";
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -20,5 +21,8 @@ export const appConfig: ApplicationConfig = {
 		provideFirestore((): Firestore => getFirestore()),
 		provideStorage((): FirebaseStorage => getStorage()),
 		provideStore({loading: loadingReducer}),
-	]
+		provideStoreDevtools({
+			maxAge: 25,
+			logOnly: false,
+		}),]
 };
