@@ -5,7 +5,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AppUserModel, PostCreateModel} from "../../../shared/models";
 import {handleError} from "../../../shared/helpers";
 import {PostService} from "../../../core/services/post.service";
-import {DocumentReference} from "@angular/fire/firestore";
 import {firstValueFrom} from "rxjs";
 
 @Component({
@@ -51,7 +50,7 @@ export class PostCreate {
 		};
 
 		try {
-			const docRef: DocumentReference = await firstValueFrom(this.postService.createPost(payload));
+			await firstValueFrom(this.postService.createPost(payload));
 			this.form.reset();
 			await this.router.navigate([`/threads/${threadId}`]);
 		} catch (e) {

@@ -51,21 +51,10 @@ export const routes: Routes = [
 	},
 
 	{
-		path: 'posts/:id',
-		canActivate: [existsGuard],
-		children: [
-			{
-				path: '',
-				loadComponent: () =>
-					import('./features/posts/post-details/post-details').then(m => m.PostDetails),
-			},
-			{
-				path: 'edit',
-				canActivate: [authGuard, ownerGuard],
-				loadComponent: () =>
-					import('./features/posts/post-edit/post-edit').then(m => m.PostEdit),
-			},
-		],
+		path: 'posts/:id/edit',
+		canActivate: [existsGuard, authGuard, ownerGuard],
+		loadComponent: () =>
+			import('./features/posts/post-edit/post-edit').then(m => m.PostEdit),
 	},
 
 	{

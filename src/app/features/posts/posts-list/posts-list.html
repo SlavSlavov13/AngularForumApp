@@ -15,6 +15,10 @@
 						<a [routerLink]="['/profile', post.authorId]" class="title"> · Author: {{ post.authorName }}</a>
 						@if (post.authorId === currentUid) {
 							<a [routerLink]="['/posts', post.id, 'edit']" class="title">Edit post</a>
+							<button type="button" class="danger" (click)="delete(post.id)">Delete</button>
+						}
+						@if (this.uid) {
+							<a [routerLink]="['/threads', post.threadId]" class="title">Go to thread</a>
 						}
 					</div>
 				}
