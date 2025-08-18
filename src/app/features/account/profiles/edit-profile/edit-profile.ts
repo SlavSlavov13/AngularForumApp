@@ -145,6 +145,9 @@ export class EditProfile implements OnInit {
 				location: this?.location
 			}
 			await this.authService.updateUser(data)
+			if (data.email !== this.user.email) {
+				alert('For email change you will receive an email on the new email address (check spam). For changes to take affect you must click the link in the email and then log out and back in in the website.')
+			}
 		} catch (e) {
 			this.error = (e as Error)?.message || 'Failed to update profile.';
 		} finally {
