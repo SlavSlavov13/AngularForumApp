@@ -7,11 +7,16 @@ import {displayNameTakenValidator, emailTakenValidator} from "../../../../shared
 import {handleError} from "../../../../shared/helpers";
 import {Router} from "@angular/router";
 import {Loader} from '@googlemaps/js-api-loader';
+import {Observable} from "rxjs";
+import {Store} from "@ngrx/store";
+import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../../store";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
 	selector: 'app-edit-profile',
 	imports: [
-		ReactiveFormsModule
+		ReactiveFormsModule,
+		AsyncPipe
 	],
 	templateUrl: './edit-profile.html',
 	styleUrl: './edit-profile.css'
@@ -20,14 +25,16 @@ export class EditProfile implements OnInit {
 	form!: FormGroup;
 	uid!: string;
 	user!: AppUserModel;
-	loading: boolean = true;
 	saving: boolean = false;
 	error: string | null = null;
 	photoPreviewUrl: string | null = null;
 	photoFile: File | null = null;
+	photoPending: boolean = false;
 	locationLoading: boolean = false;
 	location: { lat: number, lng: number, name?: string, } | null = null;
 	locationError: string | null = null;
+	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+
 
 	private mapsLoader: Loader = new Loader({
 		apiKey: 'AIzaSyA2_yHQyXqtZmicPecRvLN75J0c6D4TLd4',
@@ -35,9 +42,11 @@ export class EditProfile implements OnInit {
 	});
 
 	async initMaps(): Promise<void> {
+		this.store.dispatch(showLoading());
 		await this.mapsLoader.importLibrary('core');
 		await this.mapsLoader.importLibrary('maps');
 		await this.mapsLoader.importLibrary('geocoding');
+		this.store.dispatch(hideLoading());
 	}
 
 
@@ -45,11 +54,14 @@ export class EditProfile implements OnInit {
 		private fb: FormBuilder,
 		private authService: AuthService,
 		private router: Router,
+		private store: Store<AppState>,
 	) {
 	}
 
 	async ngOnInit(): Promise<void> {
 		try {
+			this.store.dispatch(showLoading());
+
 			await this.initMaps();
 
 			this.uid = (await this.authService.currentUid())!;
@@ -81,11 +93,14 @@ export class EditProfile implements OnInit {
 			});
 
 			this.photoPreviewUrl = this.user.photoURL ?? null;
+			this.photoPending = !!this.photoPreviewUrl;
 			this.location = this.user.location ?? null;
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.loading = false;
+			if (!this.photoPending) {
+				this.store.dispatch(hideLoading());
+			}
 		}
 	}
 
@@ -118,6 +133,7 @@ export class EditProfile implements OnInit {
 	}
 
 	async handleLocation(pos: GeolocationPosition): Promise<void> {
+		this.locationLoading = true;
 		const lat: number = pos.coords.latitude;
 		const lng: number = pos.coords.longitude;
 		const name: string | null = await this.reverseGeocode(lat, lng);
@@ -142,6 +158,9 @@ export class EditProfile implements OnInit {
 		});
 	}
 
+	onPhotoLoaded(): void {
+		this.store.dispatch(hideLoading());
+	}
 
 	clearPhoto(): void {
 		this.photoPreviewUrl = null;
@@ -154,7 +173,7 @@ export class EditProfile implements OnInit {
 
 
 	async submit(): Promise<void> {
-		if (this.form.invalid || this.loading) {
+		if (this.form.invalid || this.locationLoading) {
 			this.form.markAllAsTouched();
 			return;
 		}
