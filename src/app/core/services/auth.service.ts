@@ -28,11 +28,20 @@ export class AuthService {
 					if (!fbUser || !fbUser.email) {
 						this.userSub.next(null);
 					} else {
-						const appUser: AppUserModel = this.firebaseUserToAppUser(fbUser);
-						this.userSub.next(appUser);
 						const userDocRef = doc(this.db, 'users', fbUser.uid);
 						const snap = await getDoc(userDocRef);
-						const currentEmail = snap.get('email');
+						const firestoreData = snap.data();
+						const appUser: AppUserModel = {
+							uid: fbUser.uid,
+							email: fbUser.email,
+							displayName: fbUser.displayName,
+							photoURL: fbUser.photoURL ?? firestoreData?.['photoURL'] ?? null,
+							location: firestoreData?.['location'] ?? null,
+							createdAt: firestoreData?.['createdAt'],
+							lastLogin: firestoreData?.['lastLogin'],
+						};
+						this.userSub.next(appUser);
+						const currentEmail: string = snap.get('email');
 						if (currentEmail !== fbUser.email) {
 							await setDoc(userDocRef, {email: fbUser.email}, {merge: true});
 						}
@@ -80,11 +89,11 @@ export class AuthService {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
 			try {
 				const cred: UserCredential = await signInWithEmailAndPassword(this.auth, email, password);
-				const appUser: AppUserModel = this.firebaseUserToAppUser(cred.user);
-				this.userSub.next(appUser);
-				const userDocRef = doc(this.db, 'users', cred.user.uid);
-				await setDoc(userDocRef, {...appUser, lastLogin: serverTimestamp()}, {merge: true});
-
+				await setDoc(
+					doc(this.db, 'users', cred.user.uid),
+					{lastLogin: serverTimestamp()},
+					{merge: true}
+				);
 			} catch (err) {
 				const code: string = (err as FirebaseError).code ?? '';
 				const message: string = (err as FirebaseError).message ?? '';
@@ -96,7 +105,6 @@ export class AuthService {
 
 	async logout(): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
-			this.userSub.next(null);
 			await signOut(this.auth);
 		});
 	}
@@ -160,7 +168,7 @@ export class AuthService {
 			await this.waitUntilInitialized();
 			const firebaseUser: User = this.auth.currentUser!;
 
-			const profileData: { displayName?: string; photoURL?: string | null } = {};
+			const profileData: { displayName?: string; } = {};
 			if (data.displayName !== firebaseUser.displayName) profileData.displayName = data.displayName;
 			await this.uploadProfilePhoto(data.photoFile)
 			if (Object.keys(profileData).length > 0) {
@@ -223,9 +231,7 @@ export class AuthService {
 			await setDoc(doc(this.db, 'users', uid), {photoURL: url}, {merge: true});
 
 			const appUser: AppUserModel = this.userSub.value!;
-			if (appUser) {
-				this.userSub.next({...appUser, photoURL: url});
-			}
+			this.userSub.next({...appUser, photoURL: url});
 		});
 
 	}

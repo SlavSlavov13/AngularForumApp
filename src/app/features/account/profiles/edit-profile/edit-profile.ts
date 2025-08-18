@@ -142,7 +142,6 @@ export class EditProfile implements OnInit {
 				currentPassword: this.form.get('passwords.currentPassword')?.value,
 				newPassword: this.form.get('passwords.newPassword')?.value,
 				photoFile: this?.photoFile,
-				photoURL: this?.photoPreviewUrl,
 				location: this?.location
 			}
 			await this.authService.updateUser(data)
