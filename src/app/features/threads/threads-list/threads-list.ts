@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {ThreadModel} from '../../../shared/models';
 import {ThreadService} from '../../../core/services/thread.service';
-import {catchError, Observable, of} from "rxjs";
+import {Observable, of} from "rxjs";
 import {AsyncPipe} from "@angular/common";
 import {handleError} from "../../../shared/helpers";
+import {catchError, map, startWith} from "rxjs/operators";
 
 @Component({
 	selector: 'app-threads-list',
@@ -13,21 +14,14 @@ import {handleError} from "../../../shared/helpers";
 	templateUrl: './threads-list.html',
 	styleUrl: './threads-list.css'
 })
-export class ThreadsList implements OnInit {
-	threads$!: Observable<ThreadModel[]>;
-	loading: boolean = true;
-	error: string | null = null;
+export class ThreadsList {
+	threadsState$: Observable<{ threads: ThreadModel[]; error: string | null }>;
 
 	constructor(private threadService: ThreadService) {
-	}
-
-	async ngOnInit(): Promise<void> {
-		this.threads$ = this.threadService.listThreads().pipe(
-			catchError(e => {
-				this.error = handleError(e);
-				return of([]);
-			})
+		this.threadsState$ = this.threadService.listThreads().pipe(
+			map(threads => ({threads, error: null})),
+			catchError(e => of({threads: [], error: handleError(e)})),
+			startWith({threads: [], error: null}) // Initial blank/no-error state for template stability
 		);
-		this.loading = false;
 	}
 }
