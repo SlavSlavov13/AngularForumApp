@@ -1,5 +1,5 @@
 import {Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, collectionData, deleteDoc, doc, docData, DocumentData, Firestore, getDoc, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
+import {addDoc, collection, collectionData, deleteDoc, doc, docData, DocumentData, Firestore, getCountFromServer, getDoc, limit, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {PostCreateModel, PostModel} from '../../shared/models';
 import {ThreadService} from "./thread.service";
@@ -14,24 +14,44 @@ export class PostService {
 	) {
 	}
 
-	listPostsByThread(threadId: string): Observable<PostModel[]> {
+	listPostsByThread(threadId: string, limitCount?: number): Observable<PostModel[]> {
 		return runInInjectionContext(this.injector, (): Observable<PostModel[]> => {
-			const q = query(
-				collection(this.db, 'posts'),
-				where('threadId', '==', threadId),
-				orderBy('createdAt', 'desc')
-			);
+			let q;
+			if (limitCount != null) {
+				q = query(
+					collection(this.db, 'posts'),
+					where('threadId', '==', threadId),
+					orderBy('createdAt', 'desc'),
+					limit(limitCount)
+				);
+			} else {
+				q = query(
+					collection(this.db, 'posts'),
+					where('threadId', '==', threadId),
+					orderBy('createdAt', 'desc'),
+				);
+			}
 			return collectionData(q, {idField: 'id'}) as Observable<PostModel[]>;
 		});
 	}
 
-	listPostsByUser(uid: string): Observable<PostModel[]> {
+	listPostsByUser(uid: string, limitCount?: number): Observable<PostModel[]> {
 		return runInInjectionContext(this.injector, (): Observable<PostModel[]> => {
-			const q = query(
-				collection(this.db, 'posts'),
-				where('authorId', '==', uid),
-				orderBy('createdAt', 'desc')
-			);
+			let q;
+			if (limitCount != null) {
+				q = query(
+					collection(this.db, 'posts'),
+					where('authorId', '==', uid),
+					orderBy('createdAt', 'desc'),
+					limit(limitCount)
+				);
+			} else {
+				q = query(
+					collection(this.db, 'posts'),
+					where('authorId', '==', uid),
+					orderBy('createdAt', 'desc')
+				);
+			}
 			return collectionData(q, {idField: 'id'}) as Observable<PostModel[]>;
 		});
 	}
@@ -40,6 +60,15 @@ export class PostService {
 		return runInInjectionContext(this.injector, (): Observable<PostModel> => {
 			const ref = doc(this.db, 'posts', id);
 			return docData(ref, {idField: 'id'}) as Observable<PostModel>;
+		});
+	}
+
+	async getUserPostsCount(uid: string): Promise<number> {
+		return await runInInjectionContext(this.injector, async (): Promise<number> => {
+			const coll = collection(this.db, 'posts');
+			const q = query(coll, where('authorId', '==', uid));
+			const snapshot = await getCountFromServer(q);
+			return snapshot.data().count;
 		});
 	}
 

@@ -11,7 +11,7 @@ export class ThreadService {
 	listThreads(limitCount?: number): Observable<ThreadModel[]> {
 		return runInInjectionContext(this.injector, (): Observable<ThreadModel[]> => {
 			let q;
-			if (limitCount !== undefined) {
+			if (limitCount != null) {
 				q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'), limit(limitCount));
 			} else {
 				q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'));
@@ -23,7 +23,7 @@ export class ThreadService {
 	listThreadsByUser(uid: string, limitCount?: number): Observable<ThreadModel[]> {
 		return runInInjectionContext(this.injector, (): Observable<ThreadModel[]> => {
 			let q;
-			if (limitCount !== undefined) {
+			if (limitCount != null) {
 				q = query(
 					collection(this.db, 'threads'),
 					where('authorId', '==', uid),
@@ -42,7 +42,7 @@ export class ThreadService {
 
 	}
 
-	async getUserThreadCount(uid: string): Promise<number> {
+	async getUserThreadsCount(uid: string): Promise<number> {
 		return await runInInjectionContext(this.injector, async (): Promise<number> => {
 			const coll = collection(this.db, 'threads');
 			const q = query(coll, where('authorId', '==', uid));

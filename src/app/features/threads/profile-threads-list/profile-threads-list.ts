@@ -30,7 +30,7 @@ export class ProfileThreadsList implements OnInit {
 
 	async ngOnInit(): Promise<void> {
 		try {
-			this.userThreadsCount = await this.threadService.getUserThreadCount(this.uid);
+			this.userThreadsCount = await this.threadService.getUserThreadsCount(this.uid);
 			if (this.profileCard) {
 				this.threads$ = this.threadService.listThreadsByUser(this.uid, this.limitCount).pipe(
 					catchError(e => {
