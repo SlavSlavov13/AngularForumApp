@@ -1,39 +1,57 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {ProfileThreadsList} from '../profile-threads-list/profile-threads-list';
-import {AuthService} from "../../../core/services/auth.service";
-import {Observable} from "rxjs";
+import {Component, OnInit} from '@angular/core';
+import {AppUserModel, ThreadModel} from "../../../shared/models";
+import {firstValueFrom, Observable} from "rxjs";
+import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
+import {ThreadService} from "../../../core/services/thread.service";
 import {Store} from "@ngrx/store";
-import {AppState, selectLoadingVisible} from "../../../store";
+import {handleError} from "../../../shared/helpers";
+import {ThreadsVisualization} from "../threads-visualization/threads-visualization";
 import {AsyncPipe} from "@angular/common";
+import {AuthService} from "../../../core/services/auth.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
 	selector: 'app-user-threads',
-	standalone: true,
-	imports: [ProfileThreadsList, AsyncPipe],
+	imports: [
+		ThreadsVisualization,
+		AsyncPipe
+	],
 	templateUrl: './user-threads.html',
 	styleUrl: './user-threads.css'
 })
 export class UserThreads implements OnInit {
-	uid!: string;
+	threads: ThreadModel[] = [];
+	uid: string | null = null;
+	myProfile: boolean = false;
+	user!: AppUserModel;
+	error: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
-	@Input() profileCard: boolean = false;
-	@Output() loadingChange: EventEmitter<void> = new EventEmitter<void>();
+	componentLoaded: boolean = false;
 
 	constructor(
-		private route: ActivatedRoute,
-		protected authService: AuthService,
+		private threadService: ThreadService,
+		private authService: AuthService,
 		private store: Store<AppState>,
-		private cdr: ChangeDetectorRef,
+		private route: ActivatedRoute,
 	) {
 	}
 
-	ngOnInit(): void {
-		this.uid = this.route.snapshot.paramMap.get('uid')!;
-	}
-
-	onChildLoadingChange(): void {
-		this.loadingChange.emit();
-		this.cdr.detectChanges();
+	async ngOnInit(): Promise<void> {
+		try {
+			this.store.dispatch(showLoading());
+			this.uid = this.route.snapshot.paramMap.get('uid');
+			// My profile
+			if (!this.uid) {
+				this.uid = (await this.authService.currentUid())!;
+				this.myProfile = true;
+			}
+			this.user = await this.authService.getUser(this.uid);
+			this.threads = await firstValueFrom(this.threadService.listThreadsByUser(this.uid))
+		} catch (e) {
+			this.error = handleError(e);
+		} finally {
+			this.store.dispatch(hideLoading());
+			this.componentLoaded = true;
+		}
 	}
 }
