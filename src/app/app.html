@@ -1,28 +1,30 @@
-@let initialized = this.initialized$ | async;
-@if (initialized) {
-	<header class="nav">
-		<a routerLink="/threads">Threads</a>
-		@let loggedIn = this.authService.user$ | async;
+<div [@fadeAnimation]="animationState">
+	@let initialized = this.initialized$ | async;
+	@if (initialized) {
+		<header class="nav">
+			<a routerLink="/threads">Threads</a>
+			@let loggedIn = this.authService.user$ | async;
 
-		@if (loggedIn) {
-			<a routerLink="/threads/create">Create Thread</a>
-			<a routerLink="/my-profile/threads">My Threads</a>
-			<a routerLink="/my-profile/posts">My Posts</a>
-		}
-		<span class="spacer"></span>
-		@if (loggedIn) {
-			<a routerLink="/my-profile">Profile</a>
-			<button type="button" (click)="logout()" [disabled]="signingOut">Logout</button>
-			@if (signingOut) {
-				<span class="loading small">Signing out…</span>
+			@if (loggedIn) {
+				<a routerLink="/threads/create">Create Thread</a>
+				<a routerLink="/my-profile/threads">My Threads</a>
+				<a routerLink="/my-profile/posts">My Posts</a>
 			}
-		} @else {
-			<a routerLink="/login">Login</a>
-			<a routerLink="/register">Register</a>
-		}
-	</header>
+			<span class="spacer"></span>
+			@if (loggedIn) {
+				<a routerLink="/my-profile">Profile</a>
+				<button type="button" (click)="logout()" [disabled]="signingOut">Logout</button>
+				@if (signingOut) {
+					<span class="loading small">Signing out…</span>
+				}
+			} @else {
+				<a routerLink="/login">Login</a>
+				<a routerLink="/register">Register</a>
+			}
+		</header>
 
-	<main>
-		<router-outlet/>
-	</main>
-}
+		<main>
+			<router-outlet></router-outlet>
+		</main>
+	}
+</div>

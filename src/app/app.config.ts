@@ -10,6 +10,7 @@ import {FirebaseStorage, getStorage, provideStorage} from "@angular/fire/storage
 import {provideStore} from "@ngrx/store";
 import {loadingReducer} from "./store";
 import {provideStoreDevtools} from "@ngrx/store-devtools";
+import {provideAnimations} from "@angular/platform-browser/animations";
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -24,5 +25,7 @@ export const appConfig: ApplicationConfig = {
 		provideStoreDevtools({
 			maxAge: 25,
 			logOnly: false,
-		}),]
+		}),
+		provideAnimations(),
+	],
 };
