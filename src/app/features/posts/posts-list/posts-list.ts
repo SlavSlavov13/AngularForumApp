@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {firstValueFrom, Observable} from "rxjs";
 import {PostModel} from "../../../shared/models";
 import {handleError} from "../../../shared/helpers";
@@ -19,16 +19,18 @@ import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../..
 	templateUrl: './posts-list.html',
 	styleUrl: './posts-list.css'
 })
-export class PostsList {
-	posts!: PostModel[];
+export class PostsList implements OnInit {
+	posts: PostModel[] = [];
 	error: string | null = null;
 	currentUid: string | null = null;
 	limitCount: number = 3;
 	postsLimited: boolean = false;
 	userPostsCount: number | null = null;
 	@Input() uid: string | undefined;
+	@Output() loadingChange: EventEmitter<void> = new EventEmitter<void>();
 	finalUid: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	deleting: boolean = false;
 
 
 	constructor(
@@ -40,8 +42,9 @@ export class PostsList {
 	}
 
 	async ngOnInit(): Promise<void> {
-		this.store.dispatch(showLoading());
 		try {
+			this.store.dispatch(showLoading());
+			this.loadingChange.emit();
 			const threadId: string | null = this.route.snapshot.paramMap.get('threadId');
 			const uidFromURL: string | null = this.route.snapshot.paramMap.get('uid');
 			this.currentUid = await this.authService.currentUid();
@@ -76,14 +79,17 @@ export class PostsList {
 	}
 
 	async delete(postId: string): Promise<void> {
-		const post: PostModel = (await firstValueFrom(this.postService.getPost(postId)))!;
-		const ok: boolean = confirm(`Delete post "${post.body}"? This cannot be undone.`);
-		if (!ok) return;
-
-		this.postService.deletePost(postId).subscribe({
-			error: (e): void => {
-				this.error = handleError(e);
-			}
-		});
+		try {
+			this.deleting = true;
+			const post: PostModel = (await firstValueFrom(this.postService.getPost(postId)))!;
+			const ok: boolean = confirm(`Delete post "${post.body}"? This cannot be undone.`);
+			if (!ok) return;
+			await firstValueFrom(this.postService.deletePost(postId))
+			this.posts = this.posts.filter(post => post.id !== postId);
+		} catch (e) {
+			this.error = handleError(e);
+		} finally {
+			this.deleting = false;
+		}
 	}
 }

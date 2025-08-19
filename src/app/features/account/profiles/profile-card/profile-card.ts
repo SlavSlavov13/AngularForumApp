@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AppUserModel} from '../../../../shared/models';
 import {MyThreads} from "../../../threads/my-threads/my-threads";
@@ -24,10 +24,12 @@ export class ProfileCard implements OnInit {
 	showThreads: boolean = false;
 	showPosts: boolean = false;
 	currentUid: string | null = null;
+	thisComponentLoaded: boolean = false;
 
 	constructor(
 		protected authService: AuthService,
 		private store: Store<AppState>,
+		private cdr: ChangeDetectorRef,
 	) {
 	}
 
@@ -37,11 +39,13 @@ export class ProfileCard implements OnInit {
 		this.photoPending = !!this.user.photoURL;
 		if (!this.photoPending) {
 			this.store.dispatch(hideLoading());
+			this.thisComponentLoaded = true;
 		}
 	}
 
 	onPhotoLoaded(): void {
 		this.store.dispatch(hideLoading());
+		this.thisComponentLoaded = true;
 	}
 
 	toggleThreads(): void {
@@ -51,4 +55,9 @@ export class ProfileCard implements OnInit {
 	togglePosts(): void {
 		this.showPosts = !this.showPosts;
 	}
+
+	onChildLoadingChange(): void {
+		this.cdr.detectChanges();
+	}
+
 }
