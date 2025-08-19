@@ -1,6 +1,4 @@
-<h1>My Threads</h1>
-@if (loading) {
-	Loading…
-} @else {
-	<app-profile-threads-list [uid]="uid" [profileCard]="this.profileCard"></app-profile-threads-list>
+@if (!(this.loading$ | async)) {
+	<h1>My Threads</h1>
 }
+<app-profile-threads-list [uid]="uid" [profileCard]="this.profileCard"></app-profile-threads-list>
