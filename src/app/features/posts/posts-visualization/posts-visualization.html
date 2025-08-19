@@ -15,7 +15,8 @@
 						}
 						@if (post.authorId === currentUid) {
 							<a [routerLink]="['/posts', post.id, 'edit']" class="title">Edit post</a>
-							<!--							<button type="button" class="danger" (click)="delete(post.id)">Delete</button>-->
+							<app-post-delete [postId]="post.id" (deleting)="onDeleting()" (postDeleted)="onPostDeleted($event)">
+							</app-post-delete>
 						}
 						@if (!this.postInThread) {
 							<a [routerLink]="['/threads', post.threadId]" class="title">Go to thread</a>
