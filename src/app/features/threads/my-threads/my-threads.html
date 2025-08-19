@@ -1,6 +1,0 @@
-@if (this.userLoaded && !(this.loading$ | async)) {
-	<h1>My Threads</h1>
-}
-@if (this.userLoaded) {
-	<app-profile-threads-list [uid]="uid" [profileCard]="this.profileCard" (loadingChange)="onChildLoadingChange()"></app-profile-threads-list>
-}

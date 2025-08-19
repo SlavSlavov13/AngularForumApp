@@ -14,7 +14,7 @@ export const routes: Routes = [
 			{
 				path: '',
 				loadComponent: () =>
-					import('./features/threads/threads-list/threads-list').then(m => m.ThreadsList),
+					import('./features/threads/all-threads-list/all-threads-list').then(m => m.AllThreadsList),
 			},
 			{
 				path: 'create',
@@ -63,12 +63,12 @@ export const routes: Routes = [
 			{
 				path: '',
 				loadComponent: () =>
-					import('./features/account/profiles/my-profile/my-profile').then(m => m.MyProfile),
+					import('./features/account/profiles/profile-details/profile-details').then(m => m.ProfileDetails),
 			},
 			{
 				path: 'threads',
 				loadComponent: () =>
-					import('./features/threads/my-threads/my-threads').then(m => m.MyThreads),
+					import('./features/threads/user-threads/user-threads').then(m => m.UserThreads),
 			},
 			{
 				path: 'posts',
@@ -90,7 +90,7 @@ export const routes: Routes = [
 				path: '',
 				canActivate: [authGuard],
 				loadComponent: () =>
-					import('./features/account/profiles/my-profile/my-profile').then(m => m.MyProfile),
+					import('./features/account/profiles/profile-details/profile-details').then(m => m.ProfileDetails),
 				pathMatch: 'full'
 			},
 			{
@@ -133,6 +133,6 @@ export const routes: Routes = [
 	{
 		path: '**',
 		loadComponent: () =>
-			import('./features/threads/threads-list/threads-list').then(m => m.ThreadsList),
+			import('./shared/components/not-found/not-found').then(m => m.NotFound),
 	},
 ];

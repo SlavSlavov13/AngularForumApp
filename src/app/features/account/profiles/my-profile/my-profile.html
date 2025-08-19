@@ -1,8 +1,0 @@
-@if (!this.userLoaded && !(this.loading$ | async)) {
-	@if (error) {
-		<p class="error">{{ error }}</p>
-	}
-}
-@if (this.userLoaded) {
-	<app-profile-card [user]="user"></app-profile-card>
-}

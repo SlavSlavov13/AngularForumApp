@@ -1,0 +1,10 @@
+@if (this.componentLoaded && !(this.loading$ | async)) {
+	@if (this.myProfile) {
+		<h1>My Threads</h1>
+	} @else {
+		{{ this.user.displayName }}'s Threads
+	}
+}
+@if (this.componentLoaded) {
+	<app-threads-visualization [threads]="this.threads" [error]="this.error"></app-threads-visualization>
+}

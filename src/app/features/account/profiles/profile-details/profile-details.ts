@@ -7,19 +7,20 @@ import {handleError} from "../../../../shared/helpers";
 import {Store} from "@ngrx/store";
 import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../../store";
-import {AsyncPipe} from "@angular/common";
 
 @Component({
 	selector: 'app-profile-details',
-	imports: [ProfileCard, AsyncPipe],
+	imports: [ProfileCard],
 	templateUrl: './profile-details.html',
 	styleUrl: './profile-details.css'
 })
 export class ProfileDetails implements OnInit {
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	error: string | null = null;
+	uid: string | null = null;
 	user!: AppUserModel;
-	userLoaded: boolean = false;
+	componentLoaded: boolean = false;
+	myProfile: boolean = false;
 
 	constructor(
 		private route: ActivatedRoute,
@@ -31,13 +32,17 @@ export class ProfileDetails implements OnInit {
 	async ngOnInit(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
-			const uid: string = this.route.snapshot.paramMap.get('uid')!;
-			this.user = await this.authService.getUser(uid);
-			this.userLoaded = true;
+			this.uid = this.route.snapshot.paramMap.get('uid');
+			if (!this.uid) {
+				this.uid = (await this.authService.currentUid())!;
+				this.myProfile = true;
+			}
+			this.user = await this.authService.getUser(this.uid);
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
 			this.store.dispatch(hideLoading());
+			this.componentLoaded = true;
 		}
 	}
 }

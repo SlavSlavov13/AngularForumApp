@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MyProfile } from './my-profile';
+import { AllThreadsList } from './all-threads-list';
 
-describe('MyProfile', () => {
-  let component: MyProfile;
-  let fixture: ComponentFixture<MyProfile>;
+describe('AllThreadsList', () => {
+  let component: AllThreadsList;
+  let fixture: ComponentFixture<AllThreadsList>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MyProfile]
+      imports: [AllThreadsList]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MyProfile);
+    fixture = TestBed.createComponent(AllThreadsList);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

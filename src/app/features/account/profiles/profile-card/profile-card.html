@@ -52,7 +52,7 @@
 			}
 		</div>
 
-		@if (user.uid === this.currentUid) {
+		@if (this.myProfile) {
 			<a routerLink="/my-profile/edit">Edit Profile</a>
 		}
 
@@ -66,17 +66,13 @@
 	}
 	@if (showThreads) {
 		<section class="my-threads-section">
-			@if (user.uid === this.currentUid) {
-				<app-my-threads [profileCard]="true" (loadingChange)="onChildLoadingChange()"></app-my-threads>
-			} @else {
-				<app-user-threads [profileCard]="true" (loadingChange)="onChildLoadingChange()"></app-user-threads>
-			}
+			<app-user-profile-threads></app-user-profile-threads>
 		</section>
 	}
 
 	@if (showPosts) {
 		<section class="my-threads-section">
-			<app-posts-list [uid]="user.uid" (loadingChange)="onChildLoadingChange()"></app-posts-list>
+			<app-posts-list [uid]="user.uid"></app-posts-list>
 		</section>
 	}
 </section>

@@ -1,24 +1,25 @@
-import {Component, OnInit} from '@angular/core';
-import {RouterLink} from '@angular/router';
-import {ThreadModel} from '../../../shared/models';
-import {ThreadService} from '../../../core/services/thread.service';
+import {Component} from '@angular/core';
+import {ThreadModel} from "../../../shared/models";
 import {firstValueFrom, Observable} from "rxjs";
-import {handleError} from "../../../shared/helpers";
-import {Store} from "@ngrx/store";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
-import {AsyncPipe} from "@angular/common";
+import {ThreadService} from "../../../core/services/thread.service";
+import {Store} from "@ngrx/store";
+import {handleError} from "../../../shared/helpers";
+import {ThreadsVisualization} from "../threads-visualization/threads-visualization";
 
 @Component({
-	selector: 'app-threads-list',
-	standalone: true,
-	imports: [RouterLink, AsyncPipe],
-	templateUrl: './threads-list.html',
-	styleUrl: './threads-list.css'
+	selector: 'app-all-threads-list',
+	imports: [
+		ThreadsVisualization
+	],
+	templateUrl: './all-threads-list.html',
+	styleUrl: './all-threads-list.css'
 })
-export class ThreadsList implements OnInit {
-	threads!: ThreadModel[];
+export class AllThreadsList {
+	threads: ThreadModel[] = [];
 	error: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	componentLoaded: boolean = false;
 
 	constructor(
 		private threadService: ThreadService,
@@ -34,6 +35,7 @@ export class ThreadsList implements OnInit {
 			this.error = handleError(e);
 		} finally {
 			this.store.dispatch(hideLoading());
+			this.componentLoaded = true;
 		}
 	}
 }

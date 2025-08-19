@@ -1,0 +1,31 @@
+.not-found-container {
+	text-align: center;
+	padding: 40px;
+	font-family: Arial, sans-serif;
+}
+
+.not-found-container h1 {
+	font-size: 8rem;
+	margin-bottom: 0;
+	color: #ff3c00;
+}
+
+.not-found-container h2 {
+	font-size: 2rem;
+	margin-top: 0;
+}
+
+.not-found-container p {
+	font-size: 1.2rem;
+	margin: 20px 0;
+}
+
+.not-found-container a {
+	color: #007bff;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.not-found-container a:hover {
+	text-decoration: underline;
+}
