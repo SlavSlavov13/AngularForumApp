@@ -5,12 +5,14 @@ import {AppState, selectLoadingVisible} from "../../../store";
 import {Store} from "@ngrx/store";
 import {AsyncPipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
+import {PluralizePipe} from "../../../shared/pipes/pluralize-pipe";
 
 @Component({
 	selector: 'app-threads-visualization',
 	imports: [
 		AsyncPipe,
-		RouterLink
+		RouterLink,
+		PluralizePipe
 	],
 	templateUrl: './threads-visualization.html',
 	styleUrl: './threads-visualization.css'
