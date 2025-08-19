@@ -22,7 +22,6 @@ export class ThreadPostsList implements OnInit {
 	threadId!: string;
 	error: string | null = null;
 	currentUid: string | null = null;
-	limitCount: number = 3;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	componentLoaded: boolean = false;
 	user!: AppUserModel;
@@ -40,7 +39,7 @@ export class ThreadPostsList implements OnInit {
 			this.store.dispatch(showLoading());
 			this.currentUid = await this.authService.currentUid();
 			this.threadId = this.route.snapshot.paramMap.get('threadId')!;
-			this.posts = await firstValueFrom(this.postService.listPostsByThread(this.threadId, this.limitCount));
+			this.posts = await firstValueFrom(this.postService.listPostsByThread(this.threadId));
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
