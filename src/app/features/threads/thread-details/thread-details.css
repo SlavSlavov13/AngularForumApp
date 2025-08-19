@@ -33,13 +33,12 @@
 
 .author {
 	display: inline-block;
-	margin-top: 12px;
+	margin: 12px 12px 12px 0;
 	color: #005bb5;
 	font-weight: 600;
 	text-decoration: none;
 	font-style: italic;
 	transition: color 0.3s ease;
-	margin-right: 12px;
 }
 
 .author:hover {
@@ -75,6 +74,7 @@ button.danger:hover {
 
 .add-post {
 	background-color: #73bbfb;
+	text-align: center;
 }
 
 .add-post:hover {
@@ -120,5 +120,10 @@ button.danger:hover {
 		font-size: 0.9rem;
 		display: block;
 		margin-top: 10px;
+	}
+
+	.add-post {
+		width: 100%;
+		margin: 0 !important;
 	}
 }

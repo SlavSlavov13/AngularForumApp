@@ -53,7 +53,7 @@
 		</div>
 
 		@if (this.myProfile) {
-			<a routerLink="/my-profile/edit">Edit Profile</a>
+			<a routerLink="/my-profile/edit" class="edit-profile">Edit Profile</a>
 		}
 
 		<button type="button" (click)="toggleThreads()" [disabled]="(this.loading$ | async)">

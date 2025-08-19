@@ -2,7 +2,9 @@
 	<section class="container">
 		<h2>{{ this.thread.title }}</h2>
 		<p>{{ this.thread.body }}</p>
-		<p class="tags">Tags: {{ this.tags }}</p>
+		@if (thread.tags.length > 0) {
+			<p class="tags">Tags: {{ this.tags }}</p>
+		}
 		<a [routerLink]="['/profile', this.thread.authorId]" class="title author">Author: {{ this.author.displayName }}</a>
 		@if (this.thread.authorId === (this.currentUid | async)) {
 			<button [routerLink]="['/threads', thread.id, 'edit']">Edit</button>

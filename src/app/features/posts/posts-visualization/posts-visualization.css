@@ -61,6 +61,8 @@ a.title:hover {
 }
 
 a.edit-btn, .go-to-thread {
+	box-sizing: border-box;
+	text-align: center;
 	background-color: #0073e6;
 	border: none;
 	color: white;
@@ -92,6 +94,11 @@ a.edit-btn:hover, .go-to-thread:hover {
 /* Responsive Design */
 
 @media (max-width: 768px) {
+	a.edit-btn, .go-to-thread {
+		display: block;
+		width: 100%;
+	}
+
 	.posts-list-container {
 		padding: 15px 20px;
 		margin: 15px;

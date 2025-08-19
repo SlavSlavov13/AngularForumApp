@@ -5,7 +5,7 @@
 		@let loggedIn = this.authService.user$ | async;
 
 		@if (loggedIn) {
-			<a routerLink="/threads/create">Create</a>
+			<a routerLink="/threads/create">Create Thread</a>
 			<a routerLink="/my-profile/threads">My Threads</a>
 			<a routerLink="/my-profile/posts">My Posts</a>
 		}

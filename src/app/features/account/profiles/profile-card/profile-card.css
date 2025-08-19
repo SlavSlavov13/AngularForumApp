@@ -9,6 +9,8 @@
 	box-shadow: 0 4px 12px rgba(0, 64, 128, 0.12);
 	font-family: Arial, sans-serif;
 	color: #004080;
+	word-break: break-word;
+	overflow-wrap: break-word;
 }
 
 h1 {
@@ -143,6 +145,11 @@ a:hover {
 	margin-top: 20px;
 }
 
+.edit-profile {
+	box-sizing: border-box;
+	text-align: center;
+}
+
 /* Responsive Design */
 
 @media (max-width: 768px) {
@@ -151,6 +158,11 @@ a:hover {
 		align-items: center;
 		padding: 15px 20px;
 		text-align: center;
+	}
+
+	.edit-profile {
+		width: 100%;
+		margin: 8px 0;
 	}
 
 	.avatar {
@@ -179,6 +191,10 @@ a:hover {
 	.my-threads-section {
 		margin-top: 15px;
 	}
+	
+	.stats .stat {
+		flex: 1 1 100%;
+	}
 }
 
 @media (max-width: 480px) {
@@ -195,9 +211,5 @@ a:hover {
 		width: 70px;
 		height: 70px;
 		font-size: 30px;
-	}
-
-	.stats .stat {
-		flex: 1 1 100%;
 	}
 }

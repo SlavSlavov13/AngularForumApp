@@ -21,3 +21,11 @@ button.danger:disabled {
 	background-color: #e69980; /* Lighter red for disabled */
 	cursor: not-allowed;
 }
+
+
+@media (max-width: 768px) {
+	button.danger {
+		width: 100%;
+		margin: 16px 0;
+	}
+}
