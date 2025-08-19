@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {ProfileThreadsList} from '../profile-threads-list/profile-threads-list';
 import {AuthService} from '../../../core/services/auth.service';
 import {CommonModule} from "@angular/common";
@@ -19,10 +19,12 @@ export class MyThreads implements OnInit {
 	uid!: string;
 	error: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	userLoaded: boolean = false;
 
 	constructor(
 		protected authService: AuthService,
 		private store: Store<AppState>,
+		private cdr: ChangeDetectorRef,
 	) {
 	}
 
@@ -32,10 +34,15 @@ export class MyThreads implements OnInit {
 		try {
 			this.store.dispatch(showLoading());
 			this.uid = (await this.authService.currentUid())!;
+			this.userLoaded = true;
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
 			this.store.dispatch(hideLoading());
 		}
+	}
+
+	onChildLoadingChange(): void {
+		this.cdr.detectChanges();
 	}
 }

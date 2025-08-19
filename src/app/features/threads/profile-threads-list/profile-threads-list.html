@@ -1,9 +1,6 @@
-@let threads = this.threads$ | async;
-<section class="threads-list">
-	@if (!threads) {
-		<section class="page-skeleton">Loading…</section>
-	} @else {
-		@if (threads?.length) {
+@if (!(this.loading$ | async)) {
+	<section class="threads-list">
+		@if (threads.length > 0) {
 			<ul>
 				@for (t of threads; track t.id) {
 					<li class="thread-item">
@@ -34,5 +31,5 @@
 		} @else {
 			<p>No threads to display.</p>
 		}
-	}
-</section>
+	</section>
+}

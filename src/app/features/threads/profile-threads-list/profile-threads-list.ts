@@ -1,10 +1,12 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ThreadService} from '../../../core/services/thread.service';
 import {AsyncPipe, DatePipe} from "@angular/common";
 import {RouterLink} from "@angular/router";
-import {catchError, Observable, of} from "rxjs";
+import {firstValueFrom, Observable} from "rxjs";
 import {ThreadModel} from "../../../shared/models";
 import {handleError} from "../../../shared/helpers";
+import {Store} from "@ngrx/store";
+import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 
 @Component({
 	selector: 'app-profile-threads-list',
@@ -17,39 +19,35 @@ import {handleError} from "../../../shared/helpers";
 	templateUrl: './profile-threads-list.html'
 })
 export class ProfileThreadsList implements OnInit {
+	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	error: string | null = null;
-	loading: boolean = true;
-	threads$: Observable<ThreadModel[]> = new Observable<ThreadModel[]>();
+	threads!: ThreadModel[];
 	limitCount: number = 3;
 	userThreadsCount!: number;
 	@Input() profileCard: boolean = false;
 	@Input({required: true}) uid!: string;
+	@Output() loadingChange: EventEmitter<void> = new EventEmitter<void>();
 
-	constructor(protected threadService: ThreadService) {
+	constructor(
+		protected threadService: ThreadService,
+		private store: Store<AppState>,
+	) {
 	}
 
 	async ngOnInit(): Promise<void> {
 		try {
+			this.store.dispatch(showLoading());
+			this.loadingChange.emit();
 			this.userThreadsCount = await this.threadService.getUserThreadsCount(this.uid);
 			if (this.profileCard) {
-				this.threads$ = this.threadService.listThreadsByUser(this.uid, this.limitCount).pipe(
-					catchError(e => {
-						this.error = handleError(e);
-						return of([]);
-					})
-				);
+				this.threads = await firstValueFrom(this.threadService.listThreadsByUser(this.uid, this.limitCount))
 			} else {
-				this.threads$ = this.threadService.listThreadsByUser(this.uid).pipe(
-					catchError(e => {
-						this.error = handleError(e);
-						return of([]);
-					})
-				);
+				this.threads = await firstValueFrom(this.threadService.listThreadsByUser(this.uid))
 			}
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.loading = false;
+			this.store.dispatch(hideLoading());
 		}
 
 	}

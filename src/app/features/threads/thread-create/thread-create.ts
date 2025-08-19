@@ -35,26 +35,26 @@ export class ThreadCreate {
 	}
 
 	async submit(): Promise<void> {
-		if (this.form.invalid) {
-			this.form.markAllAsTouched();
-			return;
-		}
-
-		const {title, body, tags} = this.form.value;
-
-		const uid: string = (await this.authService.currentUid())!;
-		const author: AppUserModel = (await this.authService.getUser(uid))!;
-		const payload: ThreadCreateModel = {
-			title,
-			body,
-			tags: tags
-				? tags.split(',').map((t: string): string => t.trim()).filter(Boolean)
-				: [],
-			authorId: uid,
-			authorName: author.displayName!
-		};
-
 		try {
+			if (this.form.invalid) {
+				this.form.markAllAsTouched();
+				return;
+			}
+
+			const {title, body, tags} = this.form.value;
+
+			const uid: string = (await this.authService.currentUid())!;
+			const author: AppUserModel = (await this.authService.getUser(uid))!;
+			const payload: ThreadCreateModel = {
+				title,
+				body,
+				tags: tags
+					? tags.split(',').map((t: string): string => t.trim()).filter(Boolean)
+					: [],
+				authorId: uid,
+				authorName: author.displayName!
+			};
+
 			const docRef: DocumentReference = await firstValueFrom(this.threadService.createThread(payload));
 			this.form.reset();
 			await this.router.navigate([`/threads/${docRef.id}`]);

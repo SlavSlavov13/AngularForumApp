@@ -21,8 +21,9 @@ export class ThreadDetails implements OnInit {
 	error: string | null = null;
 	thread!: ThreadModel;
 	author!: AppUserModel;
-	currentUid: Promise<string | null> = this.authService.currentUid()
+	currentUid: Promise<string | null> = this.authService.currentUid();
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	deleting: boolean = false;
 
 	constructor(
 		private route: ActivatedRoute,
@@ -48,14 +49,18 @@ export class ThreadDetails implements OnInit {
 	}
 
 	async delete(): Promise<void> {
-		const ok: boolean = confirm(`Delete thread "${this.thread.title}"? This cannot be undone.`);
-		if (!ok) return;
+		try {
+			this.deleting = true;
+			const ok: boolean = confirm(`Delete thread "${this.thread.title}"? This cannot be undone.`);
+			if (!ok) return;
 
-		this.threadService.deleteThread(this.thread.id).subscribe({
-			error: (e): void => {
-				this.error = handleError(e);
-			}
-		});
-		await this.router.navigate(['/threads']);
+			await firstValueFrom(this.threadService.deleteThread(this.thread.id));
+			await this.router.navigate(['/threads']);
+		} catch (e) {
+			this.error = handleError(e);
+		} finally {
+			this.deleting = false
+		}
+
 	}
 }

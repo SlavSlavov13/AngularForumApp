@@ -1,8 +1,6 @@
 <section class="container">
-	<h1>User Threads</h1>
-	@if (loading) {
-		<p>Loading…</p>
-	} @else {
-		<app-profile-threads-list [uid]="this.uid!" [profileCard]="this.profileCard"></app-profile-threads-list>
+	@if (!(this.loading$ | async)) {
+		<h1>User Threads</h1>
 	}
+	<app-profile-threads-list [uid]="this.uid!" [profileCard]="this.profileCard" (loadingChange)="onChildLoadingChange()"></app-profile-threads-list>
 </section>
