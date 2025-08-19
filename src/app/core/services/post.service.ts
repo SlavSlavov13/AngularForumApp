@@ -1,5 +1,5 @@
 import {Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, serverTimestamp, updateDoc, where, WriteBatch, writeBatch} from '@angular/fire/firestore';
+import {addDoc, collection, collectionData, deleteDoc, doc, docData, DocumentData, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, serverTimestamp, updateDoc, where, WriteBatch, writeBatch} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {PostCreateModel, PostModel} from '../../shared/models';
 import {ThreadService} from "./thread.service";
@@ -71,8 +71,8 @@ export class PostService {
 		});
 	}
 
-	async createPost(data: PostCreateModel): Promise<Observable<any>> {
-		return await runInInjectionContext(this.injector, async (): Promise<Observable<any>> => {
+	createPost(data: PostCreateModel): Observable<any> {
+		return runInInjectionContext(this.injector, (): Observable<any> => {
 			const threadService: ThreadService = this.injector.get(ThreadService);
 			return from(
 				addDoc(collection(this.db, 'posts'), {
@@ -81,14 +81,13 @@ export class PostService {
 					updatedAt: serverTimestamp(),
 				})
 			).pipe(
-				switchMap(postRef =>
-					threadService.incrementReplyCount(data.threadId).pipe(
-						map(() => postRef)
-					)
-				)
+				switchMap((postRef) => threadService.incrementReplyCount(data.threadId).pipe(
+					map(() => postRef)
+				))
 			);
 		});
 	}
+
 
 	updatePost(id: string, patch: Partial<PostModel>): Observable<void> {
 		return runInInjectionContext(this.injector, (): Observable<void> => {
@@ -102,19 +101,18 @@ export class PostService {
 		});
 	}
 
-	async deletePost(id: string): Promise<Observable<void>> {
-		return await runInInjectionContext(this.injector, async (): Promise<Observable<any>> => {
-
+	deletePost(id: string): Observable<void> {
+		return runInInjectionContext(this.injector, (): Observable<void> => {
 			const threadService: ThreadService = this.injector.get(ThreadService);
 			const postRef = doc(this.db, 'posts', id);
 
 			return from(getDoc(postRef)).pipe(
-				switchMap(snapshot => {
-					const postData = snapshot.data()!;
-					const threadId = postData['threadId'];
+				switchMap((snapshot): Observable<void> => {
+					const postData: DocumentData = snapshot.data()!;
+					const threadId: string = postData['threadId'];
 
 					return from(deleteDoc(postRef)).pipe(
-						switchMap(() => threadService.decrementReplyCount(threadId))
+						switchMap((): Observable<void> => threadService.decrementReplyCount(threadId))
 					);
 				}),
 				map(() => void 0)
