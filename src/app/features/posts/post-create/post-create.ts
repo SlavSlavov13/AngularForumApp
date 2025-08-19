@@ -18,6 +18,7 @@ import {firstValueFrom} from "rxjs";
 export class PostCreate {
 	error: string | null = null;
 	form: FormGroup;
+	creating: boolean = false;
 
 	constructor(
 		private fb: FormBuilder,
@@ -36,25 +37,26 @@ export class PostCreate {
 			this.form.markAllAsTouched();
 			return;
 		}
-
-		const {body} = this.form.value;
-
-		const uid: string = (await this.authService.currentUid())!;
-		const author: AppUserModel = (await this.authService.getUser(uid))!;
-		const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
-		const payload: PostCreateModel = {
-			threadId: threadId,
-			body: body,
-			authorId: uid,
-			authorName: author.displayName!
-		};
-
 		try {
+			const {body} = this.form.value;
+
+			const uid: string = (await this.authService.currentUid())!;
+			const author: AppUserModel = (await this.authService.getUser(uid))!;
+			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
+			const payload: PostCreateModel = {
+				threadId: threadId,
+				body: body,
+				authorId: uid,
+				authorName: author.displayName!
+			};
+
 			await firstValueFrom(this.postService.createPost(payload));
 			this.form.reset();
 			await this.router.navigate([`/threads/${threadId}`]);
 		} catch (e) {
 			this.error = handleError(e);
+		} finally {
+			this.creating = false;
 		}
 	}
 }

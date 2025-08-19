@@ -29,6 +29,10 @@ label {
 	color: #003366;
 }
 
+.is-invalid {
+	border-color: #cc0000;
+}
+
 textarea {
 	width: 100%;
 	padding: 10px 12px;

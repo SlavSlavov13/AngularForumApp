@@ -2,37 +2,39 @@
 <div class="post-create-container">
 	<h2>Create a Post</h2>
 
-	<!-- Error message -->
-	@if (error) {
-		<p class="error-message">{{ error }}</p>
-	}
-
 	<!-- Form -->
-	<form [formGroup]="form" (ngSubmit)="submit()">
+	<form [formGroup]="this.form" (ngSubmit)="submit()">
 		<div class="form-field">
 			<label for="body">Post Content</label>
 			<textarea
 					id="body"
 					formControlName="body"
 					rows="6"
-					placeholder="Write your post here...">
+					placeholder="Write your post here..."
+					[class.is-invalid]="this.form.get('body')?.invalid && this.form.get('body')?.touched"
+			>
       </textarea>
 
 			<!-- Validation messages -->
-			@if (form.get('body')?.touched && form.get('body')?.invalid) {
+			@if (this.form.get('body')?.touched && this.form.get('body')?.invalid) {
 				<div class="validation-errors">
-					@if (form.get('body')?.errors?.['required']) {
+					@if (this.form.get('body')?.errors?.['required']) {
 						<p>Post content is required.</p>
 					}
-					@if (form.get('body')?.errors?.['minlength']) {
-						<p>Post content must be at least 20 characters long.</p>
+					@if (this.form.get('body')?.errors?.['minlength']) {
+						<span>Minimum length is {{ this.form.get('body')?.errors?.['minlength']?.requiredLength }} characters.</span>
 					}
 				</div>
 			}
 		</div>
 
-		<button type="submit" [disabled]="form.invalid">
-			Submit
+		<button type="submit" [disabled]="this.form.invalid || this.creating">
+			{{ this.creating ? 'Creating...' : 'Create' }}
 		</button>
+
+		<!-- Error message -->
+		@if (this.error) {
+			<p style="color:#b00020">{{ this.error }}</p>
+		}
 	</form>
 </div>

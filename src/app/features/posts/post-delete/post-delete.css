@@ -14,11 +14,11 @@ button.danger {
 }
 
 button.danger:hover:not(:disabled) {
-	background-color: #992600; /* Darker red on hover */
+	background-color: #992600;
 }
 
 button.danger:disabled {
-	background-color: #e69980; /* Lighter red for disabled */
+	background-color: #e69980;
 	cursor: not-allowed;
 }
 
