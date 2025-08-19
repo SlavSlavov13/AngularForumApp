@@ -7,7 +7,7 @@
 			<button type="button" class="danger" (click)="delete()">Delete</button>
 		}
 		<a [routerLink]="['/profile', this.thread.authorId]" class="title">Author: {{ this.author.displayName }}</a>
+		<a [routerLink]="['/threads', this.thread.id, 'add-post']" class="title add-post">Add post to thread</a>
 	</section>
-	<a [routerLink]="['/threads', this.thread.id, 'add-post']" class="title">Add post to thread</a>
 }
 <app-thread-posts-list></app-thread-posts-list>

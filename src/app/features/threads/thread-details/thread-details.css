@@ -9,6 +9,7 @@
 	box-shadow: 0 3px 6px rgba(0, 64, 128, 0.15);
 	font-family: Arial, sans-serif;
 	color: #004080;
+	position: relative;
 }
 
 .container h2 {
@@ -47,6 +48,11 @@ button:hover:not(:disabled) {
 
 button.danger:hover {
 	background-color: #992600;
+}
+
+.add-post {
+	position: absolute;
+	right: 30px;
 }
 
 a.title {

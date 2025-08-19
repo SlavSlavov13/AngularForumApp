@@ -4,7 +4,7 @@
 	max-width: 720px;
 	margin: 20px auto;
 	background-color: #e6f0ff; /* Very light blue */
-	padding: 20px 25px;
+	padding: 20px 25px 6px;
 	border-radius: 8px;
 	box-shadow: 0 3px 8px rgba(0, 64, 128, 0.12);
 	font-family: Arial, sans-serif;

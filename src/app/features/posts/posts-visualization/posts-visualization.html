@@ -11,7 +11,7 @@
 							Posted on: {{ post.createdAt.toDate() | date:'medium' }}
 						</small>
 						@if (this.postInThread) {
-							<a [routerLink]="['/profile', post.authorId]" class="title"> · Author: {{ post.authorName }}</a>
+							<a [routerLink]="['/profile', post.authorId]" class="title">Author: {{ post.authorName }}</a>
 						}
 						@if (post.authorId === currentUid) {
 							<a [routerLink]="['/posts', post.id, 'edit']" class="title edit-btn">Edit post</a>
