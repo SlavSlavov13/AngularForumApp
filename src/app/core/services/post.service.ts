@@ -71,21 +71,23 @@ export class PostService {
 		});
 	}
 
-	createPost(data: PostCreateModel): Observable<any> {
-		const threadService = this.injector.get(ThreadService);
-		return from(
-			addDoc(collection(this.db, 'posts'), {
-				...data,
-				createdAt: serverTimestamp(),
-				updatedAt: serverTimestamp(),
-			})
-		).pipe(
-			switchMap(postRef =>
-				threadService.incrementReplyCount(data.threadId).pipe(
-					map(() => postRef)
+	async createPost(data: PostCreateModel): Promise<Observable<any>> {
+		return await runInInjectionContext(this.injector, async (): Promise<Observable<any>> => {
+			const threadService: ThreadService = this.injector.get(ThreadService);
+			return from(
+				addDoc(collection(this.db, 'posts'), {
+					...data,
+					createdAt: serverTimestamp(),
+					updatedAt: serverTimestamp(),
+				})
+			).pipe(
+				switchMap(postRef =>
+					threadService.incrementReplyCount(data.threadId).pipe(
+						map(() => postRef)
+					)
 				)
-			)
-		);
+			);
+		});
 	}
 
 	updatePost(id: string, patch: Partial<PostModel>): Observable<void> {
@@ -100,21 +102,24 @@ export class PostService {
 		});
 	}
 
-	deletePost(id: string): Observable<void> {
-		const threadService = this.injector.get(ThreadService);
-		const postRef = doc(this.db, 'posts', id);
+	async deletePost(id: string): Promise<Observable<void>> {
+		return await runInInjectionContext(this.injector, async (): Promise<Observable<any>> => {
 
-		return from(getDoc(postRef)).pipe(
-			switchMap(snapshot => {
-				const postData = snapshot.data()!;
-				const threadId = postData['threadId'];
+			const threadService: ThreadService = this.injector.get(ThreadService);
+			const postRef = doc(this.db, 'posts', id);
 
-				return from(deleteDoc(postRef)).pipe(
-					switchMap(() => threadService.decrementReplyCount(threadId))
-				);
-			}),
-			map(() => void 0)
-		);
+			return from(getDoc(postRef)).pipe(
+				switchMap(snapshot => {
+					const postData = snapshot.data()!;
+					const threadId = postData['threadId'];
+
+					return from(deleteDoc(postRef)).pipe(
+						switchMap(() => threadService.decrementReplyCount(threadId))
+					);
+				}),
+				map(() => void 0)
+			);
+		});
 	}
 
 
