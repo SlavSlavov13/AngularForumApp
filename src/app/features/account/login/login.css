@@ -81,6 +81,10 @@ p[style] {
 	font-weight: 600;
 }
 
+#email, #password {
+	box-sizing: border-box;
+}
+
 /* Responsive Design */
 
 @media (max-width: 480px) {

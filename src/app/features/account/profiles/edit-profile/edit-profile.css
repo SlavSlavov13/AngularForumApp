@@ -103,6 +103,10 @@ button.btn-secondary:disabled {
 	cursor: not-allowed;
 }
 
+#displayName, #email, #currentPassword, #newPassword, #repeatNewPassword, #profile-photo {
+	box-sizing: border-box;
+}
+
 /* Photo Preview */
 
 .photo-preview img.rounded {

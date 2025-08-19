@@ -7,7 +7,7 @@
 	/>
 }
 
-<section class="container">
+<section class="container" [style.display]="(loading$ | async) ? 'none' : 'block'">
 	@if (this.thisComponentLoaded) {
 		<h1>Profile</h1>
 

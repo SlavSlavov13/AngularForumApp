@@ -14,12 +14,12 @@
 							<a [routerLink]="['/profile', post.authorId]" class="title">Author: {{ post.authorName }}</a>
 						}
 						@if (post.authorId === currentUid) {
-							<a [routerLink]="['/posts', post.id, 'edit']" class="title edit-btn">Edit post</a>
+							<a [routerLink]="['/posts', post.id, 'edit']" class="edit-btn">Edit post</a>
 							<app-post-delete [postId]="post.id" (deleting)="onDeleting()" (postDeleted)="onPostDeleted($event)">
 							</app-post-delete>
 						}
 						@if (!this.postInThread) {
-							<a [routerLink]="['/threads', post.threadId]" class="title">Go to thread</a>
+							<a [routerLink]="['/threads', post.threadId]" class="go-to-thread">Go to thread</a>
 						}
 					</div>
 				}

@@ -11,6 +11,10 @@ form {
 	color: #004080;
 }
 
+#body {
+	box-sizing: border-box;
+}
+
 .error-message {
 	color: #cc0000;
 	font-weight: 600;

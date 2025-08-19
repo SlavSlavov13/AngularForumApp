@@ -2,7 +2,7 @@
 
 	<div>
 		<label>Email</label>
-		<input formControlName="email" type="email"/>
+		<input formControlName="email" type="email" id="email"/>
 		@if (form.get('email')?.touched && form.get('email')?.invalid) {
 			<small>
 				@if (form.get('email')?.errors?.['required']) {
@@ -17,7 +17,7 @@
 
 	<div>
 		<label>Display name</label>
-		<input formControlName="displayName" type="text"/>
+		<input formControlName="displayName" type="text" id="displayName"/>
 		@if (form.get('displayName')?.touched && form.get('displayName')?.invalid) {
 			<small>
 				@if (form.get('displayName')?.errors?.['required']) {
@@ -35,30 +35,33 @@
 	</div>
 
 	<div [formGroup]="passwords">
-		<label>Password</label>
-		<input formControlName="password" type="password"/>
-		@if (form.get('passwords.password')?.touched && form.get('passwords.password')?.invalid) {
-			<small>
-				@if (form.get('passwords.password')?.errors?.['required']) {
-					<span>Password is required.</span>
-				}
-				@if (form.get('passwords.password')?.errors?.['minlength']) {
-					<span>
+		<div>
+			<label>Password</label>
+			<input formControlName="password" type="password" id="password"/>
+			@if (form.get('passwords.password')?.touched && form.get('passwords.password')?.invalid) {
+				<small>
+					@if (form.get('passwords.password')?.errors?.['required']) {
+						<span>Password is required.</span>
+					}
+					@if (form.get('passwords.password')?.errors?.['minlength']) {
+						<span>
             Minimum {{ form.get('passwords.password')?.errors?.['minlength']?.requiredLength }} characters.
           </span>
-				}
-			</small>
-		}
-
-		<label>Repeat Password</label>
-		<input formControlName="repeat" type="password"/>
-		@if (form.get('passwords.repeat')?.touched && form.get('passwords.repeat')?.invalid) {
-			<small>
-				@if (form.get('passwords.repeat')?.errors?.['required']) {
-					<span>Repeat password is required.</span>
-				}
-			</small>
-		}
+					}
+				</small>
+			}
+		</div>
+		<div>
+			<label>Repeat Password</label>
+			<input formControlName="repeat" type="password" id="repeatPassword"/>
+			@if (form.get('passwords.repeat')?.touched && form.get('passwords.repeat')?.invalid) {
+				<small>
+					@if (form.get('passwords.repeat')?.errors?.['required']) {
+						<span>Repeat password is required.</span>
+					}
+				</small>
+			}
+		</div>
 
 		@if (form.get('passwords')?.errors?.['noMatch'] &&
 		(form.get('passwords.repeat')?.touched || form.get('passwords.password')?.touched)) {

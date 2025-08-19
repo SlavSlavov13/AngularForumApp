@@ -1,5 +1,4 @@
 /* Light Blue Theme CSS */
-
 body {
 	margin: 0;
 	font-family: Arial, sans-serif;
@@ -13,6 +12,7 @@ header.nav {
 	display: flex;
 	align-items: center;
 	box-shadow: 0 2px 4px rgba(0, 64, 128, 0.2);
+	font-size: 18px;
 }
 
 header.nav a {
@@ -58,9 +58,10 @@ button:hover:not(:disabled) {
 }
 
 main {
+	box-sizing: border-box;
 	padding: 20px;
 	background-color: #e6f0ff; /* Very light blue background */
-	min-height: calc(100vh - 60px); /* Adjust based on header height */
+	min-height: calc(100vh - 65px); /* Adjust based on header height */
 }
 
 @media (max-width: 768px) {

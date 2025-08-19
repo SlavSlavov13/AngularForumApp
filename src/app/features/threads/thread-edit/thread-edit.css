@@ -1,7 +1,8 @@
 /* Edit Thread Form Styling - Light Blue Theme */
 
 .container {
-	max-width: 600px;
+	box-sizing: border-box;
+	max-width: 900px;
 	margin: 20px auto;
 	background-color: #e6f0ff; /* Very light blue background */
 	padding: 25px 30px;
@@ -10,6 +11,16 @@
 	font-family: Arial, sans-serif;
 	color: #004080;
 }
+
+#body, #title, #tags {
+	box-sizing: border-box;
+}
+
+#body-label, #tags-label {
+	margin-top: 10px;
+
+}
+
 
 .container h1 {
 	margin-bottom: 20px;

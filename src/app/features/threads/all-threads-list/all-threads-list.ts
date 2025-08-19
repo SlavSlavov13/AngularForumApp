@@ -6,11 +6,13 @@ import {ThreadService} from "../../../core/services/thread.service";
 import {Store} from "@ngrx/store";
 import {handleError} from "../../../shared/helpers";
 import {ThreadsVisualization} from "../threads-visualization/threads-visualization";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
 	selector: 'app-all-threads-list',
 	imports: [
-		ThreadsVisualization
+		ThreadsVisualization,
+		AsyncPipe
 	],
 	templateUrl: './all-threads-list.html',
 	styleUrl: './all-threads-list.css'

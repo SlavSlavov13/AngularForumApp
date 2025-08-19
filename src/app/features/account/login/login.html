@@ -1,7 +1,7 @@
 <form (ngSubmit)="submit()" [formGroup]="form">
 	<div>
 		<label>Email</label>
-		<input formControlName="email" type="email"/>
+		<input formControlName="email" type="email" id="email"/>
 
 		@if (form.get('email')?.touched && form.get('email')?.invalid) {
 			<small>
@@ -17,7 +17,7 @@
 
 	<div>
 		<label>Password</label>
-		<input formControlName="password" type="password"/>
+		<input formControlName="password" type="password" id="password"/>
 
 		@if (form.get('password')?.touched && form.get('password')?.invalid) {
 			<small>

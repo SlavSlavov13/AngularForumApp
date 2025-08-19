@@ -2,28 +2,41 @@
 	<h1>Create Thread</h1>
 
 	<form (ngSubmit)="submit()" [formGroup]="form">
-		<label>
+		<label for="title">
 			Title
-			<input formControlName="title" type="text"/>
 		</label>
+		<input formControlName="title" id="title" type="text"/>
 
-		@if (form.get('title')?.invalid && form.get('title')?.touched) {
-			<div>Title is required (min 6).</div>
+
+		@if (form.controls['title'].touched && form.controls['title'].invalid) {
+			<small class="error">
+				@if (form.controls['title'].errors?.['required']) {
+					Title is required.
+				}
+				@if (form.controls['title'].errors?.['minlength']) {
+					Title must be at least 6 characters.
+				}
+			</small>
 		}
 
-		<label>
+		<label for="body" id="body-label">
 			Body
-			<textarea formControlName="body"></textarea>
 		</label>
+		<textarea formControlName="body" id="body"></textarea>
 
-		@if (form.get('body')?.invalid && form.get('body')?.touched) {
-			<div>Body is required (min 20).</div>
+
+		@if (form.controls['body'].touched && form.controls['body'].invalid) {
+			<small class="error">
+				@if (form.controls['body'].errors?.['required']) {
+					Body is required.
+				}
+				@if (form.controls['body'].errors?.['minlength']) {
+					Body must be at least 20 characters.
+				}
+			</small>
 		}
-
-		<label>
-			Tags (comma-separated)
-			<input formControlName="tags" placeholder="angular,help,discussion"/>
-		</label>
+		<label for="tags" id="tags-label">Tags</label>
+		<input id="tags" type="text" formControlName="tags" placeholder="comma,separated,tags"/>
 
 		<button [disabled]="form.invalid" type="submit">Create</button>
 	</form>

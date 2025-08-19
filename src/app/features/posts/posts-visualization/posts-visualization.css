@@ -1,10 +1,11 @@
 /* Posts List Container Styling - Light Blue Theme */
 
 .posts-list-container {
-	max-width: 720px;
+	box-sizing: border-box;
+	max-width: 900px;
 	margin: 20px auto;
 	background-color: #e6f0ff; /* Very light blue */
-	padding: 20px 25px 6px;
+	padding: 6px 25px 6px;
 	border-radius: 8px;
 	box-shadow: 0 3px 8px rgba(0, 64, 128, 0.12);
 	font-family: Arial, sans-serif;
@@ -19,10 +20,13 @@
 }
 
 .post-item {
+	box-sizing: border-box;
+	word-break: break-word;
+	overflow-wrap: break-word;
 	background-color: #dceeff; /* Soft very light blue */
 	border-radius: 6px;
 	padding: 15px 18px;
-	margin-bottom: 14px;
+	margin: 14px 0;
 	box-shadow: 0 1px 4px rgba(0, 64, 128, 0.1);
 	transition: box-shadow 0.3s ease, transform 0.3s ease;
 	position: relative;
@@ -56,7 +60,7 @@ a.title:hover {
 	text-decoration: underline;
 }
 
-a.edit-btn {
+a.edit-btn, .go-to-thread {
 	background-color: #0073e6;
 	border: none;
 	color: white;
@@ -67,12 +71,22 @@ a.edit-btn {
 	margin-right: 12px;
 	transition: background-color 0.3s ease;
 	font-size: 1rem;
+	text-decoration: none;
 }
 
-a.edit-btn:hover {
+a.edit-btn:hover, .go-to-thread:hover {
 	color: white;
 	text-decoration: none;
 	background: #005bb5;
+}
+
+.go-to-thread {
+	background-color: #73bbfb;
+
+}
+
+.go-to-thread:hover {
+	background-color: #259eff;
 }
 
 /* Responsive Design */

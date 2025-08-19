@@ -1,7 +1,13 @@
 /* Thread Detail Section Styling - Light Blue Theme */
 
+* {
+	box-sizing: border-box;
+}
+
 .container {
-	max-width: 720px;
+	word-break: break-word;
+	overflow-wrap: break-word;
+	max-width: 900px;
 	margin: 20px auto;
 	background-color: #e6f0ff; /* Very light blue background */
 	padding: 25px 30px;
@@ -25,7 +31,23 @@
 	margin-bottom: 25px;
 }
 
-button {
+.author {
+	display: inline-block;
+	margin-top: 12px;
+	color: #005bb5;
+	font-weight: 600;
+	text-decoration: none;
+	font-style: italic;
+	transition: color 0.3s ease;
+	margin-right: 12px;
+}
+
+.author:hover {
+	color: #003366;
+	text-decoration: underline;
+}
+
+button, .add-post {
 	background-color: #0073e6;
 	border: none;
 	color: white;
@@ -36,6 +58,7 @@ button {
 	margin-right: 12px;
 	transition: background-color 0.3s ease;
 	font-size: 1rem;
+	text-decoration: none;
 }
 
 button.danger {
@@ -51,23 +74,15 @@ button.danger:hover {
 }
 
 .add-post {
-	position: absolute;
-	right: 30px;
+	background-color: #73bbfb;
 }
 
-a.title {
-	display: inline-block;
-	margin-top: 12px;
-	color: #005bb5;
-	font-weight: 600;
-	text-decoration: none;
+.add-post:hover {
+	background-color: #259eff;
+}
+
+.tags {
 	font-style: italic;
-	transition: color 0.3s ease;
-}
-
-a.title:hover {
-	color: #003366;
-	text-decoration: underline;
 }
 
 /* Responsive Design */

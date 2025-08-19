@@ -12,7 +12,8 @@ form {
 }
 
 form > div,
-form > div[formGroup] {
+form > div,
+form > div > div {
 	margin-bottom: 22px;
 }
 
@@ -79,6 +80,10 @@ p[style] {
 	font-weight: 600;
 	text-align: center;
 	margin-top: 15px;
+}
+
+#email, #displayName, #password, #repeatPassword {
+	box-sizing: border-box;
 }
 
 /* Responsive Design */

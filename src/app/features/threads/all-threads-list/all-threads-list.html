@@ -1,3 +1,6 @@
+@if (this.componentLoaded && !(this.loading$ | async)) {
+	<h1>All Threads</h1>
+}
 @if (this.componentLoaded) {
 	<app-threads-visualization [threads]="this.threads" [error]="this.error"></app-threads-visualization>
 }

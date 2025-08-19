@@ -2,11 +2,12 @@
 	<section class="container">
 		<h2>{{ this.thread.title }}</h2>
 		<p>{{ this.thread.body }}</p>
+		<p class="tags">Tags: {{ this.tags }}</p>
+		<a [routerLink]="['/profile', this.thread.authorId]" class="title author">Author: {{ this.author.displayName }}</a>
 		@if (this.thread.authorId === (this.currentUid | async)) {
 			<button [routerLink]="['/threads', thread.id, 'edit']">Edit</button>
 			<button type="button" class="danger" (click)="delete()">Delete</button>
 		}
-		<a [routerLink]="['/profile', this.thread.authorId]" class="title">Author: {{ this.author.displayName }}</a>
 		<a [routerLink]="['/threads', this.thread.id, 'add-post']" class="title add-post">Add post to thread</a>
 	</section>
 }

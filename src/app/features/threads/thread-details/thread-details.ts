@@ -21,6 +21,7 @@ export class ThreadDetails implements OnInit {
 	error: string | null = null;
 	thread!: ThreadModel;
 	author!: AppUserModel;
+	tags: string = '';
 	currentUid: Promise<string | null> = this.authService.currentUid();
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	deleting: boolean = false;
@@ -39,6 +40,7 @@ export class ThreadDetails implements OnInit {
 			this.store.dispatch(showLoading());
 			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
 			this.thread = await firstValueFrom(this.threadService.getThread(threadId));
+			this.tags = this.thread.tags.join(', ')
 			const authorUid: string = this.thread.authorId;
 			this.author = await this.authService.getUser(authorUid);
 		} catch (e) {
