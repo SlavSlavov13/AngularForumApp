@@ -97,6 +97,10 @@ p.error {
 
 }
 
+.is-invalid {
+	border-color: #cc0000 !important;
+}
+
 /* Responsive Design */
 
 @media (max-width: 768px) {

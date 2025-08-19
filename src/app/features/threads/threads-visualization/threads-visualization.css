@@ -59,6 +59,23 @@ div > a, span {
 	overflow-wrap: break-word;
 }
 
+.error-message,
+.container > .error {
+	background-color: #ffe6e6; /* Light red background */
+	border: 1px solid #cc0000; /* Dark red border */
+	color: #990000; /* Dark red text */
+	padding: 15px 20px;
+	border-radius: 6px;
+	font-weight: 600;
+	font-size: 1.1rem;
+	text-align: center;
+	margin: 20px 0;
+}
+
+.container > .error {
+	margin-bottom: 25px;
+}
+
 @media (max-width: 600px) {
 	div {
 		flex-direction: column;

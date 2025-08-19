@@ -1,4 +1,4 @@
-@if (this.componentLoaded && !(this.loading$ | async)) {
+@if (this.componentLoaded && !(this.loading$ | async) && !this.error) {
 	<h1>All Threads</h1>
 }
 @if (this.componentLoaded) {

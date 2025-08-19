@@ -20,6 +20,7 @@ import {handleError} from "../../../shared/helpers";
 export class ThreadCreate {
 	error: string | null = null;
 	form: FormGroup;
+	creating: boolean = false;
 
 	constructor(
 		private fb: FormBuilder,
@@ -40,6 +41,7 @@ export class ThreadCreate {
 				this.form.markAllAsTouched();
 				return;
 			}
+			this.creating = true;
 
 			const {title, body, tags} = this.form.value;
 
@@ -60,6 +62,8 @@ export class ThreadCreate {
 			await this.router.navigate([`/threads/${docRef.id}`]);
 		} catch (e) {
 			this.error = handleError(e);
+		} finally {
+			this.creating = false;
 		}
 	}
 }

@@ -10,7 +10,7 @@ import {firstValueFrom} from "rxjs";
 @Component({
 	selector: 'app-post-create',
 	imports: [
-		ReactiveFormsModule
+		ReactiveFormsModule,
 	],
 	templateUrl: './post-create.html',
 	styleUrl: './post-create.css'

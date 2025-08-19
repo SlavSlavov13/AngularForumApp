@@ -1,4 +1,4 @@
-@if (this.componentLoaded && !(this.loading$ | async)) {
+@if (this.componentLoaded && !(this.loading$ | async) && !this.error) {
 	@if (this.myProfile) {
 		<h1>My Posts</h1>
 	} @else {

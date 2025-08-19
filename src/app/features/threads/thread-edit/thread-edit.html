@@ -1,54 +1,49 @@
 @if (!(this.loading$ | async)) {
 
-
 	<section class="container">
 		<h1>Edit Thread</h1>
 
-		@if (error) {
-			<p class="error">{{ error }}</p>
-		} @else {
-			<form [formGroup]="form" (ngSubmit)="submit()" novalidate>
-				<!-- Title -->
-				<label for="title">Title</label>
-				<input id="title" type="text" formControlName="title"/>
-				@if (form.controls['title'].touched && form.controls['title'].invalid) {
-					<small class="error">
-						@if (form.controls['title'].errors?.['required']) {
-							Title is required.
-						}
-						@if (form.controls['title'].errors?.['minlength']) {
-							Title must be at least 6 characters.
-						}
-					</small>
-				}
-
-				<!-- Body -->
-				<label for="body">Body</label>
-				<textarea id="body" formControlName="body" rows="8"></textarea>
-				@if (form.controls['body'].touched && form.controls['body'].invalid) {
-					<small class="error">
-						@if (form.controls['body'].errors?.['required']) {
-							Body is required.
-						}
-						@if (form.controls['body'].errors?.['minlength']) {
-							Body must be at least 20 characters.
-						}
-					</small>
-				}
-
-				<!-- Tags -->
-				<label for="tags">Tags</label>
-				<input id="tags" type="text" formControlName="tags" placeholder="comma,separated,tags"/>
-
-				<!-- Submit -->
-				<button type="submit" [disabled]="form.invalid || saving">
-					@if (!saving) {
-						Save
-					} @else {
-						Saving…
+		<form [formGroup]="this.form" (ngSubmit)="submit()" novalidate>
+			<!-- Title -->
+			<label for="title">Title</label>
+			<input id="title" type="text" formControlName="title" [class.is-invalid]="this.form.get('title')?.invalid && this.form.get('title')?.touched"/>
+			@if (this.form.controls['title'].touched && this.form.controls['title'].invalid) {
+				<small class="error">
+					@if (this.form.controls['title'].errors?.['required']) {
+						Title is required.
 					}
-				</button>
-			</form>
-		}
+					@if (this.form.controls['title'].errors?.['minlength']) {
+						Minimum length is {{ this.form.get('title')?.errors?.['minlength']?.requiredLength }} characters.
+					}
+				</small>
+			}
+
+			<!-- Body -->
+			<label for="body">Body</label>
+			<textarea id="body" formControlName="body" rows="8" [class.is-invalid]="this.form.get('body')?.invalid && this.form.get('body')?.touched"></textarea>
+			@if (this.form.controls['body'].touched && this.form.controls['body'].invalid) {
+				<small class="error">
+					@if (this.form.controls['body'].errors?.['required']) {
+						Body is required.
+					}
+					@if (this.form.controls['body'].errors?.['minlength']) {
+						Minimum length is {{ this.form.get('body')?.errors?.['minlength']?.requiredLength }} characters.
+					}
+				</small>
+			}
+
+			<!-- Tags -->
+			<label for="tags">Tags</label>
+			<input id="tags" type="text" formControlName="tags" placeholder="comma, separated, tags"/>
+
+			<!-- Submit -->
+			<button [disabled]="this.saving || this.form.invalid" type="submit">
+				{{ this.saving ? 'Saving...' : 'Save' }}
+			</button>
+
+			@if (this.error) {
+				<p style="color:#b00020">{{ error }}</p>
+			}
+		</form>
 	</section>
 }

@@ -1,16 +1,22 @@
 @if (!(loading$ | async)) {
-	<section class="container">
-		<h2>{{ this.thread.title }}</h2>
-		<p>{{ this.thread.body }}</p>
-		@if (thread.tags.length > 0) {
-			<p class="tags">Tags: {{ this.tags }}</p>
-		}
-		<a [routerLink]="['/profile', this.thread.authorId]" class="title author">Author: {{ this.author.displayName }}</a>
-		@if (this.thread.authorId === (this.currentUid | async)) {
-			<button [routerLink]="['/threads', thread.id, 'edit']">Edit</button>
-			<button type="button" class="danger" (click)="delete()">Delete</button>
-		}
-		<a [routerLink]="['/threads', this.thread.id, 'add-post']" class="title add-post">Add post to thread</a>
-	</section>
+	@if (this.error) {
+		<div class="error-message">{{ this.error }}</div>
+	} @else {
+		<section class="container">
+			<h2>{{ this.thread.title }}</h2>
+			<p>{{ this.thread.body }}</p>
+			@if (this.thread.tags.length > 0) {
+				<p class="tags">Tags: {{ this.tags }}</p>
+			}
+			<a [routerLink]="['/profile', this.thread.authorId]" class="title author">Author: {{ this.author.displayName }}</a>
+			@if (this.thread.authorId === (this.currentUid | async)) {
+				<button [routerLink]="['/threads', this.thread.id, 'edit']">Edit</button>
+				<button type="button" class="danger" (click)="delete()">Delete</button>
+			}
+			<a [routerLink]="['/threads', this.thread.id, 'add-post']" class="title add-post">Add post to thread</a>
+		</section>
+	}
 }
-<app-thread-posts-list></app-thread-posts-list>
+@if (!this.error) {
+	<app-thread-posts-list></app-thread-posts-list>
+}

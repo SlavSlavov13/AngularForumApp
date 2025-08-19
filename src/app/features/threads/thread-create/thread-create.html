@@ -1,20 +1,20 @@
 <section class="container">
 	<h1>Create Thread</h1>
 
-	<form (ngSubmit)="submit()" [formGroup]="form">
+	<form (ngSubmit)="submit()" [formGroup]="this.form">
 		<label for="title">
 			Title
 		</label>
-		<input formControlName="title" id="title" type="text"/>
+		<input formControlName="title" id="title" type="text" [class.is-invalid]="this.form.get('title')?.invalid && this.form.get('title')?.touched"/>
 
 
-		@if (form.controls['title'].touched && form.controls['title'].invalid) {
+		@if (this.form.controls['title'].touched && this.form.controls['title'].invalid) {
 			<small class="error">
-				@if (form.controls['title'].errors?.['required']) {
+				@if (this.form.controls['title'].errors?.['required']) {
 					Title is required.
 				}
-				@if (form.controls['title'].errors?.['minlength']) {
-					Title must be at least 6 characters.
+				@if (this.form.controls['title'].errors?.['minlength']) {
+					<span>Minimum length is {{ this.form.get('title')?.errors?.['minlength']?.requiredLength }} characters.</span>
 				}
 			</small>
 		}
@@ -22,22 +22,28 @@
 		<label for="body" id="body-label">
 			Body
 		</label>
-		<textarea formControlName="body" id="body"></textarea>
+		<textarea formControlName="body" id="body" [class.is-invalid]="this.form.get('body')?.invalid && this.form.get('body')?.touched"></textarea>
 
 
-		@if (form.controls['body'].touched && form.controls['body'].invalid) {
+		@if (this.form.controls['body'].touched && this.form.controls['body'].invalid) {
 			<small class="error">
-				@if (form.controls['body'].errors?.['required']) {
+				@if (this.form.controls['body'].errors?.['required']) {
 					Body is required.
 				}
-				@if (form.controls['body'].errors?.['minlength']) {
-					Body must be at least 20 characters.
+				@if (this.form.controls['body'].errors?.['minlength']) {
+					<span>Minimum length is {{ this.form.get('body')?.errors?.['minlength']?.requiredLength }} characters.</span>
 				}
 			</small>
 		}
 		<label for="tags" id="tags-label">Tags</label>
-		<input id="tags" type="text" formControlName="tags" placeholder="comma,separated,tags"/>
+		<input id="tags" type="text" formControlName="tags" placeholder="comma, separated, tags"/>
 
-		<button [disabled]="form.invalid" type="submit">Create</button>
+		<button [disabled]="this.form.invalid || this.creating" type="submit">
+			{{ this.creating ? 'Creating...' : 'Create' }}
+		</button>
+
+		@if (this.error) {
+			<p style="color:#b00020">{{ error }}</p>
+		}
 	</form>
 </section>

@@ -98,6 +98,10 @@ p.error {
 	margin-bottom: 20px;
 }
 
+.is-invalid {
+	border-color: #cc0000 !important;
+}
+
 /* Responsive Design */
 
 @media (max-width: 768px) {
