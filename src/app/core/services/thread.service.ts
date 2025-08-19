@@ -1,12 +1,17 @@
-import {inject, Injectable, Injector, runInInjectionContext} from '@angular/core';
+import {Injectable, Injector, runInInjectionContext} from '@angular/core';
 import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getCountFromServer, getDoc, increment, limit, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {ThreadCreateModel, ThreadModel} from '../../shared/models';
+import {PostService} from "./post.service";
+import {switchMap} from "rxjs/operators";
 
 @Injectable({providedIn: 'root'})
 export class ThreadService {
-	private db: Firestore = inject(Firestore);
-	private injector: Injector = inject(Injector);
+	constructor(
+		private db: Firestore,
+		private injector: Injector,
+	) {
+	}
 
 	listThreads(limitCount?: number): Observable<ThreadModel[]> {
 		return runInInjectionContext(this.injector, (): Observable<ThreadModel[]> => {
@@ -95,7 +100,13 @@ export class ThreadService {
 
 	deleteThread(id: string): Observable<void> {
 		return runInInjectionContext(this.injector, (): Observable<void> => {
-			return from(deleteDoc(doc(this.db, 'threads', id)));
+			const postService: PostService = this.injector.get(PostService);
+			const threadRef = doc(this.db, 'threads', id);
+			return from(deleteDoc(threadRef)).pipe(
+				switchMap((): Observable<void> => {
+					return postService.deletePostsByThreadId(id);
+				})
+			);
 		});
 	}
 

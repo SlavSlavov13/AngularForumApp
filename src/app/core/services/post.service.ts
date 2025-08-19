@@ -1,5 +1,5 @@
 import {Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, collectionData, deleteDoc, doc, docData, DocumentData, Firestore, getCountFromServer, getDoc, limit, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
+import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, serverTimestamp, updateDoc, where, WriteBatch, writeBatch} from '@angular/fire/firestore';
 import {from, Observable} from 'rxjs';
 import {PostCreateModel, PostModel} from '../../shared/models';
 import {ThreadService} from "./thread.service";
@@ -10,7 +10,6 @@ export class PostService {
 	constructor(
 		private db: Firestore,
 		private injector: Injector,
-		private threadService: ThreadService,
 	) {
 	}
 
@@ -73,19 +72,20 @@ export class PostService {
 	}
 
 	createPost(data: PostCreateModel): Observable<any> {
-		return runInInjectionContext(this.injector, (): Observable<any> => {
-			return from(
-				addDoc(collection(this.db, 'posts'), {
-					...data,
-					createdAt: serverTimestamp(),
-					updatedAt: serverTimestamp(),
-				})
-			).pipe(
-				switchMap((postRef) => this.threadService.incrementReplyCount(data.threadId).pipe(
+		const threadService = this.injector.get(ThreadService);
+		return from(
+			addDoc(collection(this.db, 'posts'), {
+				...data,
+				createdAt: serverTimestamp(),
+				updatedAt: serverTimestamp(),
+			})
+		).pipe(
+			switchMap(postRef =>
+				threadService.incrementReplyCount(data.threadId).pipe(
 					map(() => postRef)
-				))
-			);
-		});
+				)
+			)
+		);
 	}
 
 	updatePost(id: string, patch: Partial<PostModel>): Observable<void> {
@@ -101,21 +101,20 @@ export class PostService {
 	}
 
 	deletePost(id: string): Observable<void> {
-		return runInInjectionContext(this.injector, (): Observable<void> => {
-			const postRef = doc(this.db, 'posts', id);
+		const threadService = this.injector.get(ThreadService);
+		const postRef = doc(this.db, 'posts', id);
 
-			return from(getDoc(postRef)).pipe(
-				switchMap((snapshot): Observable<void> => {
-					const postData: DocumentData = snapshot.data()!;
-					const threadId: string = postData['threadId'];
+		return from(getDoc(postRef)).pipe(
+			switchMap(snapshot => {
+				const postData = snapshot.data()!;
+				const threadId = postData['threadId'];
 
-					return from(deleteDoc(postRef)).pipe(
-						switchMap((): Observable<void> => this.threadService.decrementReplyCount(threadId))
-					);
-				}),
-				map(() => void 0)
-			);
-		});
+				return from(deleteDoc(postRef)).pipe(
+					switchMap(() => threadService.decrementReplyCount(threadId))
+				);
+			}),
+			map(() => void 0)
+		);
 	}
 
 
@@ -125,6 +124,23 @@ export class PostService {
 			const snapshot = await getDoc(ref);
 			return snapshot.exists();
 		});
+	}
 
+	deletePostsByThreadId(threadId: string): Observable<void> {
+		return runInInjectionContext(this.injector, (): Observable<void> => {
+			const postsRef = collection(this.db, 'posts');
+			const q = query(postsRef, where('threadId', '==', threadId));
+
+			return from(getDocs(q)).pipe(
+				switchMap(async (postsSnapshot): Promise<void> => {
+					const batch: WriteBatch = writeBatch(this.db);
+					postsSnapshot.forEach((docSnap): void => {
+						batch.delete(docSnap.ref);
+					});
+					await batch.commit();
+				}),
+				map((): undefined => void 0)
+			);
+		});
 	}
 }

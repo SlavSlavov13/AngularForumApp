@@ -21,6 +21,10 @@
 								}
 							</div>
 						}
+						@if (uid === currentUid) {
+							<a [routerLink]="['/threads', t.id, 'edit']" class="title">Edit thread</a>
+							<button type="button" class="danger" (click)="delete(t.id)">Delete</button>
+						}
 					</li>
 				}
 
