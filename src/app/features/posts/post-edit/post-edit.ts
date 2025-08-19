@@ -2,14 +2,18 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {PostModel, ThreadModel} from "../../../shared/models";
 import {ActivatedRoute, Router} from "@angular/router";
-import {firstValueFrom} from "rxjs";
+import {firstValueFrom, Observable} from "rxjs";
 import {handleError} from "../../../shared/helpers";
 import {PostService} from "../../../core/services/post.service";
+import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
+import {Store} from "@ngrx/store";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
 	selector: 'app-post-edit',
 	imports: [
-		ReactiveFormsModule
+		ReactiveFormsModule,
+		AsyncPipe
 	],
 	templateUrl: './post-edit.html',
 	styleUrl: './post-edit.css'
@@ -17,8 +21,8 @@ import {PostService} from "../../../core/services/post.service";
 export class PostEdit implements OnInit {
 	error: string | null = null;
 	form!: FormGroup;
-	loading: boolean = true;
 	saving: boolean = false;
+	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	post!: PostModel;
 
 	constructor(
@@ -26,44 +30,49 @@ export class PostEdit implements OnInit {
 		private route: ActivatedRoute,
 		private router: Router,
 		private postService: PostService,
+		private store: Store<AppState>,
 	) {
 	}
 
 	async ngOnInit(): Promise<void> {
 		try {
+			this.store.dispatch(showLoading());
 			const postId: string = this.route.snapshot.paramMap.get('postId')!;
 			this.post = await firstValueFrom(this.postService.getPost(postId));
 
 			this.form = this.fb.group({
 				body: [this.post.body, [Validators.required, Validators.minLength(20)]],
 			});
-
-			this.loading = false;
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.loading = false;
+			this.store.dispatch(hideLoading());
 		}
 	}
 
 	async submit(): Promise<void> {
-		if (this.form.invalid) {
-			this.form.markAllAsTouched();
-			return;
-		}
-		this.saving = true;
-		const raw = this.form.value as { body: string; };
-
-		const patch: Partial<ThreadModel> = {
-			body: raw.body,
-		};
-
-		this.postService.updatePost(this.post.id, patch).subscribe({
-			error: (e): void => {
-				this.error = handleError(e);
+		try {
+			if (this.form.invalid) {
+				this.form.markAllAsTouched();
+				return;
 			}
-		});
-		await this.router.navigate(['/threads', this.post.threadId]);
-		this.loading = false;
+			this.saving = true;
+			const raw = this.form.value as { body: string; };
+
+			const patch: Partial<ThreadModel> = {
+				body: raw.body,
+			};
+
+			this.postService.updatePost(this.post.id, patch).subscribe({
+				error: (e): void => {
+					this.error = handleError(e);
+				}
+			});
+			await this.router.navigate(['/threads', this.post.threadId]);
+		} catch (e) {
+			this.error = handleError(e);
+		} finally {
+			this.saving = false;
+		}
 	}
 }

@@ -1,31 +1,34 @@
-<form [formGroup]="form" (ngSubmit)="submit()">
-	@if (error) {
-		<div class="error-message">
-			{{ error }}
-		</div>
-	}
-	<label for="body">Edit Post</label>
-	<textarea
-			id="body"
-			formControlName="body"
-			rows="6"
-			[class.invalid]="form.get('body')?.invalid && form.get('body')?.touched"
-	></textarea>
-	@if (form.get('body')?.touched && form.get('body')?.invalid) {
-		<div class="validation-errors">
-			@if (form.get('body')?.errors?.['required']) {
-				<div>
-					Post body is required.
-				</div>
-			}
-			@if (form.get('body')?.errors?.['minlength']) {
-				<div>
-					Post body must be at least 20 characters long.
-				</div>
-			}
-		</div>
-	}
-	<button type="submit" [disabled]="saving || form.invalid">
-		{{ saving ? 'Saving...' : 'Save Changes' }}
-	</button>
-</form>
+@if (!(this.loading$ | async)) {
+
+	<form [formGroup]="form" (ngSubmit)="submit()">
+		@if (error) {
+			<div class="error-message">
+				{{ error }}
+			</div>
+		}
+		<label for="body">Edit Post</label>
+		<textarea
+				id="body"
+				formControlName="body"
+				rows="6"
+				[class.invalid]="form.get('body')?.invalid && form.get('body')?.touched"
+		></textarea>
+		@if (form.get('body')?.touched && form.get('body')?.invalid) {
+			<div class="validation-errors">
+				@if (form.get('body')?.errors?.['required']) {
+					<div>
+						Post body is required.
+					</div>
+				}
+				@if (form.get('body')?.errors?.['minlength']) {
+					<div>
+						Post body must be at least 20 characters long.
+					</div>
+				}
+			</div>
+		}
+		<button type="submit" [disabled]="saving || form.invalid">
+			{{ saving ? 'Saving...' : 'Save Changes' }}
+		</button>
+	</form>
+}
