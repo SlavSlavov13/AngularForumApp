@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserProfileThreads } from './user-profile-threads';
+import { UserThreadsList } from './user-threads-list';
 
-describe('UserProfileThreads', () => {
-  let component: UserProfileThreads;
-  let fixture: ComponentFixture<UserProfileThreads>;
+describe('UserThreadsList', () => {
+  let component: UserThreadsList;
+  let fixture: ComponentFixture<UserThreadsList>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserProfileThreads]
+      imports: [UserThreadsList]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UserProfileThreads);
+    fixture = TestBed.createComponent(UserThreadsList);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

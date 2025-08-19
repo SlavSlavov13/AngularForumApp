@@ -7,12 +7,12 @@ import {PostsList} from "../../../posts/posts-list/posts-list";
 import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../../store";
 import {Store} from "@ngrx/store";
-import {UserProfileThreads} from "../../../threads/user-profile-threads/user-profile-threads";
+import {UserProfileThreadsList} from "../../../threads/user-profile-threads-list/user-profile-threads-list";
 
 @Component({
 	selector: 'app-profile-card',
 	standalone: true,
-	imports: [CommonModule, RouterLink, PostsList, UserProfileThreads],
+	imports: [CommonModule, RouterLink, PostsList, UserProfileThreadsList],
 	templateUrl: './profile-card.html',
 	styleUrl: './profile-card.css'
 })

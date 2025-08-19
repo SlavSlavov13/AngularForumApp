@@ -3,23 +3,23 @@ import {firstValueFrom, Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {AppUserModel, ThreadModel} from "../../../shared/models";
 import {AuthService} from "../../../core/services/auth.service";
+import {ThreadService} from "../../../core/services/thread.service";
 import {Store} from "@ngrx/store";
 import {ActivatedRoute} from "@angular/router";
 import {handleError} from "../../../shared/helpers";
-import {ThreadsVisualization} from "../threads-visualization/threads-visualization";
 import {AsyncPipe} from "@angular/common";
-import {ThreadService} from "../../../core/services/thread.service";
+import {ThreadsVisualization} from "../threads-visualization/threads-visualization";
 
 @Component({
-	selector: 'app-user-profile-threads',
+	selector: 'app-user-profile-threads-list',
 	imports: [
-		ThreadsVisualization,
-		AsyncPipe
+		AsyncPipe,
+		ThreadsVisualization
 	],
-	templateUrl: './user-profile-threads.html',
-	styleUrl: './user-profile-threads.css'
+	templateUrl: './user-profile-threads-list.html',
+	styleUrl: './user-profile-threads-list.css'
 })
-export class UserProfileThreads implements OnInit {
+export class UserProfileThreadsList implements OnInit {
 	uid: string | null = null;
 	error: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);

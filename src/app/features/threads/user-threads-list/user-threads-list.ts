@@ -3,23 +3,23 @@ import {AppUserModel, ThreadModel} from "../../../shared/models";
 import {firstValueFrom, Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {ThreadService} from "../../../core/services/thread.service";
+import {AuthService} from "../../../core/services/auth.service";
 import {Store} from "@ngrx/store";
+import {ActivatedRoute} from "@angular/router";
 import {handleError} from "../../../shared/helpers";
 import {ThreadsVisualization} from "../threads-visualization/threads-visualization";
 import {AsyncPipe} from "@angular/common";
-import {AuthService} from "../../../core/services/auth.service";
-import {ActivatedRoute} from "@angular/router";
 
 @Component({
-	selector: 'app-user-threads',
+	selector: 'app-user-threads-list',
 	imports: [
 		ThreadsVisualization,
 		AsyncPipe
 	],
-	templateUrl: './user-threads.html',
-	styleUrl: './user-threads.css'
+	templateUrl: './user-threads-list.html',
+	styleUrl: './user-threads-list.css'
 })
-export class UserThreads implements OnInit {
+export class UserThreadsList implements OnInit {
 	threads: ThreadModel[] = [];
 	uid: string | null = null;
 	myProfile: boolean = false;
@@ -39,6 +39,7 @@ export class UserThreads implements OnInit {
 	async ngOnInit(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
+			// Another user profile
 			this.uid = this.route.snapshot.paramMap.get('uid');
 			// My profile
 			if (!this.uid) {

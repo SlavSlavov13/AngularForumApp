@@ -68,7 +68,7 @@ export const routes: Routes = [
 			{
 				path: 'threads',
 				loadComponent: () =>
-					import('./features/threads/user-threads/user-threads').then(m => m.UserThreads),
+					import('./features/threads/user-threads-list/user-threads-list').then(m => m.UserThreadsList),
 			},
 			{
 				path: 'posts',
@@ -105,7 +105,7 @@ export const routes: Routes = [
 					{
 						path: 'threads',
 						loadComponent: () =>
-							import('./features/threads/user-threads/user-threads').then(m => m.UserThreads),
+							import('./features/threads/user-threads-list/user-threads-list').then(m => m.UserThreadsList),
 					},
 					{
 						path: 'posts',
