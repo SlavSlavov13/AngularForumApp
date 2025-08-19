@@ -24,6 +24,7 @@ export class PostsList {
 	error: string | null = null;
 	currentUid: string | null = null;
 	limitCount: number = 3;
+	postsLimited: boolean = false;
 	userPostsCount: number | null = null;
 	@Input() uid: string | undefined;
 	finalUid: string | null = null;
@@ -41,31 +42,31 @@ export class PostsList {
 	async ngOnInit(): Promise<void> {
 		this.store.dispatch(showLoading());
 		try {
-			const threadId: string | null = this.route.snapshot.paramMap.get('id');
-			const parentPath: string = this.route.parent?.parent?.routeConfig?.path ?? this.route.routeConfig?.path ?? '';
+			const threadId: string | null = this.route.snapshot.paramMap.get('threadId');
+			const uidFromURL: string | null = this.route.snapshot.paramMap.get('uid');
 			this.currentUid = await this.authService.currentUid();
 			// Listing posts in profile
 			if (this.uid) {
-				this.userPostsCount = await this.postService.getUserPostsCount(this.uid);
 				this.finalUid = this.uid;
-				this.posts = await firstValueFrom(this.postService.listPostsByUser(this.uid, this.limitCount));
+				this.userPostsCount = await this.postService.getUserPostsCount(this.finalUid);
+				this.posts = await firstValueFrom(this.postService.listPostsByUser(this.finalUid, this.limitCount));
+				this.postsLimited = (this.userPostsCount > this.limitCount);
 			}
 			// Listing posts by thread
-			else if (parentPath === 'threads') {
-				this.posts = await firstValueFrom(this.postService.listPostsByThread(threadId!));
+			else if (threadId) {
+				this.posts = await firstValueFrom(this.postService.listPostsByThread(threadId));
 			}
 			// Listing posts by going to profile/posts for other users
-			else if (parentPath === 'profile') {
-				const userId: string = this.route.snapshot.paramMap.get('id')!;
-				this.finalUid = userId;
-				this.userPostsCount = await this.postService.getUserPostsCount(userId)
-				this.posts = await firstValueFrom(this.postService.listPostsByUser(userId));
+			else if (uidFromURL) {
+				this.finalUid = uidFromURL;
+				this.userPostsCount = await this.postService.getUserPostsCount(this.finalUid)
+				this.posts = await firstValueFrom(this.postService.listPostsByUser(this.finalUid));
 			}
 			// Listing posts by going to my-profile/posts
 			else {
 				this.finalUid = this.currentUid!;
-				this.userPostsCount = await this.postService.getUserPostsCount(this.currentUid!)
-				this.posts = await firstValueFrom(this.postService.listPostsByUser(this.currentUid!));
+				this.userPostsCount = await this.postService.getUserPostsCount(this.finalUid)
+				this.posts = await firstValueFrom(this.postService.listPostsByUser(this.finalUid));
 			}
 		} catch (e) {
 			this.error = handleError(e);

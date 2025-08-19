@@ -1,7 +1,7 @@
 @if (!(loading$ | async)) {
 	@if (error) {
 		<div class="error">{{ error }}</div>
-	} @else if (threads?.length) {
+	} @else if (threads.length > 0) {
 		@for (t of threads; track t.id) {
 			<div>
 				<a [routerLink]="['/threads', t.id]">{{ t.title }}</a>

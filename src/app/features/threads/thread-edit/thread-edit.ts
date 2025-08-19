@@ -30,8 +30,8 @@ export class ThreadEdit implements OnInit {
 
 	async ngOnInit(): Promise<void> {
 		try {
-			const id: string = this.route.snapshot.paramMap.get('id')!;
-			this.thread = await firstValueFrom(this.threadService.getThread(id));
+			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
+			this.thread = await firstValueFrom(this.threadService.getThread(threadId));
 
 			this.form = this.fb.group({
 				title: [this.thread.title, [Validators.required, Validators.minLength(6)]],

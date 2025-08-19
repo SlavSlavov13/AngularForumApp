@@ -15,7 +15,7 @@ import {handleError} from "../../../shared/helpers";
 })
 export class Register implements OnInit {
 	form!: FormGroup;
-	loading: boolean = false;
+	saving: boolean = false;
 	error: string | null = null;
 
 	constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
@@ -42,13 +42,13 @@ export class Register implements OnInit {
 
 
 	async submit(): Promise<void> {
-		if (this.form.invalid || this.loading) {
+		if (this.form.invalid || this.saving) {
 			this.form.markAllAsTouched();
 			return;
 		}
 
 		this.error = null;
-		this.loading = true;
+		this.saving = true;
 		const {email, displayName, passwords} = this.form.value;
 		const password: string = passwords.password;
 
@@ -59,7 +59,7 @@ export class Register implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.loading = false;
+			this.saving = false;
 		}
 	}
 }

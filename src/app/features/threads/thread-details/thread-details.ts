@@ -36,9 +36,9 @@ export class ThreadDetails implements OnInit {
 	async ngOnInit(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
-			const id: string = this.route.snapshot.paramMap.get('id')!;
-			this.thread = await firstValueFrom(this.threadService.getThread(id));
-			const authorUid: string = this.thread!.authorId;
+			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
+			this.thread = await firstValueFrom(this.threadService.getThread(threadId));
+			const authorUid: string = this.thread.authorId;
 			this.author = await this.authService.getUser(authorUid);
 		} catch (e) {
 			this.error = handleError(e);
@@ -48,10 +48,10 @@ export class ThreadDetails implements OnInit {
 	}
 
 	async delete(): Promise<void> {
-		const ok: boolean = confirm(`Delete thread "${this.thread!.title}"? This cannot be undone.`);
+		const ok: boolean = confirm(`Delete thread "${this.thread.title}"? This cannot be undone.`);
 		if (!ok) return;
 
-		this.threadService.deleteThread(this.thread!.id).subscribe({
+		this.threadService.deleteThread(this.thread.id).subscribe({
 			error: (e): void => {
 				this.error = handleError(e);
 			}

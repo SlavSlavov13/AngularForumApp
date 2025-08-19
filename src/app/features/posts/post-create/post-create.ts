@@ -41,7 +41,7 @@ export class PostCreate {
 
 		const uid: string = (await this.authService.currentUid())!;
 		const author: AppUserModel = (await this.authService.getUser(uid))!;
-		const threadId: string = this.route.snapshot.paramMap.get('id')!;
+		const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
 		const payload: PostCreateModel = {
 			threadId: threadId,
 			body: body,

@@ -23,7 +23,7 @@
 							}
 						</div>
 					}
-					@if (this.userPostsCount && this.userPostsCount > posts.length) {
+					@if (this.postsLimited) {
 						<a [routerLink]="['/profile', this.finalUid, 'posts']" class="title">View all posts by user</a>
 					}
 				} @else {

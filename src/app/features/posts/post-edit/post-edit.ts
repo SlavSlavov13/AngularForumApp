@@ -31,8 +31,8 @@ export class PostEdit implements OnInit {
 
 	async ngOnInit(): Promise<void> {
 		try {
-			const id: string = this.route.snapshot.paramMap.get('id')!;
-			this.post = await firstValueFrom(this.postService.getPost(id));
+			const postId: string = this.route.snapshot.paramMap.get('postId')!;
+			this.post = await firstValueFrom(this.postService.getPost(postId));
 
 			this.form = this.fb.group({
 				body: [this.post.body, [Validators.required, Validators.minLength(20)]],

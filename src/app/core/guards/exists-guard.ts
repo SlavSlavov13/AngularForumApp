@@ -9,30 +9,26 @@ export const existsGuard: CanActivateFn = async (route: ActivatedRouteSnapshot):
 	const authService: AuthService = inject(AuthService);
 	const threadService: ThreadService = inject(ThreadService);
 	const postService: PostService = inject(PostService);
-	const id: string | null = route.paramMap.get('id');
+	const uid: string | null = route.paramMap.get('uid');
+	const postId: string | null = route.paramMap.get('postId');
+	const threadId: string | null = route.paramMap.get('threadId');
 
-	if (!id) {
-		return router.createUrlTree(['/threads']);
-	}
-
-	const parentPath: string = route.parent?.routeConfig?.path ?? route.routeConfig?.path ?? '';
-
-	if (parentPath.startsWith('profile')) {
-		if (!(await authService.userExists(id))) {
+	if (uid) {
+		if (!(await authService.userExists(uid))) {
 			return router.createUrlTree(['/threads']);
 		}
 		return true;
 	}
 
-	if (parentPath.startsWith('threads')) {
-		if (!(await threadService.threadExists(id))) {
+	if (threadId) {
+		if (!(await threadService.threadExists(threadId))) {
 			return router.createUrlTree(['/threads']);
 		}
 		return true;
 	}
 
-	if (parentPath.startsWith('posts')) {
-		if (!(await postService.postExists(id))) {
+	if (postId) {
+		if (!(await postService.postExists(postId))) {
 			return router.createUrlTree(['/threads']);
 		}
 		return true;

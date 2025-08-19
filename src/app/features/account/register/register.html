@@ -68,8 +68,8 @@
 		}
 	</div>
 
-	<button [disabled]="loading || form.invalid || form.get('displayName')?.pending" type="submit">
-		{{ loading ? 'Creating account...' : 'Register' }}
+	<button [disabled]="saving || form.invalid || form.get('displayName')?.pending" type="submit">
+		{{ saving ? 'Creating account...' : 'Register' }}
 	</button>
 
 

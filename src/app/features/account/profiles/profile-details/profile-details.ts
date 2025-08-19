@@ -31,7 +31,7 @@ export class ProfileDetails implements OnInit {
 	async ngOnInit(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
-			const uid: string = this.route.snapshot.paramMap.get('id')!;
+			const uid: string = this.route.snapshot.paramMap.get('uid')!;
 			this.user = await this.authService.getUser(uid);
 			this.userLoaded = true;
 		} catch (e) {

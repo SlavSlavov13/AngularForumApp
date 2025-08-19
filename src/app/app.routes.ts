@@ -23,7 +23,7 @@ export const routes: Routes = [
 					import('./features/threads/thread-create/thread-create').then(m => m.ThreadCreate),
 			},
 			{
-				path: ':id',
+				path: ':threadId',
 				canActivate: [existsGuard],
 				children: [
 					{
@@ -50,7 +50,7 @@ export const routes: Routes = [
 	},
 
 	{
-		path: 'posts/:id/edit',
+		path: 'posts/:postId/edit',
 		canActivate: [existsGuard, authGuard, ownerGuard],
 		loadComponent: () =>
 			import('./features/posts/post-edit/post-edit').then(m => m.PostEdit),
@@ -94,7 +94,7 @@ export const routes: Routes = [
 				pathMatch: 'full'
 			},
 			{
-				path: ':id',
+				path: ':uid',
 				canActivate: [existsGuard, selfRedirectGuard],
 				children: [
 					{

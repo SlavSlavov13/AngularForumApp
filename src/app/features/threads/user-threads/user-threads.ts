@@ -22,7 +22,7 @@ export class UserThreads implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.uid = this.route.snapshot.paramMap.get('id')!;
+		this.uid = this.route.snapshot.paramMap.get('uid')!;
 		this.loading = false;
 	}
 }
