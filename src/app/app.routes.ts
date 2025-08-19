@@ -73,7 +73,7 @@ export const routes: Routes = [
 			{
 				path: 'posts',
 				loadComponent: () =>
-					import('./features/posts/posts-list/posts-list').then(m => m.PostsList),
+					import('./features/posts/user-posts-list/user-posts-list').then(m => m.UserPostsList),
 			},
 			{
 				path: 'edit',
@@ -110,7 +110,7 @@ export const routes: Routes = [
 					{
 						path: 'posts',
 						loadComponent: () =>
-							import('./features/posts/posts-list/posts-list').then(m => m.PostsList),
+							import('./features/posts/user-posts-list/user-posts-list').then(m => m.UserPostsList),
 					},
 				],
 			},

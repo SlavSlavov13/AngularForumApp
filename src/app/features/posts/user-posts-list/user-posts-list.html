@@ -1,0 +1,8 @@
+@if (this.componentLoaded && !(this.loading$ | async)) {
+	@if (this.myProfile) {
+		<h1>My Posts</h1>
+	} @else {
+		{{ this.user.displayName }}'s Posts
+	}
+}
+<app-posts-visualization [posts]="this.posts" [error]="this.error" [currentUid]="this.uid"></app-posts-visualization>

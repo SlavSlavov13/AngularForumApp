@@ -17,7 +17,8 @@ import {RouterLink} from "@angular/router";
 })
 export class ThreadsVisualization {
 	@Input({required: true}) threads!: ThreadModel[];
-	@Input() error!: string | null;
+	@Input({required: true}) error!: string | null;
+	@Input() inProfile?: boolean;
 
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 
