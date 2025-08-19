@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {ProfileThreadsList} from '../profile-threads-list/profile-threads-list';
 import {AuthService} from "../../../core/services/auth.service";
@@ -18,6 +18,7 @@ export class UserThreads implements OnInit {
 	uid!: string;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	@Input() profileCard: boolean = false;
+	@Output() loadingChange: EventEmitter<void> = new EventEmitter<void>();
 
 	constructor(
 		private route: ActivatedRoute,
@@ -32,6 +33,7 @@ export class UserThreads implements OnInit {
 	}
 
 	onChildLoadingChange(): void {
+		this.loadingChange.emit();
 		this.cdr.detectChanges();
 	}
 }

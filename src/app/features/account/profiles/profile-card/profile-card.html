@@ -67,9 +67,9 @@
 	@if (showThreads) {
 		<section class="my-threads-section">
 			@if (user.uid === this.currentUid) {
-				<app-my-threads [profileCard]="true"></app-my-threads>
+				<app-my-threads [profileCard]="true" (loadingChange)="onChildLoadingChange()"></app-my-threads>
 			} @else {
-				<app-user-threads [profileCard]="true"></app-user-threads>
+				<app-user-threads [profileCard]="true" (loadingChange)="onChildLoadingChange()"></app-user-threads>
 			}
 		</section>
 	}
