@@ -2,15 +2,15 @@
 @if (initialized) {
 	<header class="nav">
 		<a routerLink="/threads">Threads</a>
-		@let logged = this.authService.user$ | async;
+		@let loggedIn = this.authService.user$ | async;
 
-		@if (logged) {
+		@if (loggedIn) {
 			<a routerLink="/threads/create">Create</a>
 			<a routerLink="/my-profile/threads">My Threads</a>
 			<a routerLink="/my-profile/posts">My Posts</a>
 		}
 		<span class="spacer"></span>
-		@if (logged) {
+		@if (loggedIn) {
 			<a routerLink="/my-profile">Profile</a>
 			<button type="button" (click)="logout()" [disabled]="signingOut">Logout</button>
 			@if (signingOut) {

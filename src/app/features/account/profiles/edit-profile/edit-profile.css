@@ -1,0 +1,157 @@
+/* Edit Profile Form Styling - Light Blue Theme */
+
+.edit-profile-container {
+	max-width: 520px;
+	margin: 25px auto;
+	background-color: #e6f0ff; /* Very light blue background */
+	padding: 30px 35px;
+	border-radius: 8px;
+	box-shadow: 0 4px 10px rgba(0, 64, 128, 0.15);
+	font-family: Arial, sans-serif;
+	color: #004080;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 8px;
+	color: #003366;
+}
+
+input.form-control,
+input[type="file"] {
+	width: 100%;
+	padding: 9px 12px;
+	border: 2px solid #b3d1ff;
+	border-radius: 5px;
+	font-size: 1rem;
+	color: #004080;
+	background-color: white;
+	transition: border-color 0.3s ease;
+}
+
+input.form-control:focus {
+	border-color: #0073e6;
+	outline: none;
+}
+
+input.is-invalid {
+	border-color: #cc0000;
+}
+
+.invalid-feedback {
+	color: #cc0000;
+	font-size: 0.9rem;
+	margin-top: 5px;
+}
+
+.invalid-feedback span,
+.invalid-feedback div {
+	margin-top: 4px;
+}
+
+.mt-2 {
+	margin-top: 10px;
+}
+
+.mt-3 {
+	margin-top: 15px;
+}
+
+/* Buttons */
+
+button.btn {
+	font-weight: 700;
+	border-radius: 5px;
+	cursor: pointer;
+	padding: 10px 18px;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+	border: none;
+}
+
+button.btn-primary {
+	background-color: #0073e6;
+	color: white;
+}
+
+button.btn-primary:hover:not(:disabled) {
+	background-color: #005bb5;
+}
+
+button.btn-primary:disabled {
+	background-color: #99c2ff;
+	cursor: not-allowed;
+}
+
+button.btn-secondary {
+	background-color: #a3bff8;
+	color: #003366;
+	margin-right: 10px;
+}
+
+button.btn-secondary:hover:not(:disabled) {
+	background-color: #7da2f7;
+}
+
+button.btn-secondary:disabled {
+	background-color: #d0d9fc;
+	cursor: not-allowed;
+}
+
+/* Photo Preview */
+
+.photo-preview img.rounded {
+	border-radius: 10px;
+	max-width: 150px;
+	max-height: 150px;
+	display: block;
+}
+
+/* Loading Spinner Centering */
+
+.loading-spinner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Text Danger for Location Error */
+
+.text-danger {
+	color: #cc0000;
+	margin-top: 10px;
+}
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+	.edit-profile-container {
+		padding: 25px 25px;
+		margin: 20px 15px;
+	}
+
+	button.btn-secondary {
+		margin-top: 10px;
+		margin-right: 0;
+		width: 100%;
+	}
+}
+
+@media (max-width: 480px) {
+	.edit-profile-container {
+		padding: 20px 15px;
+		margin: 15px 10px;
+	}
+
+	button.btn-primary,
+	button.btn-secondary {
+		width: 100%;
+		font-size: 1rem;
+	}
+}
