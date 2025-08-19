@@ -7,47 +7,49 @@
 	/>
 }
 
-<section class="container" [style.display]="((loading$ | async) && !this.thisComponentLoaded) ? 'none' : 'block'">
-	@if (this.thisComponentLoaded) {
+<section class="container" [style.display]="((this.loading$ | async) && !this.thisComponentLoaded) ? 'none' : 'block'">
+	@if (this.error) {
+		<div class="error-message">{{ this.error }}</div>
+	} @else if (this.thisComponentLoaded) {
 		<h1>Profile</h1>
 
 		<div class="profile-card">
-			@if (user.photoURL) {
+			@if (this.user.photoURL) {
 				<div class="avatar">
-					<img [src]="user.photoURL" alt="avatar">
+					<img [src]="this.user.photoURL" alt="avatar">
 				</div>
 			} @else {
 				<div class="avatar placeholder">👤</div>
 			}
 
 			<div class="info">
-				<h2 class="name">{{ user.displayName }}</h2>
-				<p class="email">{{ user.email }}</p>
+				<h2 class="name">{{ this.user.displayName }}</h2>
+				<p class="email">{{ this.user.email }}</p>
 			</div>
 		</div>
 
 		<div class="stats">
-			@if (user.createdAt) {
+			@if (this.user.createdAt) {
 				<div class="stat">
 					<div class="label">Joined</div>
 					<div class="value">
-						{{ user.createdAt.toDate() | date:'mediumDate' }}
+						{{ this.user.createdAt.toDate() | date:'mediumDate' }}
 					</div>
 				</div>
 			}
 
-			@if (user.lastLogin) {
+			@if (this.user.lastLogin) {
 				<div class="stat">
 					<div class="label">Last Login</div>
 					<div class="value">
-						{{ user.lastLogin.toDate() | date:'medium' }}
+						{{ this.user.lastLogin.toDate() | date:'medium' }}
 					</div>
 				</div>
 			}
 
-			@if (user.location) {
+			@if (this.user.location) {
 				<div>
-					<small>Location: {{ user.location!.name || (user.location!.lat + ', ' + user.location!.lng) }}</small>
+					<small>Location: {{ this.user.location!.name || (this.user.location!.lat + ', ' + this.user.location!.lng) }}</small>
 				</div>
 			}
 		</div>
@@ -57,20 +59,20 @@
 		}
 
 		<button type="button" (click)="toggleThreads()" [disabled]="(this.loading$ | async)">
-			{{ showThreads ? 'Hide Threads' : 'Show Threads' }}
+			{{ this.showThreads ? 'Hide Threads' : 'Show Threads' }}
 		</button>
 
 		<button type="button" (click)="togglePosts()" [disabled]="(this.loading$ | async)">
-			{{ showPosts ? 'Hide Posts' : 'Show Posts' }}
+			{{ this.showPosts ? 'Hide Posts' : 'Show Posts' }}
 		</button>
 	}
-	@if (showThreads) {
+	@if (!this.error && this.showThreads) {
 		<section class="my-threads-section">
 			<app-user-profile-threads-list (loadingStateChanged)="detectChanges()"></app-user-profile-threads-list>
 		</section>
 	}
 
-	@if (showPosts) {
+	@if (!this.error && this.showPosts) {
 		<section class="my-threads-section">
 			<app-user-profile-posts-list (loadingStateChanged)="detectChanges()"></app-user-profile-posts-list>
 		</section>

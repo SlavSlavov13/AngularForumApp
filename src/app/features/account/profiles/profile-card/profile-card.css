@@ -150,6 +150,30 @@ a:hover {
 	text-align: center;
 }
 
+/* Error Message Styling for Profile Component */
+
+.container > :not(.profile-card):not(.stats):not(button):not(.my-threads-section) {
+	margin-bottom: 20px;
+}
+
+.error-message,
+.container > .error {
+	background-color: #ffe6e6; /* Light red background */
+	border: 1px solid #cc0000; /* Dark red border */
+	color: #990000; /* Dark red text */
+	padding: 15px 20px;
+	border-radius: 6px;
+	font-weight: 600;
+	font-size: 1.1rem;
+	text-align: center;
+	margin: 20px 0;
+}
+
+.container > .error {
+	margin-bottom: 25px;
+}
+
+
 /* Responsive Design */
 
 @media (max-width: 768px) {
@@ -191,7 +215,7 @@ a:hover {
 	.my-threads-section {
 		margin-top: 15px;
 	}
-	
+
 	.stats .stat {
 		flex: 1 1 100%;
 	}

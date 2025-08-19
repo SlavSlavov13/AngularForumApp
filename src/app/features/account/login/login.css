@@ -85,6 +85,10 @@ p[style] {
 	box-sizing: border-box;
 }
 
+input.is-invalid {
+	border-color: #cc0000;
+}
+
 /* Responsive Design */
 
 @media (max-width: 480px) {

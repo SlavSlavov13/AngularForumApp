@@ -1,14 +1,14 @@
-<form (ngSubmit)="submit()" [formGroup]="form">
+<form (ngSubmit)="submit()" [formGroup]="this.form">
 
 	<div>
-		<label>Email</label>
-		<input formControlName="email" type="email" id="email"/>
-		@if (form.get('email')?.touched && form.get('email')?.invalid) {
+		<label for="email">Email</label>
+		<input formControlName="email" type="email" id="email" [class.is-invalid]="this.form.get('email')?.invalid && this.form.get('email')?.touched"/>
+		@if (this.form.get('email')?.touched && this.form.get('email')?.invalid) {
 			<small>
-				@if (form.get('email')?.errors?.['required']) {
+				@if (this.form.get('email')?.errors?.['required']) {
 					<span>Email is required.</span>
 				}
-				@if (form.get('email')?.errors?.['email']) {
+				@if (this.form.get('email')?.errors?.['email']) {
 					<span>Enter a valid email.</span>
 				}
 			</small>
@@ -16,17 +16,17 @@
 	</div>
 
 	<div>
-		<label>Display name</label>
-		<input formControlName="displayName" type="text" id="displayName"/>
-		@if (form.get('displayName')?.touched && form.get('displayName')?.invalid) {
+		<label for="displayName">Display name</label>
+		<input formControlName="displayName" type="text" id="displayName" [class.is-invalid]="this.form.get('displayName')?.invalid && this.form.get('displayName')?.touched"/>
+		@if (this.form.get('displayName')?.touched && this.form.get('displayName')?.invalid) {
 			<small>
-				@if (form.get('displayName')?.errors?.['required']) {
+				@if (this.form.get('displayName')?.errors?.['required']) {
 					<span>Display name is required.</span>
 				}
-				@if (form.get('displayName')?.errors?.['minlength']) {
-					<span>Minimum length is 2 characters.</span>
+				@if (this.form.get('displayName')?.errors?.['minlength']) {
+					<span>Minimum length is {{ this.form.get('displayName')?.errors?.['minlength'].requiredLength }} characters.</span>
 				}
-				@if (form.get('displayName')?.errors?.['displayNameTaken']) {
+				@if (this.form.get('displayName')?.errors?.['displayNameTaken']) {
 					<span>This display name is already taken.</span>
 				}
 
@@ -37,38 +37,37 @@
 	<div [formGroup]="passwords">
 		<div>
 			<label>Password</label>
-			<input formControlName="password" type="password" id="password"/>
-			@if (form.get('passwords.password')?.touched && form.get('passwords.password')?.invalid) {
+			<input formControlName="password" type="password" id="password" [class.is-invalid]="this.form.get('passwords.password')?.invalid && this.form.get('passwords.password')?.touched"/>
+			@if (this.form.get('passwords.password')?.touched && this.form.get('passwords.password')?.invalid) {
 				<small>
-					@if (form.get('passwords.password')?.errors?.['required']) {
+					@if (this.form.get('passwords.password')?.errors?.['required']) {
 						<span>Password is required.</span>
 					}
-					@if (form.get('passwords.password')?.errors?.['minlength']) {
-						<span>
-            Minimum {{ form.get('passwords.password')?.errors?.['minlength']?.requiredLength }} characters.
-          </span>
+					@if (this.form.get('passwords.password')?.errors?.['minlength']) {
+						<span>Minimum length is {{ form.get('passwords.password')?.errors?.['minlength']?.requiredLength }} characters.</span>
 					}
 				</small>
 			}
 		</div>
 		<div>
 			<label>Repeat Password</label>
-			<input formControlName="repeat" type="password" id="repeatPassword"/>
-			@if (form.get('passwords.repeat')?.touched && form.get('passwords.repeat')?.invalid) {
+			<input formControlName="repeat" type="password" id="repeatPassword" [class.is-invalid]="this.form.get('passwords.repeat')?.invalid && this.form.get('passwords.repeat')?.touched"/>
+			@if (this.form.get('passwords.repeat')?.touched && this.form.get('passwords.repeat')?.invalid) {
 				<small>
-					@if (form.get('passwords.repeat')?.errors?.['required']) {
+					@if (this.form.get('passwords.repeat')?.errors?.['required']) {
 						<span>Repeat password is required.</span>
 					}
 				</small>
 			}
+			@if (this.form.get('passwords')?.errors?.['noMatch'] &&
+			(this.form.get('passwords.repeat')?.touched || this.form.get('passwords.password')?.touched)) {
+				<small>
+					<span>Passwords do not match.</span>
+				</small>
+			}
 		</div>
 
-		@if (form.get('passwords')?.errors?.['noMatch'] &&
-		(form.get('passwords.repeat')?.touched || form.get('passwords.password')?.touched)) {
-			<small>
-				<span>Passwords do not match.</span>
-			</small>
-		}
+
 	</div>
 
 	<button [disabled]="saving || form.invalid || form.get('displayName')?.pending" type="submit">

@@ -13,7 +13,7 @@ import {handleError} from "../../../shared/helpers";
 	styleUrls: ['./login.css'],
 })
 export class Login {
-	loading: boolean = false;
+	loggingIn: boolean = false;
 	error: string | null = null;
 	form: FormGroup;
 
@@ -30,12 +30,12 @@ export class Login {
 	}
 
 	async submit(): Promise<void> {
-		if (this.form.invalid || this.loading) {
+		if (this.form.invalid || this.loggingIn) {
 			this.form.markAllAsTouched();
 			return;
 		}
 		this.error = null;
-		this.loading = true;
+		this.loggingIn = true;
 
 		const {email, password} = this.form.value as { email: string; password: string };
 
@@ -46,7 +46,7 @@ export class Login {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.loading = false;
+			this.loggingIn = false;
 		}
 	}
 }
