@@ -27,16 +27,13 @@ export class ThreadsList implements OnInit {
 	}
 
 	async ngOnInit(): Promise<void> {
-		this.store.dispatch(showLoading());
 		try {
-			this.threads = await firstValueFrom(
-				this.threadService.listThreads()
-			);
+			this.store.dispatch(showLoading());
+			this.threads = await firstValueFrom(this.threadService.listThreads());
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
 			this.store.dispatch(hideLoading());
 		}
 	}
-
 }
