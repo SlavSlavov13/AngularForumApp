@@ -43,6 +43,9 @@ export class App {
 
 	async logout(): Promise<void> {
 		try {
+			if (this.signingOut) {
+				return;
+			}
 			this.animationState = 'fadeOut';
 			this.signingOut = true;
 
