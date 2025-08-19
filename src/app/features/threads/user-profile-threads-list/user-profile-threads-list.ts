@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {firstValueFrom, Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {AppUserModel, ThreadModel} from "../../../shared/models";
@@ -20,6 +20,7 @@ import {ThreadsVisualization} from "../threads-visualization/threads-visualizati
 	styleUrl: './user-profile-threads-list.css'
 })
 export class UserProfileThreadsList implements OnInit {
+	@Output() loadingStateChanged: EventEmitter<void> = new EventEmitter<void>();
 	uid: string | null = null;
 	error: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
@@ -40,6 +41,7 @@ export class UserProfileThreadsList implements OnInit {
 	async ngOnInit(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
+			this.loadingStateChanged.emit();
 			// Another user's profile
 			this.uid = this.route.snapshot.paramMap.get('uid');
 			// My profile

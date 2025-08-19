@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AppUserModel} from '../../../../shared/models';
 import {AuthService} from "../../../../core/services/auth.service";
@@ -29,6 +29,7 @@ export class ProfileCard implements OnInit {
 	constructor(
 		protected authService: AuthService,
 		private store: Store<AppState>,
+		private cdr: ChangeDetectorRef,
 	) {
 	}
 
@@ -52,5 +53,9 @@ export class ProfileCard implements OnInit {
 
 	togglePosts(): void {
 		this.showPosts = !this.showPosts;
+	}
+
+	detectChanges(): void {
+		this.cdr.detectChanges();
 	}
 }

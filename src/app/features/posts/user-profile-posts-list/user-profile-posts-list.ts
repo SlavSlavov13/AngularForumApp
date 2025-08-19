@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AppUserModel, PostModel} from "../../../shared/models";
 import {firstValueFrom, Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
@@ -20,6 +20,7 @@ import {PostsVisualization} from "../posts-visualization/posts-visualization";
 	styleUrl: './user-profile-posts-list.css'
 })
 export class UserProfilePostsList implements OnInit {
+	@Output() loadingStateChanged: EventEmitter<void> = new EventEmitter<void>();
 	posts: PostModel[] = [];
 	error: string | null = null;
 	uid: string | null = null;
@@ -42,6 +43,7 @@ export class UserProfilePostsList implements OnInit {
 	async ngOnInit(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
+			this.loadingStateChanged.emit();
 			this.uid = this.route.snapshot.paramMap.get('uid');
 			if (!this.uid) {
 				this.uid = (await this.authService.currentUid())!;

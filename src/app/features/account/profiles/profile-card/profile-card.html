@@ -66,13 +66,13 @@
 	}
 	@if (showThreads) {
 		<section class="my-threads-section">
-			<app-user-profile-threads-list></app-user-profile-threads-list>
+			<app-user-profile-threads-list (loadingStateChanged)="detectChanges()"></app-user-profile-threads-list>
 		</section>
 	}
 
 	@if (showPosts) {
 		<section class="my-threads-section">
-			<app-user-profile-posts-list></app-user-profile-posts-list>
+			<app-user-profile-posts-list (loadingStateChanged)="detectChanges()"></app-user-profile-posts-list>
 		</section>
 	}
 </section>
