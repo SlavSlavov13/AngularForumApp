@@ -56,6 +56,25 @@ a.title:hover {
 	text-decoration: underline;
 }
 
+a.edit-btn {
+	background-color: #0073e6;
+	border: none;
+	color: white;
+	padding: 8px 16px;
+	font-weight: 600;
+	border-radius: 4px;
+	cursor: pointer;
+	margin-right: 12px;
+	transition: background-color 0.3s ease;
+	font-size: 1rem;
+}
+
+a.edit-btn:hover {
+	color: white;
+	text-decoration: none;
+	background: #005bb5;
+}
+
 /* Responsive Design */
 
 @media (max-width: 768px) {
