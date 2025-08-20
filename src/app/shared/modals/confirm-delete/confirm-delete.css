@@ -66,21 +66,21 @@ button {
 /* Cancel Button */
 button[type="button"]:not(.danger) {
 	color: white;
-	background-color: #003366;
+	background-color: #73bbfb;
 }
 
 button[type="button"]:not(.danger):hover {
-	background-color: #024b95;
+	background-color: #259eff;
 }
 
 /* Danger Button */
 button.danger {
-	background-color: #cc3300;
+	background-color: #f8a2b6;
 	color: white;
 }
 
 button.danger:hover {
-	background-color: #992600;
+	background-color: #f886a1;
 }
 
 /* Responsive for small screens */

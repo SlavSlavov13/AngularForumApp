@@ -146,6 +146,20 @@ a:hover {
 	text-align: center;
 }
 
+.btn-secondary {
+	background-color: #a3bff8;
+	color: #003366;
+}
+
+.btn-secondary:hover:not(:disabled) {
+	background-color: #7da2f7;
+}
+
+.btn-secondary:disabled {
+	background-color: #d0d9fc;
+	cursor: not-allowed;
+}
+
 /* Error Message Styling for Profile Component */
 
 .error-message,
