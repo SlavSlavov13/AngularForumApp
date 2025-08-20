@@ -26,6 +26,7 @@ export class UserProfilePostsList implements OnInit, OnDestroy {
 	uid: string | null = null;
 	limitCount: number = 3;
 	userPostsCount: number = 0;
+	currentUid: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
 	postsLimited: boolean = false;
@@ -54,6 +55,7 @@ export class UserProfilePostsList implements OnInit, OnDestroy {
 			this.userPostsCount = await this.postService.getUserPostsCount(this.uid);
 			this.posts = await firstValueFrom(this.postService.listPostsByUser(this.uid, this.limitCount));
 			this.postsLimited = (this.userPostsCount > this.limitCount);
+			this.currentUid = await this.authService.currentUid();
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {

@@ -84,7 +84,7 @@ a.edit-btn:hover, .go-to-thread:hover {
 
 .go-to-thread {
 	background-color: #73bbfb;
-
+	display: inline-block;
 }
 
 .go-to-thread:hover {

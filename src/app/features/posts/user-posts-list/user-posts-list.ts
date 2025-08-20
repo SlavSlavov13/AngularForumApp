@@ -28,6 +28,7 @@ export class UserPostsList implements OnInit, OnDestroy {
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
 	componentLoaded: boolean = false;
+	currentUid: string | null = null;
 	user!: AppUserModel;
 
 	constructor(
@@ -49,6 +50,7 @@ export class UserPostsList implements OnInit, OnDestroy {
 			this.user = await this.authService.getUser(this.uid);
 			this.userPostsCount = await this.postService.getUserPostsCount(this.uid);
 			this.posts = await firstValueFrom(this.postService.listPostsByUser(this.uid));
+			this.currentUid = await this.authService.currentUid();
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
