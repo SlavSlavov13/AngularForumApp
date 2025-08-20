@@ -7,7 +7,7 @@ import {firstValueFrom, Observable} from 'rxjs';
 import {handleError} from "../../../shared/helpers";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {Store} from "@ngrx/store";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, Location} from "@angular/common";
 
 @Component({
 	selector: 'app-thread-edit',
@@ -31,6 +31,7 @@ export class ThreadEdit implements OnInit, OnDestroy {
 		private router: Router,
 		private threadService: ThreadService,
 		private store: Store<AppState>,
+		private location: Location,
 	) {
 	}
 
@@ -91,5 +92,9 @@ export class ThreadEdit implements OnInit, OnDestroy {
 		} finally {
 			this.submitting = false;
 		}
+	}
+
+	onCancel(): void {
+		this.location.back();
 	}
 }

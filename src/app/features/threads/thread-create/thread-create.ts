@@ -7,6 +7,7 @@ import {Router} from "@angular/router";
 import {DocumentReference} from '@angular/fire/firestore';
 import {firstValueFrom} from "rxjs";
 import {handleError} from "../../../shared/helpers";
+import {Location} from "@angular/common";
 
 @Component({
 	selector: 'app-thread-create',
@@ -27,6 +28,7 @@ export class ThreadCreate {
 		private threadService: ThreadService,
 		private authService: AuthService,
 		private router: Router,
+		private location: Location,
 	) {
 		this.form = this.fb.group({
 			title: ['', [Validators.required, Validators.minLength(6)]],
@@ -63,5 +65,9 @@ export class ThreadCreate {
 		} finally {
 			this.creating = false;
 		}
+	}
+
+	onCancel(): void {
+		this.location.back();
 	}
 }

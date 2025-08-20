@@ -26,6 +26,10 @@
 			{{ this.saving ? 'Saving...' : 'Save Changes' }}
 		</button>
 
+		<button type="button" (click)="onCancel()" class="btn-three">
+			Cancel
+		</button>
+
 		@if (this.error) {
 			<p style="color:#b00020">{{ error }}</p>
 		}

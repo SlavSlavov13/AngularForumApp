@@ -6,6 +6,7 @@ import {PostCreateModel} from "../../../shared/models";
 import {handleError} from "../../../shared/helpers";
 import {PostService} from "../../../core/services/post.service";
 import {firstValueFrom} from "rxjs";
+import {Location} from "@angular/common";
 
 @Component({
 	selector: 'app-post-create',
@@ -26,6 +27,7 @@ export class PostCreate {
 		private authService: AuthService,
 		private router: Router,
 		private route: ActivatedRoute,
+		private location: Location,
 	) {
 		this.form = this.fb.group({
 			body: ['', [Validators.required, Validators.minLength(20)]],
@@ -56,5 +58,9 @@ export class PostCreate {
 		} finally {
 			this.creating = false;
 		}
+	}
+
+	onCancel(): void {
+		this.location.back();
 	}
 }

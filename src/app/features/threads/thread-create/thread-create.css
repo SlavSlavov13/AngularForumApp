@@ -57,13 +57,12 @@ small.error {
 }
 
 button {
-	display: block;
-	width: 100%;
 	background-color: #0073e6;
 	color: white;
 	font-weight: 700;
 	border: none;
-	padding: 12px 0;
+	padding: 12px;
+	margin-right: 10px;
 	border-radius: 5px;
 	cursor: pointer;
 	font-size: 1.1rem;
@@ -101,6 +100,16 @@ p.error {
 	border-color: #cc0000 !important;
 }
 
+.btn-three {
+	color: white;
+	background-color: #003366;
+}
+
+.btn-three:hover {
+	background-color: #024b95;
+}
+
+
 /* Responsive Design */
 
 @media (max-width: 768px) {
@@ -117,7 +126,12 @@ p.error {
 	}
 
 	button {
+		width: 100%;
 		font-size: 1rem;
 		padding: 10px 0;
+	}
+
+	.btn-three {
+		margin-top: 10px;
 	}
 }

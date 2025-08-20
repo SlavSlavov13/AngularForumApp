@@ -7,7 +7,7 @@ import {handleError} from "../../../shared/helpers";
 import {PostService} from "../../../core/services/post.service";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {Store} from "@ngrx/store";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, Location} from "@angular/common";
 
 @Component({
 	selector: 'app-post-edit',
@@ -32,6 +32,7 @@ export class PostEdit implements OnInit, OnDestroy {
 		private router: Router,
 		private postService: PostService,
 		private store: Store<AppState>,
+		private location: Location,
 	) {
 	}
 
@@ -86,5 +87,9 @@ export class PostEdit implements OnInit, OnDestroy {
 		} finally {
 			this.saving = false;
 		}
+	}
+
+	onCancel(): void {
+		this.location.back();
 	}
 }

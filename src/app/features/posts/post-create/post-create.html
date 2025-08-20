@@ -31,6 +31,10 @@
 			{{ this.creating ? 'Creating...' : 'Create' }}
 		</button>
 
+		<button type="button" (click)="onCancel()" class="btn-three">
+			Cancel
+		</button>
+
 		<!-- Error message -->
 		@if (this.error) {
 			<p style="color:#b00020">{{ this.error }}</p>
