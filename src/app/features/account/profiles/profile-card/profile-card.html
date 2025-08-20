@@ -67,9 +67,9 @@
 		</button>
 	}
 	@if (!this.error && this.showThreads) {
-		<!--		<section class="my-threads-section">-->
-		<app-user-profile-threads-list (loadingStateChanged)="detectChanges()"></app-user-profile-threads-list>
-		<!--		</section>-->
+		<section class="my-threads-section">
+			<app-user-profile-threads-list (loadingStateChanged)="detectChanges()"></app-user-profile-threads-list>
+		</section>
 	}
 
 	@if (!this.error && this.showPosts) {
