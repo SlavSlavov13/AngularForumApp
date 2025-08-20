@@ -4,7 +4,7 @@ import {firstValueFrom, Observable} from 'rxjs';
 import {AppUserModel, ThreadModel} from '../../../shared/models';
 import {ThreadService} from '../../../core/services/thread.service';
 import {AuthService} from "../../../core/services/auth.service";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, Location} from "@angular/common";
 import {handleError} from "../../../shared/helpers";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {Store} from "@ngrx/store";
@@ -33,6 +33,7 @@ export class ThreadDetails implements OnInit, OnDestroy {
 		private threadService: ThreadService,
 		private authService: AuthService,
 		private store: Store<AppState>,
+		private location: Location,
 	) {
 	}
 
@@ -69,7 +70,7 @@ export class ThreadDetails implements OnInit, OnDestroy {
 			if (!ok) return;
 
 			await firstValueFrom(this.threadService.deleteThread(this.thread.id));
-			await this.router.navigate(['/threads']);
+			this.location.back();
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
