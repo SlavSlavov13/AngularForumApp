@@ -7,8 +7,7 @@
 			<small>
 				@if (this.form.get('email')?.errors?.['required']) {
 					<span>Email is required.</span>
-				}
-				@if (this.form.get('email')?.errors?.['email']) {
+				} @else if (this.form.get('email')?.errors?.['email']) {
 					<span>Enter a valid email.</span>
 				}
 			</small>
@@ -23,8 +22,7 @@
 			<small>
 				@if (this.form.get('password')?.errors?.['required']) {
 					<span>Password is required.</span>
-				}
-				@if (this.form.get('password')?.errors?.['minlength']) {
+				} @else if (this.form.get('password')?.errors?.['minlength']) {
 					<span>Minimum length is {{ this.form.get('password')?.errors?.['minlength']?.requiredLength }} characters.</span>
 				}
 			</small>

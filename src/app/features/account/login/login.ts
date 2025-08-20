@@ -4,7 +4,7 @@ import {CommonModule} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../core/services/auth.service';
 import {handleError} from "../../../shared/helpers";
-import {trimmedMinLength} from "../../../shared/validators";
+import {customEmailValidator, trimmedMinLength} from "../../../shared/validators";
 
 @Component({
 	selector: 'app-login',
@@ -25,7 +25,7 @@ export class Login {
 		private fb: FormBuilder
 	) {
 		this.form = this.fb.group({
-			email: ['', [Validators.required, Validators.email]],
+			email: ['', [Validators.required, customEmailValidator()]],
 			password: ['', [Validators.required, trimmedMinLength(6)]],
 		});
 	}
