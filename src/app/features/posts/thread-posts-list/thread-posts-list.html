@@ -1,1 +1,3 @@
-<app-posts-visualization [posts]="this.posts" [error]="this.error" [currentUid]="this.currentUid" [postInThread]="true"></app-posts-visualization>
+@if (this.componentLoaded) {
+	<app-posts-visualization [posts]="this.posts" [error]="this.error" [currentUid]="this.currentUid" [postInThread]="true"></app-posts-visualization>
+}

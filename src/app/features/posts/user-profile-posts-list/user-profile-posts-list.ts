@@ -25,7 +25,7 @@ export class UserProfilePostsList implements OnInit, OnDestroy {
 	error: string | null = null;
 	uid: string | null = null;
 	limitCount: number = 3;
-	userPostsCount: number | null = null;
+	userPostsCount: number = 0;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
 	postsLimited: boolean = false;

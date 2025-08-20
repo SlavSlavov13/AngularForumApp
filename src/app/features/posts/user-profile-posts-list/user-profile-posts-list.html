@@ -5,4 +5,6 @@
 		<h1>{{ this.user.displayName }}'s Posts</h1>
 	}
 }
-<app-posts-visualization [posts]="this.posts" [error]="this.error" [postsLimited]="this.postsLimited" [profileCardUser]="this.user" [currentUid]="this.uid"></app-posts-visualization>
+@if (this.componentLoaded) {
+	<app-posts-visualization [posts]="this.posts" [error]="this.error" [postsLimited]="this.postsLimited" [profileCardUser]="this.user" [currentUid]="this.uid"></app-posts-visualization>
+}

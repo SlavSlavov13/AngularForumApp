@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ThreadModel} from "../../../shared/models";
+import {AppUserModel, ThreadModel} from "../../../shared/models";
 import {Observable} from "rxjs";
 import {AppState, selectLoadingVisible} from "../../../store";
 import {Store} from "@ngrx/store";
@@ -20,6 +20,8 @@ import {PluralizePipe} from "../../../shared/pipes/pluralize-pipe";
 export class ThreadsVisualization {
 	@Input({required: true}) threads!: ThreadModel[];
 	@Input({required: true}) error!: string | null;
+	@Input() threadsLimited?: boolean;
+	@Input() profileCardUser?: AppUserModel;
 	@Input() inProfile?: boolean;
 
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);

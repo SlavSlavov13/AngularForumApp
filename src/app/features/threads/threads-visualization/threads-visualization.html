@@ -1,18 +1,25 @@
 @if (!(loading$ | async)) {
 	@if (this.error) {
 		<div class="error-message">{{ this.error }}</div>
-	} @else if (this.threads.length > 0) {
-		@for (t of threads; track t.id) {
-			<div>
-				<a [routerLink]="['/threads', t.id]">{{ t.title }}</a>
-				<span> · {{ t.body }}</span>
-				<span> · {{ t.replyCount || 0 }} {{ 'reply' | pluralize: t.replyCount : 'replies' }}</span>
-				@if (!this.inProfile) {
-					<a [routerLink]="['/profile', t.authorId]" class="title"> · Author: {{ t.authorName }}</a>
-				}
-			</div>
-		}
-	} @else {
-		<div>No threads found.</div>
 	}
+	<div class="threads-container">
+		@if (this.threads.length > 0) {
+			@for (t of threads; track t.id) {
+				<div class="thread-item">
+					<a [routerLink]="['/threads', t.id]">{{ t.title }}</a>
+					<span> · {{ t.body }}</span>
+					<span> · {{ t.replyCount || 0 }} {{ 'reply' | pluralize: t.replyCount : 'replies' }}</span>
+					@if (!this.inProfile) {
+						<a [routerLink]="['/profile', t.authorId]" class="title"> · Author: {{ t.authorName }}</a>
+					}
+				</div>
+			}
+			@if (this.threadsLimited) {
+				<a [routerLink]="['/profile', this.profileCardUser!.uid, 'threads']" class="title">View all threads</a>
+			}
+		} @else {
+			<p>No threads found.</p>
+		}
+	</div>
+
 }

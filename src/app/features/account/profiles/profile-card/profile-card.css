@@ -141,20 +141,12 @@ a:hover {
 
 /* Sections for threads and posts */
 
-.my-threads-section {
-	margin-top: 20px;
-}
-
 .edit-profile {
 	box-sizing: border-box;
 	text-align: center;
 }
 
 /* Error Message Styling for Profile Component */
-
-.container > :not(.profile-card):not(.stats):not(button):not(.my-threads-section) {
-	margin-bottom: 20px;
-}
 
 .error-message,
 .container > .error {
@@ -210,10 +202,6 @@ a:hover {
 	a.router-link {
 		width: 100%;
 		margin: 8px 0;
-	}
-
-	.my-threads-section {
-		margin-top: 15px;
 	}
 
 	.stats .stat {

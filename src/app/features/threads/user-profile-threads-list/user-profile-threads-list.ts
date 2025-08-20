@@ -28,6 +28,8 @@ export class UserProfileThreadsList implements OnInit, OnDestroy {
 	componentLoaded: boolean = false;
 	myProfile: boolean = false;
 	countLimit: number = 3;
+	threadsLimited: boolean = false;
+	threadsCount: number = 0;
 	threads: ThreadModel[] = [];
 	user!: AppUserModel;
 
@@ -52,6 +54,8 @@ export class UserProfileThreadsList implements OnInit, OnDestroy {
 			}
 			this.user = await this.authService.getUser(this.uid);
 			this.threads = await firstValueFrom(this.threadService.listThreadsByUser(this.uid, this.countLimit))
+			this.threadsCount = await this.threadService.getUserThreadsCount(this.uid);
+			this.threadsLimited = (this.threadsCount > this.countLimit)
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
