@@ -117,11 +117,6 @@
 				}
 			</div>
 
-			<!-- Error Message -->
-			@if (this.error) {
-				<p style="color:#b00020">{{ this.error }}</p>
-			}
-
 			<!-- Submit Button -->
 			<button type="submit" class="btn btn-primary mt-3" [disabled]="(this.loading$ | async) || this.form.invalid || this.form.get('displayName')?.pending || this.form.get('email')?.pending || this.saving">
 				{{ this.saving ? 'Saving...' : 'Save Changes' }}
@@ -130,6 +125,11 @@
 			<button type="button" class="btn btn-three mt-3" (click)="onCancel()" [disabled]="this.saving">
 				Cancel
 			</button>
+
+			<!-- Error Message -->
+			@if (this.error) {
+				<p style="color:#b00020">{{ this.error }}</p>
+			}
 		</form>
 	</div>
 }
