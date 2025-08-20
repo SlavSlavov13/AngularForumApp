@@ -65,12 +65,12 @@ button {
 
 /* Cancel Button */
 button[type="button"]:not(.danger) {
-	background-color: #a3bff8; /* Light blue secondary */
-	color: #003366;
+	color: white;
+	background-color: #003366;
 }
 
 button[type="button"]:not(.danger):hover {
-	background-color: #7da2f7;
+	background-color: #024b95;
 }
 
 /* Danger Button */
