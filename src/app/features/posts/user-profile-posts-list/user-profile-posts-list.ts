@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {AppUserModel, PostModel} from "../../../shared/models";
 import {firstValueFrom, Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
@@ -19,7 +19,7 @@ import {PostsVisualization} from "../posts-visualization/posts-visualization";
 	templateUrl: './user-profile-posts-list.html',
 	styleUrl: './user-profile-posts-list.css'
 })
-export class UserProfilePostsList implements OnInit {
+export class UserProfilePostsList implements OnInit, OnDestroy {
 	@Output() loadingStateChanged: EventEmitter<void> = new EventEmitter<void>();
 	posts: PostModel[] = [];
 	error: string | null = null;
@@ -27,6 +27,7 @@ export class UserProfilePostsList implements OnInit {
 	limitCount: number = 3;
 	userPostsCount: number | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private loadingHandled: boolean = false;
 	postsLimited: boolean = false;
 	componentLoaded: boolean = false;
 	myProfile: boolean = false;
@@ -56,8 +57,19 @@ export class UserProfilePostsList implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.store.dispatch(hideLoading());
+			this.handleLoaded();
 			this.componentLoaded = true;
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
+			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
 		}
 	}
 }

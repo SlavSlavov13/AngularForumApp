@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {firstValueFrom, Observable} from 'rxjs';
 import {AppUserModel, ThreadModel} from '../../../shared/models';
@@ -17,13 +17,14 @@ import {ThreadPostsList} from "../../posts/thread-posts-list/thread-posts-list";
 	templateUrl: './thread-details.html',
 	styleUrl: './thread-details.css'
 })
-export class ThreadDetails implements OnInit {
+export class ThreadDetails implements OnInit, OnDestroy {
 	error: string | null = null;
 	thread!: ThreadModel;
 	author!: AppUserModel;
 	tags: string = '';
 	currentUid: Promise<string | null> = this.authService.currentUid();
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private loadingHandled: boolean = false;
 	deleting: boolean = false;
 
 	constructor(
@@ -46,7 +47,18 @@ export class ThreadDetails implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
+			this.handleLoaded();
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
 			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
 		}
 	}
 

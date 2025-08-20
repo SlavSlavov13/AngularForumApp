@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppUserModel, PostModel} from "../../../shared/models";
 import {firstValueFrom, Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
@@ -19,13 +19,14 @@ import {PostsVisualization} from "../posts-visualization/posts-visualization";
 	templateUrl: './user-posts-list.html',
 	styleUrl: './user-posts-list.css'
 })
-export class UserPostsList implements OnInit {
+export class UserPostsList implements OnInit, OnDestroy {
 	posts: PostModel[] = [];
 	error: string | null = null;
 	uid: string | null = null;
 	userPostsCount: number | null = null;
 	myProfile: boolean = false;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private loadingHandled: boolean = false;
 	componentLoaded: boolean = false;
 	user!: AppUserModel;
 
@@ -51,8 +52,19 @@ export class UserPostsList implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.store.dispatch(hideLoading());
+			this.handleLoaded();
 			this.componentLoaded = true;
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
+			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
 		}
 	}
 }

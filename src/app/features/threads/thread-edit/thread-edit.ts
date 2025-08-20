@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ThreadService} from '../../../core/services/thread.service';
@@ -16,10 +16,11 @@ import {AsyncPipe} from "@angular/common";
 	templateUrl: './thread-edit.html',
 	styleUrl: './thread-edit.css'
 })
-export class ThreadEdit implements OnInit {
+export class ThreadEdit implements OnInit, OnDestroy {
 	error: string | null = null;
 	form!: FormGroup;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private loadingHandled: boolean = false;
 	saving: boolean = false;
 	thread!: ThreadModel;
 	submitting: boolean = false;
@@ -47,7 +48,18 @@ export class ThreadEdit implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
+			this.handleLoaded();
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
 			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
 		}
 	}
 

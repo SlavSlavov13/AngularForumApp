@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AppUserModel} from "../../../../shared/models";
 import {AuthService} from "../../../../core/services/auth.service";
@@ -21,13 +21,14 @@ import {AsyncPipe} from "@angular/common";
 	templateUrl: './edit-profile.html',
 	styleUrl: './edit-profile.css'
 })
-export class EditProfile implements OnInit {
+export class EditProfile implements OnInit, OnDestroy {
 	form!: FormGroup;
 	uid!: string;
 	user!: AppUserModel;
 	saving: boolean = false;
 	error: string | null = null;
 	photoPreviewUrl: string | null = null;
+	private loadingHandled: boolean = false;
 	photoFile: File | null = null;
 	photoPending: boolean = false;
 	locationLoading: boolean = false;
@@ -42,11 +43,9 @@ export class EditProfile implements OnInit {
 	});
 
 	async initMaps(): Promise<void> {
-		this.store.dispatch(showLoading());
 		await this.mapsLoader.importLibrary('core');
 		await this.mapsLoader.importLibrary('maps');
 		await this.mapsLoader.importLibrary('geocoding');
-		this.store.dispatch(hideLoading());
 	}
 
 
@@ -99,7 +98,7 @@ export class EditProfile implements OnInit {
 			this.error = handleError(e);
 		} finally {
 			if (!this.photoPending) {
-				this.store.dispatch(hideLoading());
+				this.handleLoaded();
 			}
 		}
 	}
@@ -159,7 +158,7 @@ export class EditProfile implements OnInit {
 	}
 
 	onPhotoLoaded(): void {
-		this.store.dispatch(hideLoading());
+		this.handleLoaded();
 	}
 
 	clearPhoto(): void {
@@ -169,6 +168,17 @@ export class EditProfile implements OnInit {
 
 	clearLocation(): void {
 		this.location = null;
+	}
+
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
+			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
+		}
 	}
 
 

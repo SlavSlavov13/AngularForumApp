@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {PostModel, ThreadModel} from "../../../shared/models";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -18,12 +18,13 @@ import {AsyncPipe} from "@angular/common";
 	templateUrl: './post-edit.html',
 	styleUrl: './post-edit.css'
 })
-export class PostEdit implements OnInit {
+export class PostEdit implements OnInit, OnDestroy {
 	error: string | null = null;
 	form!: FormGroup;
 	saving: boolean = false;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	post!: PostModel;
+	private loadingHandled: boolean = false;
 
 	constructor(
 		private fb: FormBuilder,
@@ -46,7 +47,18 @@ export class PostEdit implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
+			this.handleLoaded();
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
 			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
 		}
 	}
 

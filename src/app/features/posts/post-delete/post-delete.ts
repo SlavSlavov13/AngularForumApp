@@ -33,6 +33,7 @@ export class PostDelete {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
+			this.postDeleted.emit(this.postId);
 		}
 	}
 }

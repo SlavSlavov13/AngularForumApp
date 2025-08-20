@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ProfileCard} from "../profile-card/profile-card";
 import {AuthService} from "../../../../core/services/auth.service";
 import {AppUserModel} from "../../../../shared/models";
@@ -14,8 +14,9 @@ import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../..
 	templateUrl: './profile-details.html',
 	styleUrl: './profile-details.css'
 })
-export class ProfileDetails implements OnInit {
+export class ProfileDetails implements OnInit, OnDestroy {
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private loadingHandled: boolean = false;
 	error: string | null = null;
 	uid: string | null = null;
 	user!: AppUserModel;
@@ -41,8 +42,19 @@ export class ProfileDetails implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.store.dispatch(hideLoading());
+			this.handleLoaded();
 			this.componentLoaded = true;
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
+			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
 		}
 	}
 }

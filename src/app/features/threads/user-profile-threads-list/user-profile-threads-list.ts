@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {firstValueFrom, Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {AppUserModel, ThreadModel} from "../../../shared/models";
@@ -19,11 +19,12 @@ import {ThreadsVisualization} from "../threads-visualization/threads-visualizati
 	templateUrl: './user-profile-threads-list.html',
 	styleUrl: './user-profile-threads-list.css'
 })
-export class UserProfileThreadsList implements OnInit {
+export class UserProfileThreadsList implements OnInit, OnDestroy {
 	@Output() loadingStateChanged: EventEmitter<void> = new EventEmitter<void>();
 	uid: string | null = null;
 	error: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private loadingHandled: boolean = false;
 	componentLoaded: boolean = false;
 	myProfile: boolean = false;
 	countLimit: number = 3;
@@ -54,8 +55,19 @@ export class UserProfileThreadsList implements OnInit {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.store.dispatch(hideLoading());
+			this.handleLoaded();
 			this.componentLoaded = true;
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
+			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
 		}
 	}
 }

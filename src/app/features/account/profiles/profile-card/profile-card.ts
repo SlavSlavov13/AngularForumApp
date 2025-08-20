@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AppUserModel} from '../../../../shared/models';
 import {AuthService} from "../../../../core/services/auth.service";
@@ -16,11 +16,12 @@ import {UserProfilePostsList} from "../../../posts/user-profile-posts-list/user-
 	templateUrl: './profile-card.html',
 	styleUrl: './profile-card.css'
 })
-export class ProfileCard implements OnInit {
+export class ProfileCard implements OnInit, OnDestroy {
 	@Input({required: true}) user!: AppUserModel;
 	@Input() myProfile?: boolean;
 	@Input({required: true}) error!: string | null;
 	photoPending: boolean = false;
+	private loadingHandled: boolean = false;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	showThreads: boolean = false;
 	showPosts: boolean = false;
@@ -37,13 +38,24 @@ export class ProfileCard implements OnInit {
 		this.store.dispatch(showLoading());
 		this.photoPending = !!this.user.photoURL;
 		if (!this.photoPending) {
-			this.store.dispatch(hideLoading());
+			this.handleLoaded();
 			this.thisComponentLoaded = true;
 		}
 	}
 
+	ngOnDestroy(): void {
+		this.handleLoaded();
+	}
+
+	private handleLoaded(): void {
+		if (!this.loadingHandled) {
+			this.store.dispatch(hideLoading());
+			this.loadingHandled = true;
+		}
+	}
+
 	onPhotoLoaded(): void {
-		this.store.dispatch(hideLoading());
+		this.handleLoaded();
 		this.thisComponentLoaded = true;
 	}
 
