@@ -5,7 +5,6 @@ import {ThreadCreateModel} from "../../../shared/models";
 import {AuthService} from "../../../core/services/auth.service";
 import {Router} from "@angular/router";
 import {DocumentReference} from '@angular/fire/firestore';
-import {firstValueFrom} from "rxjs";
 import {handleError} from "../../../shared/helpers";
 import {Location} from "@angular/common";
 import {trimmedMinLength} from "../../../shared/validators";
@@ -58,7 +57,7 @@ export class ThreadCreate {
 				authorId: uid,
 			};
 
-			const docRef: DocumentReference = await firstValueFrom(this.threadService.createThread(payload));
+			const docRef: DocumentReference = await this.threadService.createThread(payload);
 			this.form.reset();
 			await this.router.navigate([`/threads/${docRef.id}`]);
 		} catch (e) {

@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {AppUserModel, PostModel} from "../../../shared/models";
-import {firstValueFrom, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {PostService} from "../../../core/services/post.service";
 import {ActivatedRoute} from "@angular/router";
@@ -53,7 +53,7 @@ export class UserProfilePostsList implements OnInit, OnDestroy {
 			}
 			this.user = await this.authService.getUser(this.uid);
 			this.userPostsCount = await this.postService.getUserPostsCount(this.uid);
-			this.posts = await firstValueFrom(this.postService.listPostsByUser(this.uid, this.limitCount));
+			this.posts = await this.postService.listPostsByUser(this.uid, this.limitCount);
 			this.postsLimited = (this.userPostsCount > this.limitCount);
 			this.currentUid = await this.authService.currentUid();
 		} catch (e) {

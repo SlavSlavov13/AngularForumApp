@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppUserModel, ThreadModel} from "../../../shared/models";
-import {firstValueFrom, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {ThreadService} from "../../../core/services/thread.service";
 import {AuthService} from "../../../core/services/auth.service";
@@ -48,7 +48,7 @@ export class UserThreadsList implements OnInit, OnDestroy {
 				this.myProfile = true;
 			}
 			this.user = await this.authService.getUser(this.uid);
-			this.threads = await firstValueFrom(this.threadService.listThreadsByUser(this.uid))
+			this.threads = await this.threadService.listThreadsByUser(this.uid);
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {

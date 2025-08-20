@@ -1,9 +1,7 @@
 import {Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, collectionData, deleteDoc, doc, docData, Firestore, getCountFromServer, getDoc, increment, limit, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
-import {from, Observable} from 'rxjs';
+import {addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDoc, getDocs, increment, limit, orderBy, query, serverTimestamp, updateDoc, where} from '@angular/fire/firestore';
 import {ThreadCreateModel, ThreadModel} from '../../shared/models';
 import {PostService} from "./post.service";
-import {switchMap} from "rxjs/operators";
 
 @Injectable({providedIn: 'root'})
 export class ThreadService {
@@ -13,20 +11,21 @@ export class ThreadService {
 	) {
 	}
 
-	listThreads(limitCount?: number): Observable<ThreadModel[]> {
-		return runInInjectionContext(this.injector, (): Observable<ThreadModel[]> => {
+	async listThreads(limitCount?: number): Promise<ThreadModel[]> {
+		return runInInjectionContext(this.injector, async (): Promise<ThreadModel[]> => {
 			let q;
 			if (limitCount != null) {
 				q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'), limit(limitCount));
 			} else {
 				q = query(collection(this.db, 'threads'), orderBy('createdAt', 'desc'));
 			}
-			return collectionData(q, {idField: 'id'}) as Observable<ThreadModel[]>;
+			const snapshot = await getDocs(q);
+			return snapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as ThreadModel));
 		});
 	}
 
-	listThreadsByUser(uid: string, limitCount?: number): Observable<ThreadModel[]> {
-		return runInInjectionContext(this.injector, (): Observable<ThreadModel[]> => {
+	async listThreadsByUser(uid: string, limitCount?: number): Promise<ThreadModel[]> {
+		return runInInjectionContext(this.injector, async (): Promise<ThreadModel[]> => {
 			let q;
 			if (limitCount != null) {
 				q = query(
@@ -42,9 +41,9 @@ export class ThreadService {
 					orderBy('createdAt', 'desc')
 				);
 			}
-			return collectionData(q, {idField: 'id'}) as Observable<ThreadModel[]>;
+			const snapshot = await getDocs(q);
+			return snapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as ThreadModel));
 		});
-
 	}
 
 	async getUserThreadsCount(uid: string): Promise<number> {
@@ -56,11 +55,14 @@ export class ThreadService {
 		});
 	}
 
-
-	getThread(id: string): Observable<ThreadModel> {
-		return runInInjectionContext(this.injector, (): Observable<ThreadModel> => {
+	async getThread(id: string): Promise<ThreadModel | undefined> {
+		return runInInjectionContext(this.injector, async (): Promise<ThreadModel | undefined> => {
 			const ref = doc(this.db, 'threads', id);
-			return docData(ref, {idField: 'id'}) as Observable<ThreadModel>;
+			const snapshot = await getDoc(ref);
+			if (snapshot.exists()) {
+				return {id: snapshot.id, ...snapshot.data()} as ThreadModel;
+			}
+			return undefined;
 		});
 	}
 
@@ -70,63 +72,55 @@ export class ThreadService {
 			const snapshot = await getDoc(ref);
 			return snapshot.exists();
 		});
-
 	}
 
-	createThread(data: ThreadCreateModel): Observable<any> {
-		return runInInjectionContext(this.injector, (): Observable<any> => {
-			return from(
-				addDoc(collection(this.db, 'threads'), {
-					...data,
-					createdAt: serverTimestamp(),
-					updatedAt: serverTimestamp(),
-					replyCount: 0
-				})
-			);
+	async createThread(data: ThreadCreateModel): Promise<any> {
+		return runInInjectionContext(this.injector, async (): Promise<any> => {
+			return await addDoc(collection(this.db, 'threads'), {
+				...data,
+				createdAt: serverTimestamp(),
+				updatedAt: serverTimestamp(),
+				replyCount: 0
+			});
 		});
 	}
 
-	updateThread(id: string, patch: Partial<ThreadModel>): Observable<void> {
-		return runInInjectionContext(this.injector, (): Observable<void> => {
+	async updateThread(id: string, patch: Partial<ThreadModel>): Promise<void> {
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
 			const ref = doc(this.db, 'threads', id);
-			return from(
-				updateDoc(ref, {
-					...patch,
-					updatedAt: serverTimestamp()
-				})
-			);
+			await updateDoc(ref, {
+				...patch,
+				updatedAt: serverTimestamp()
+			});
 		});
 	}
 
-	deleteThread(id: string): Observable<void> {
-		return runInInjectionContext(this.injector, (): Observable<void> => {
+	async deleteThread(id: string): Promise<void> {
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
 			const postService: PostService = this.injector.get(PostService);
 			const threadRef = doc(this.db, 'threads', id);
-			return from(deleteDoc(threadRef)).pipe(
-				switchMap((): Observable<void> => {
-					return postService.deletePostsByThreadId(id);
-				})
-			);
+			await deleteDoc(threadRef);
+			await postService.deletePostsByThreadId(id);
 		});
 	}
 
-	incrementReplyCount(threadId: string): Observable<void> {
-		return runInInjectionContext(this.injector, (): Observable<void> => {
+	async incrementReplyCount(threadId: string): Promise<void> {
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
 			const ref = doc(this.db, 'threads', threadId);
-			return from(updateDoc(ref, {
+			await updateDoc(ref, {
 				replyCount: increment(1),
 				updatedAt: serverTimestamp()
-			}));
+			});
 		});
 	}
 
-	decrementReplyCount(threadId: string): Observable<void> {
-		return runInInjectionContext(this.injector, (): Observable<void> => {
+	async decrementReplyCount(threadId: string): Promise<void> {
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
 			const ref = doc(this.db, 'threads', threadId);
-			return from(updateDoc(ref, {
+			await updateDoc(ref, {
 				replyCount: increment(-1),
 				updatedAt: serverTimestamp()
-			}));
+			});
 		});
 	}
 

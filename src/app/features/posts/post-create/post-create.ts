@@ -5,7 +5,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {PostCreateModel} from "../../../shared/models";
 import {handleError} from "../../../shared/helpers";
 import {PostService} from "../../../core/services/post.service";
-import {firstValueFrom} from "rxjs";
 import {Location} from "@angular/common";
 import {trimmedMinLength} from "../../../shared/validators";
 
@@ -51,7 +50,7 @@ export class PostCreate {
 				authorId: uid,
 			};
 
-			await firstValueFrom(this.postService.createPost(payload));
+			await this.postService.createPost(payload);
 			this.form.reset();
 			await this.router.navigate([`/threads/${threadId}`]);
 		} catch (e) {

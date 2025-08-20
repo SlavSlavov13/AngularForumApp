@@ -1,5 +1,5 @@
 import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {firstValueFrom, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {AppUserModel, ThreadModel} from "../../../shared/models";
 import {AuthService} from "../../../core/services/auth.service";
@@ -53,7 +53,7 @@ export class UserProfileThreadsList implements OnInit, OnDestroy {
 				this.myProfile = true;
 			}
 			this.user = await this.authService.getUser(this.uid);
-			this.threads = await firstValueFrom(this.threadService.listThreadsByUser(this.uid, this.countLimit))
+			this.threads = await this.threadService.listThreadsByUser(this.uid, this.countLimit);
 			this.threadsCount = await this.threadService.getUserThreadsCount(this.uid);
 			this.threadsLimited = (this.threadsCount > this.countLimit)
 		} catch (e) {

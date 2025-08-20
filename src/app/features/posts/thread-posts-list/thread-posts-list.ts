@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppUserModel, PostModel} from "../../../shared/models";
-import {firstValueFrom, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {PostService} from "../../../core/services/post.service";
 import {ActivatedRoute} from "@angular/router";
@@ -41,7 +41,7 @@ export class ThreadPostsList implements OnInit, OnDestroy {
 			this.currentUid = await this.authService.currentUid();
 			this.threadId = this.route.snapshot.paramMap.get('threadId')!;
 
-			const posts: PostModel[] = await firstValueFrom(this.postService.listPostsByThread(this.threadId));
+			const posts: PostModel[] = await this.postService.listPostsByThread(this.threadId);
 
 			const authorIds: string[] = Array.from(new Set(posts.map(p => p.authorId)));
 			const users: AppUserModel[] = authorIds.length > 0

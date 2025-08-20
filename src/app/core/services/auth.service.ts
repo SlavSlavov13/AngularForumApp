@@ -2,8 +2,8 @@ import {Injectable, Injector, runInInjectionContext} from '@angular/core';
 import {Auth, createUserWithEmailAndPassword, EmailAuthCredential, EmailAuthProvider, onAuthStateChanged, reauthenticateWithCredential, signInWithEmailAndPassword, signOut, updatePassword, updateProfile, User, UserCredential, verifyBeforeUpdateEmail} from '@angular/fire/auth';
 import {collection, doc, DocumentSnapshot, Firestore, getDoc, getDocs, query, serverTimestamp, setDoc, where} from '@angular/fire/firestore';
 import {AppUserModel} from '../../shared/models';
-import {BehaviorSubject, from, Observable} from 'rxjs';
-import {filter, map, take} from 'rxjs/operators';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {filter, take} from 'rxjs/operators';
 import {getDownloadURL, ref, Storage, StorageReference, uploadBytes} from "@angular/fire/storage";
 import {mapFirebaseError} from "../../shared/helpers";
 
@@ -135,27 +135,26 @@ export class AuthService {
 		return users;
 	}
 
-	isDisplayNameTaken(displayName: string): Observable<boolean> {
-		return runInInjectionContext(this.injector, (): Observable<boolean> => {
+	async isDisplayNameTaken(displayName: string): Promise<boolean> {
+		return runInInjectionContext(this.injector, async (): Promise<boolean> => {
 			const q = query(
 				collection(this.db, 'users'),
 				where('displayName', '==', displayName)
 			);
-			return from(getDocs(q)).pipe(
-				map(snapshot => !snapshot.empty)
-			);
+			const snapshot = await getDocs(q);
+			return !snapshot.empty;
 		});
 	}
 
-	isEmailTaken(email: string): Observable<boolean> {
-		return runInInjectionContext(this.injector, (): Observable<boolean> => {
+
+	async isEmailTaken(email: string): Promise<boolean> {
+		return runInInjectionContext(this.injector, async (): Promise<boolean> => {
 			const q = query(
 				collection(this.db, 'users'),
-				where('email', '==', email.toLowerCase())
+				where('email', '==', email)
 			);
-			return from(getDocs(q)).pipe(
-				map(snapshot => !snapshot.empty)
-			);
+			const snapshot = await getDocs(q);
+			return !snapshot.empty;
 		});
 	}
 

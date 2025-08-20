@@ -1,9 +1,7 @@
 import {Injectable, Injector, runInInjectionContext} from '@angular/core';
-import {addDoc, collection, collectionData, deleteDoc, doc, docData, DocumentData, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, serverTimestamp, updateDoc, where, WriteBatch, writeBatch} from '@angular/fire/firestore';
-import {from, Observable} from 'rxjs';
+import {addDoc, collection, deleteDoc, doc, DocumentData, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, serverTimestamp, updateDoc, where, WriteBatch, writeBatch} from '@angular/fire/firestore';
 import {PostCreateModel, PostModel} from '../../shared/models';
 import {ThreadService} from "./thread.service";
-import {map, switchMap} from "rxjs/operators";
 
 @Injectable({providedIn: 'root'})
 export class PostService {
@@ -13,8 +11,8 @@ export class PostService {
 	) {
 	}
 
-	listPostsByThread(threadId: string, limitCount?: number): Observable<PostModel[]> {
-		return runInInjectionContext(this.injector, (): Observable<PostModel[]> => {
+	async listPostsByThread(threadId: string, limitCount?: number): Promise<PostModel[]> {
+		return runInInjectionContext(this.injector, async (): Promise<PostModel[]> => {
 			let q;
 			if (limitCount != null) {
 				q = query(
@@ -30,12 +28,13 @@ export class PostService {
 					orderBy('createdAt', 'desc'),
 				);
 			}
-			return collectionData(q, {idField: 'id'}) as Observable<PostModel[]>;
+			const snapshot = await getDocs(q);
+			return snapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as PostModel));
 		});
 	}
 
-	listPostsByUser(uid: string, limitCount?: number): Observable<PostModel[]> {
-		return runInInjectionContext(this.injector, (): Observable<PostModel[]> => {
+	async listPostsByUser(uid: string, limitCount?: number): Promise<PostModel[]> {
+		return runInInjectionContext(this.injector, async (): Promise<PostModel[]> => {
 			let q;
 			if (limitCount != null) {
 				q = query(
@@ -51,14 +50,19 @@ export class PostService {
 					orderBy('createdAt', 'desc')
 				);
 			}
-			return collectionData(q, {idField: 'id'}) as Observable<PostModel[]>;
+			const snapshot = await getDocs(q);
+			return snapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as PostModel));
 		});
 	}
 
-	getPost(id: string): Observable<PostModel> {
-		return runInInjectionContext(this.injector, (): Observable<PostModel> => {
+	async getPost(id: string): Promise<PostModel | undefined> {
+		return runInInjectionContext(this.injector, async (): Promise<PostModel | undefined> => {
 			const ref = doc(this.db, 'posts', id);
-			return docData(ref, {idField: 'id'}) as Observable<PostModel>;
+			const snapshot = await getDoc(ref);
+			if (snapshot.exists()) {
+				return {id: snapshot.id, ...snapshot.data()} as PostModel;
+			}
+			return undefined;
 		});
 	}
 
@@ -71,55 +75,44 @@ export class PostService {
 		});
 	}
 
-	createPost(data: PostCreateModel): Observable<any> {
-		return runInInjectionContext(this.injector, (): Observable<any> => {
+	async createPost(data: PostCreateModel): Promise<any> {
+		return runInInjectionContext(this.injector, async (): Promise<any> => {
 			const threadService: ThreadService = this.injector.get(ThreadService);
-			return from(
-				addDoc(collection(this.db, 'posts'), {
-					...data,
-					createdAt: serverTimestamp(),
-					updatedAt: serverTimestamp(),
-				})
-			).pipe(
-				switchMap((postRef) => threadService.incrementReplyCount(data.threadId).pipe(
-					map(() => postRef)
-				))
-			);
+			const postRef = await addDoc(collection(this.db, 'posts'), {
+				...data,
+				createdAt: serverTimestamp(),
+				updatedAt: serverTimestamp(),
+			});
+			await threadService.incrementReplyCount(data.threadId);
+			return postRef;
 		});
 	}
 
-
-	updatePost(id: string, patch: Partial<PostModel>): Observable<void> {
-		return runInInjectionContext(this.injector, (): Observable<void> => {
+	async updatePost(id: string, patch: Partial<PostModel>): Promise<void> {
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
 			const ref = doc(this.db, 'posts', id);
-			return from(
-				updateDoc(ref, {
-					...patch,
-					updatedAt: serverTimestamp(),
-				})
-			);
+			await updateDoc(ref, {
+				...patch,
+				updatedAt: serverTimestamp(),
+			});
 		});
 	}
 
-	deletePost(id: string): Observable<void> {
-		return runInInjectionContext(this.injector, (): Observable<void> => {
+	async deletePost(id: string): Promise<void> {
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
 			const threadService: ThreadService = this.injector.get(ThreadService);
 			const postRef = doc(this.db, 'posts', id);
+			const snapshot = await getDoc(postRef);
+			if (!snapshot.exists()) {
+				return;
+			}
+			const postData: DocumentData = snapshot.data()!;
+			const threadId: string = postData['threadId'];
 
-			return from(getDoc(postRef)).pipe(
-				switchMap((snapshot): Observable<void> => {
-					const postData: DocumentData = snapshot.data()!;
-					const threadId: string = postData['threadId'];
-
-					return from(deleteDoc(postRef)).pipe(
-						switchMap((): Observable<void> => threadService.decrementReplyCount(threadId))
-					);
-				}),
-				map(() => void 0)
-			);
+			await deleteDoc(postRef);
+			await threadService.decrementReplyCount(threadId);
 		});
 	}
-
 
 	async postExists(id: string): Promise<boolean> {
 		return await runInInjectionContext(this.injector, async (): Promise<boolean> => {
@@ -129,21 +122,16 @@ export class PostService {
 		});
 	}
 
-	deletePostsByThreadId(threadId: string): Observable<void> {
-		return runInInjectionContext(this.injector, (): Observable<void> => {
+	async deletePostsByThreadId(threadId: string): Promise<void> {
+		return runInInjectionContext(this.injector, async (): Promise<void> => {
 			const postsRef = collection(this.db, 'posts');
 			const q = query(postsRef, where('threadId', '==', threadId));
-
-			return from(getDocs(q)).pipe(
-				switchMap(async (postsSnapshot): Promise<void> => {
-					const batch: WriteBatch = writeBatch(this.db);
-					postsSnapshot.forEach((docSnap): void => {
-						batch.delete(docSnap.ref);
-					});
-					await batch.commit();
-				}),
-				map((): undefined => void 0)
-			);
+			const postsSnapshot = await getDocs(q);
+			const batch: WriteBatch = writeBatch(this.db);
+			postsSnapshot.forEach((docSnap): void => {
+				batch.delete(docSnap.ref);
+			});
+			await batch.commit();
 		});
 	}
 }

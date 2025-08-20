@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppUserModel, PostModel} from "../../../shared/models";
-import {firstValueFrom, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {PostService} from "../../../core/services/post.service";
 import {ActivatedRoute} from "@angular/router";
@@ -49,7 +49,7 @@ export class UserPostsList implements OnInit, OnDestroy {
 			}
 			this.user = await this.authService.getUser(this.uid);
 			this.userPostsCount = await this.postService.getUserPostsCount(this.uid);
-			this.posts = await firstValueFrom(this.postService.listPostsByUser(this.uid));
+			this.posts = await this.postService.listPostsByUser(this.uid);
 			this.currentUid = await this.authService.currentUid();
 		} catch (e) {
 			this.error = handleError(e);

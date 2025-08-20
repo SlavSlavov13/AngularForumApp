@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {ActivatedRoute, Router} from '@angular/router';
 import {ThreadService} from '../../../core/services/thread.service';
 import {ThreadModel} from '../../../shared/models';
-import {firstValueFrom, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {handleError} from "../../../shared/helpers";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {Store} from "@ngrx/store";
@@ -40,7 +40,7 @@ export class ThreadEdit implements OnInit, OnDestroy {
 		try {
 			this.store.dispatch(showLoading());
 			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
-			this.thread = await firstValueFrom(this.threadService.getThread(threadId));
+			this.thread = (await this.threadService.getThread(threadId))!;
 
 			this.form = this.fb.group({
 				title: [this.thread.title, [Validators.required, trimmedMinLength(6)]],
@@ -86,7 +86,7 @@ export class ThreadEdit implements OnInit, OnDestroy {
 				tags: tagsArray,
 			};
 
-			await firstValueFrom(this.threadService.updateThread(this.thread.id, patch))
+			await this.threadService.updateThread(this.thread.id, patch);
 			await this.router.navigate(['/threads', this.thread.id]);
 		} catch (e) {
 			this.error = handleError(e);

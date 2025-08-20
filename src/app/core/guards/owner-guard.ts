@@ -3,7 +3,6 @@ import {ActivatedRouteSnapshot, CanActivateFn, Router, UrlTree} from '@angular/r
 import {AuthService} from '../services/auth.service';
 import {ThreadService} from '../services/thread.service';
 import {PostModel, ThreadModel} from "../../shared/models";
-import {firstValueFrom} from "rxjs";
 import {PostService} from "../services/post.service";
 
 export const ownerGuard: CanActivateFn = async (route: ActivatedRouteSnapshot): Promise<true | UrlTree> => {
@@ -18,14 +17,14 @@ export const ownerGuard: CanActivateFn = async (route: ActivatedRouteSnapshot): 
 	const currentUid: string | null = await authService.currentUid();
 
 	if (threadId) {
-		const thread: ThreadModel = await firstValueFrom(threadService.getThread(threadId));
+		const thread: ThreadModel = (await threadService.getThread(threadId))!;
 		return thread.authorId === currentUid
 			? true
 			: router.createUrlTree([`/threads/${threadId}`]);
 	}
 
 	if (postId) {
-		const post: PostModel = await firstValueFrom(postService.getPost(postId));
+		const post: PostModel = (await postService.getPost(postId))!;
 		return post.authorId === currentUid
 			? true
 			: router.createUrlTree([`/threads/${post.threadId}`]);

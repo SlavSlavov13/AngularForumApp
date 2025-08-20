@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppUserModel, ThreadModel} from "../../../shared/models";
-import {firstValueFrom, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {ThreadService} from "../../../core/services/thread.service";
 import {Store} from "@ngrx/store";
@@ -35,7 +35,7 @@ export class AllThreadsList implements OnInit, OnDestroy {
 	async ngOnInit(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
-			const threads: ThreadModel[] = await firstValueFrom(this.threadService.listThreads());
+			const threads: ThreadModel[] = await this.threadService.listThreads();
 
 			const authorIds: string[] = Array.from(new Set(threads.map(t => t.authorId)));
 

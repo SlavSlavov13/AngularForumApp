@@ -26,7 +26,7 @@ export class PostDelete {
 
 	async delete(): Promise<void> {
 		try {
-			const post: PostModel = (await firstValueFrom(this.postService.getPost(this.postId)))!;
+			const post: PostModel = (await this.postService.getPost(this.postId))!;
 			const result: unknown = await firstValueFrom(this.dialog.open(ConfirmDelete, {
 				data: {
 					messageType: 'Delete post ',
@@ -36,7 +36,7 @@ export class PostDelete {
 			}).closed);
 
 			if (result) {
-				await firstValueFrom(this.postService.deletePost(this.postId));
+				await this.postService.deletePost(this.postId);
 				this.postDeleted.emit(this.postId);
 			}
 		} catch (e) {

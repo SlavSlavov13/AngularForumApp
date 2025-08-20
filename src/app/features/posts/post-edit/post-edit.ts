@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {PostModel, ThreadModel} from "../../../shared/models";
 import {ActivatedRoute, Router} from "@angular/router";
-import {firstValueFrom, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {handleError} from "../../../shared/helpers";
 import {PostService} from "../../../core/services/post.service";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
@@ -41,7 +41,7 @@ export class PostEdit implements OnInit, OnDestroy {
 		try {
 			this.store.dispatch(showLoading());
 			const postId: string = this.route.snapshot.paramMap.get('postId')!;
-			this.post = await firstValueFrom(this.postService.getPost(postId));
+			this.post = (await this.postService.getPost(postId))!;
 
 			this.form = this.fb.group({
 				body: [this.post.body, [Validators.required, trimmedMinLength(20)]],
@@ -77,11 +77,7 @@ export class PostEdit implements OnInit, OnDestroy {
 				body: raw.body.trim(),
 			};
 
-			this.postService.updatePost(this.post.id, patch).subscribe({
-				error: (e): void => {
-					this.error = handleError(e);
-				}
-			});
+			await this.postService.updatePost(this.post.id, patch);
 			await this.router.navigate(['/threads', this.post.threadId]);
 		} catch (e) {
 			this.error = handleError(e);

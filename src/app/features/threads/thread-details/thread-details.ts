@@ -43,7 +43,7 @@ export class ThreadDetails implements OnInit, OnDestroy {
 		try {
 			this.store.dispatch(showLoading());
 			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
-			this.thread = await firstValueFrom(this.threadService.getThread(threadId));
+			this.thread = (await this.threadService.getThread(threadId))!;
 			this.tags = this.thread.tags.join(', ')
 			const authorUid: string = this.thread.authorId;
 			this.author = await this.authService.getUser(authorUid);
@@ -77,7 +77,7 @@ export class ThreadDetails implements OnInit, OnDestroy {
 				}
 			}).closed);
 			if (result) {
-				await firstValueFrom(this.threadService.deleteThread(this.thread.id));
+				await this.threadService.deleteThread(this.thread.id);
 				this.location.back();
 			}
 		} catch (e) {
