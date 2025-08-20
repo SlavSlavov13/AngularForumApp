@@ -109,7 +109,9 @@ This project is a modern, full-featured forum web application built with Angular
 
 Start the development server:
 
+```
 ng serve
+```
 
 Navigate to `http://localhost:4200/` in your browser. The application will auto-reload as you make changes.
 
@@ -117,7 +119,9 @@ Navigate to `http://localhost:4200/` in your browser. The application will auto-
 
 Execute unit tests with:
 
+```
 ng test
+```
 
 Tests use Jasmine and Karma, covering all components, services, and validators extensively.
 
