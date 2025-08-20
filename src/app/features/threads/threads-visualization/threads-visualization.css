@@ -14,33 +14,31 @@ div > a {
 	color: #004080; /* Dark blue links */
 	font-weight: 700;
 	text-decoration: none;
-	margin-right: 6px;
 	transition: color 0.3s ease;
+	box-sizing: border-box;
+	display: inline-block;
+	width: 100%;
+	margin: 14px 0;
 }
 
-div > a:hover {
-	color: #0073e6; /* Lighter blue color on hover */
-	text-decoration: underline;
-}
 
 div {
 	background-color: #dceeff; /* Soft very light blue background */
 	border-radius: 6px;
 	padding: 15px 18px;
-	margin: 14px 0;
 	box-shadow: 0 1px 3px rgba(0, 64, 128, 0.1);
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
 }
 
-span {
-	color: #003366; /* Darker blue for secondary text */
-	margin-left: 4px;
-	font-weight: 500;
+.info {
+	color: #003366 !important; /* Darker blue for secondary text */
+	margin-left: 4px !important;
+	font-weight: 500 !important;
 }
 
-a.title {
+.title {
 	color: #005bb5; /* Medium blue for author links */
 	margin-left: 4px;
 	font-weight: 600;
@@ -48,12 +46,7 @@ a.title {
 	text-decoration: none;
 }
 
-a.title:hover {
-	color: #003366;
-	text-decoration: underline;
-}
-
-div > a, span {
+div > a, .info {
 	word-break: break-word;
 	overflow-wrap: break-word;
 }
@@ -91,11 +84,15 @@ div > a, span {
 	background-color: #dceeff; /* Very light blue */
 	border-radius: 6px;
 	padding: 15px 18px;
-	margin: 14px 0;
 	box-shadow: 0 1px 3px rgba(0, 64, 128, 0.1);
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
+	transition: background-color 0.3s ease;
+}
+
+.thread-item:hover {
+	background-color: #cae4fd;
 }
 
 @media (max-width: 768px) {
@@ -112,7 +109,7 @@ div > a, span {
 		align-items: flex-start;
 	}
 
-	span, a.title {
+	.info, a.title {
 		margin-left: 0;
 		margin-top: 4px;
 	}
