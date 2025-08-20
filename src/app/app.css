@@ -63,7 +63,7 @@ main {
 	box-sizing: border-box;
 	padding: 20px;
 	background-color: #e6f0ff; /* Very light blue background */
-	min-height: calc(100vh - 65px); /* Adjust based on header height */
+	min-height: calc(100vh - 123px); /* Adjust based on header height */
 }
 
 .error-message,
@@ -81,6 +81,33 @@ main {
 
 .container > .error {
 	margin-bottom: 25px;
+}
+
+.site-footer {
+	background-color: #b3d1ff; /* Light blue matching header */
+	color: #003366;
+	padding: 15px 20px;
+	box-shadow: inset 0 1px 3px rgba(0, 64, 128, 0.1);
+	font-family: Arial, sans-serif;
+	font-size: 0.9rem;
+	text-align: center;
+}
+
+.footer-content {
+	max-width: 960px;
+	margin: 0 auto;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+}
+
+.footer-content p {
+	margin: 0;
+	flex: 1 1 200px;
+	font-weight: 600;
+	color: #003366;
 }
 
 @media (max-width: 768px) {
@@ -103,6 +130,19 @@ main {
 
 	button {
 		padding: 6px 10px;
+	}
+}
+
+@media (max-width: 600px) {
+	.footer-content {
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.footer-content p,
+	.footer-nav {
+		flex: none;
+		text-align: center;
 	}
 }
 
