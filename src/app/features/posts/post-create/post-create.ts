@@ -41,7 +41,7 @@ export class PostCreate {
 		}
 		try {
 			const {body} = this.form.value;
-
+			this.creating = true;
 			const uid: string = (await this.authService.currentUid())!;
 			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
 			const payload: PostCreateModel = {

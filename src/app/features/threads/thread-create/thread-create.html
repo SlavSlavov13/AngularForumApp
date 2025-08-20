@@ -40,7 +40,7 @@
 			{{ this.creating ? 'Creating...' : 'Create' }}
 		</button>
 
-		<button type="button" (click)="onCancel()" class="btn-three">
+		<button type="button" class="btn btn-three mt-3" (click)="onCancel()" [disabled]="this.creating">
 			Cancel
 		</button>
 

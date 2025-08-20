@@ -127,7 +127,7 @@
 				{{ this.saving ? 'Saving...' : 'Save Changes' }}
 			</button>
 
-			<button type="button" class="btn btn-three mt-3" (click)="onCancel()">
+			<button type="button" class="btn btn-three mt-3" (click)="onCancel()" [disabled]="this.saving">
 				Cancel
 			</button>
 		</form>

@@ -111,6 +111,11 @@ p.error {
 	background-color: #024b95;
 }
 
+.btn-three:disabled {
+	background-color: #55a5f4;
+	cursor: not-allowed;
+}
+
 
 /* Responsive Design */
 

@@ -24,7 +24,6 @@ export class ThreadEdit implements OnInit, OnDestroy {
 	private loadingHandled: boolean = false;
 	saving: boolean = false;
 	thread!: ThreadModel;
-	submitting: boolean = false;
 
 	constructor(
 		private fb: FormBuilder,
@@ -91,7 +90,7 @@ export class ThreadEdit implements OnInit, OnDestroy {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.submitting = false;
+			this.saving = false;
 		}
 	}
 
