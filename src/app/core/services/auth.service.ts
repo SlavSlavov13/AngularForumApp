@@ -22,7 +22,6 @@ export class AuthService {
 		private db: Firestore,
 	) {
 		runInInjectionContext(this.injector, async (): Promise<void> => {
-
 			onAuthStateChanged(this.auth, async (fbUser: User | null): Promise<void> => {
 				try {
 					if (!fbUser || !fbUser.email) {
@@ -223,7 +222,7 @@ export class AuthService {
 		});
 	}
 
-	async uploadProfilePhoto(file: File | null): Promise<void> {
+	private async uploadProfilePhoto(file: File | null): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
 			const uid: string = (await this.currentUid())!;
 
@@ -255,7 +254,7 @@ export class AuthService {
 		});
 	}
 
-	waitUntilInitialized(): Promise<void> {
+	private waitUntilInitialized(): Promise<void> {
 		if (this.initializedSub.value) return Promise.resolve();
 		return new Promise<void>((resolve): void => {
 			this.initialized$

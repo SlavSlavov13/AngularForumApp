@@ -21,20 +21,20 @@ import {ThreadsVisualization} from "../threads-visualization/threads-visualizati
 })
 export class UserProfileThreadsList implements OnInit, OnDestroy {
 	@Output() loadingStateChanged: EventEmitter<void> = new EventEmitter<void>();
-	uid: string | null = null;
-	error: string | null = null;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private uid: string | null = null;
+	protected error: string | null = null;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
-	componentLoaded: boolean = false;
-	myProfile: boolean = false;
-	countLimit: number = 3;
-	threadsLimited: boolean = false;
-	threadsCount: number = 0;
-	threads: ThreadModel[] = [];
-	user!: AppUserModel;
+	protected componentLoaded: boolean = false;
+	protected myProfile: boolean = false;
+	private countLimit: number = 3;
+	protected threadsLimited: boolean = false;
+	private threadsCount: number = 0;
+	protected threads: ThreadModel[] = [];
+	protected user!: AppUserModel;
 
 	constructor(
-		protected authService: AuthService,
+		private authService: AuthService,
 		private threadService: ThreadService,
 		private store: Store<AppState>,
 		private route: ActivatedRoute,

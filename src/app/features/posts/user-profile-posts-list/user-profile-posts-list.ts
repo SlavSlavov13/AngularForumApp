@@ -21,23 +21,23 @@ import {PostsVisualization} from "../posts-visualization/posts-visualization";
 })
 export class UserProfilePostsList implements OnInit, OnDestroy {
 	@Output() loadingStateChanged: EventEmitter<void> = new EventEmitter<void>();
-	posts: PostModel[] = [];
-	error: string | null = null;
-	uid: string | null = null;
-	limitCount: number = 3;
-	userPostsCount: number = 0;
-	currentUid: string | null = null;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected posts: PostModel[] = [];
+	protected error: string | null = null;
+	private uid: string | null = null;
+	private limitCount: number = 3;
+	private userPostsCount: number = 0;
+	protected currentUid: string | null = null;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
-	postsLimited: boolean = false;
-	componentLoaded: boolean = false;
-	myProfile: boolean = false;
-	user!: AppUserModel;
+	protected postsLimited: boolean = false;
+	protected componentLoaded: boolean = false;
+	protected myProfile: boolean = false;
+	protected user!: AppUserModel;
 
 	constructor(
 		private postService: PostService,
 		private route: ActivatedRoute,
-		protected authService: AuthService,
+		private authService: AuthService,
 		private store: Store<AppState>,
 	) {
 	}

@@ -20,15 +20,15 @@ export class ProfileCard implements OnInit, OnDestroy {
 	@Input({required: true}) user!: AppUserModel;
 	@Input() myProfile?: boolean;
 	@Input({required: true}) error!: string | null;
-	photoPending: boolean = false;
+	private photoPending: boolean = false;
 	private loadingHandled: boolean = false;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
-	showThreads: boolean = false;
-	showPosts: boolean = false;
-	thisComponentLoaded: boolean = false;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected showThreads: boolean = false;
+	protected showPosts: boolean = false;
+	protected thisComponentLoaded: boolean = false;
 
 	constructor(
-		protected authService: AuthService,
+		private authService: AuthService,
 		private store: Store<AppState>,
 		private cdr: ChangeDetectorRef,
 	) {
@@ -54,20 +54,20 @@ export class ProfileCard implements OnInit, OnDestroy {
 		}
 	}
 
-	onPhotoLoaded(): void {
+	protected onPhotoLoaded(): void {
 		this.handleLoaded();
 		this.thisComponentLoaded = true;
 	}
 
-	toggleThreads(): void {
+	protected toggleThreads(): void {
 		this.showThreads = !this.showThreads;
 	}
 
-	togglePosts(): void {
+	protected togglePosts(): void {
 		this.showPosts = !this.showPosts;
 	}
 
-	detectChanges(): void {
+	protected detectChanges(): void {
 		this.cdr.detectChanges();
 	}
 }

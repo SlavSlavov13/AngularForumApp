@@ -18,12 +18,12 @@ import {trimmedMinLength} from "../../../shared/validators";
 	styleUrl: './thread-edit.css'
 })
 export class ThreadEdit implements OnInit, OnDestroy {
-	error: string | null = null;
-	form!: FormGroup;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected error: string | null = null;
+	protected form!: FormGroup;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
-	saving: boolean = false;
-	thread!: ThreadModel;
+	protected saving: boolean = false;
+	private thread!: ThreadModel;
 
 	constructor(
 		private fb: FormBuilder,
@@ -64,7 +64,7 @@ export class ThreadEdit implements OnInit, OnDestroy {
 		}
 	}
 
-	async submit(): Promise<void> {
+	protected async submit(): Promise<void> {
 		try {
 			if (this.form.invalid) {
 				this.form.markAllAsTouched();
@@ -94,7 +94,7 @@ export class ThreadEdit implements OnInit, OnDestroy {
 		}
 	}
 
-	onCancel(): void {
+	protected onCancel(): void {
 		this.location.back();
 	}
 }

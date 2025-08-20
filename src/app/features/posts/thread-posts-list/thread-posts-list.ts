@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AppUserModel, PostModel} from "../../../shared/models";
-import {Observable} from "rxjs";
-import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
+import {AppState, hideLoading, showLoading} from "../../../store";
 import {PostService} from "../../../core/services/post.service";
 import {ActivatedRoute} from "@angular/router";
 import {AuthService} from "../../../core/services/auth.service";
@@ -18,14 +17,12 @@ import {PostsVisualization} from "../posts-visualization/posts-visualization";
 	styleUrl: './thread-posts-list.css'
 })
 export class ThreadPostsList implements OnInit, OnDestroy {
-	posts: (PostModel & { authorName?: string })[] = [];
-	threadId!: string;
-	error: string | null = null;
-	currentUid: string | null = null;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected posts: (PostModel & { authorName?: string })[] = [];
+	private threadId!: string;
+	protected error: string | null = null;
+	protected currentUid: string | null = null;
 	private loadingHandled: boolean = false;
-	componentLoaded: boolean = false;
-	user!: AppUserModel;
+	protected componentLoaded: boolean = false;
 
 	constructor(
 		private postService: PostService,

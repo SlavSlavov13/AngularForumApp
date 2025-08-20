@@ -20,14 +20,14 @@ import {AsyncPipe} from "@angular/common";
 	styleUrl: './user-threads-list.css'
 })
 export class UserThreadsList implements OnInit, OnDestroy {
-	threads: ThreadModel[] = [];
-	uid: string | null = null;
-	myProfile: boolean = false;
-	user!: AppUserModel;
-	error: string | null = null;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected threads: ThreadModel[] = [];
+	private uid: string | null = null;
+	protected myProfile: boolean = false;
+	protected user!: AppUserModel;
+	protected error: string | null = null;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
-	componentLoaded: boolean = false;
+	protected componentLoaded: boolean = false;
 
 	constructor(
 		private threadService: ThreadService,

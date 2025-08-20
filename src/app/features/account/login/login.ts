@@ -14,9 +14,9 @@ import {customEmailValidator, trimmedMinLength} from "../../../shared/validators
 	styleUrls: ['./login.css'],
 })
 export class Login {
-	loggingIn: boolean = false;
-	error: string | null = null;
-	form: FormGroup;
+	protected loggingIn: boolean = false;
+	protected error: string | null = null;
+	protected form: FormGroup;
 
 	constructor(
 		private authService: AuthService,

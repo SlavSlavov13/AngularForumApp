@@ -22,20 +22,20 @@ import {AsyncPipe, Location} from "@angular/common";
 	styleUrl: './edit-profile.css'
 })
 export class EditProfile implements OnInit, OnDestroy {
-	form!: FormGroup;
-	uid!: string;
-	user!: AppUserModel;
-	saving: boolean = false;
-	error: string | null = null;
-	photoPreviewUrl: string | null = null;
+	protected form!: FormGroup;
+	private uid!: string;
+	private user!: AppUserModel;
+	protected saving: boolean = false;
+	protected error: string | null = null;
+	protected photoPreviewUrl: string | null = null;
 	private loadingHandled: boolean = false;
-	photoFile: File | null = null;
-	photoPending: boolean = false;
-	locationLoading: boolean = false;
-	location: { lat: number, lng: number, name?: string, } | null = null;
-	locationError: string | null = null;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
-	updatePhoto: boolean = false;
+	private photoFile: File | null = null;
+	private photoPending: boolean = false;
+	protected locationLoading: boolean = false;
+	protected location: { lat: number, lng: number, name?: string, } | null = null;
+	protected locationError: string | null = null;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private updatePhoto: boolean = false;
 
 
 	private mapsLoader: Loader = new Loader({
@@ -43,7 +43,7 @@ export class EditProfile implements OnInit, OnDestroy {
 		version: 'weekly',
 	});
 
-	async initMaps(): Promise<void> {
+	private async initMaps(): Promise<void> {
 		await this.mapsLoader.importLibrary('core');
 		await this.mapsLoader.importLibrary('maps');
 		await this.mapsLoader.importLibrary('geocoding');
@@ -105,7 +105,7 @@ export class EditProfile implements OnInit, OnDestroy {
 		}
 	}
 
-	onPhotoSelected(event: Event): void {
+	protected onPhotoSelected(event: Event): void {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length) {
 			this.photoFile = input.files[0];
@@ -114,7 +114,7 @@ export class EditProfile implements OnInit, OnDestroy {
 		}
 	}
 
-	onAddLocation(): void {
+	protected onAddLocation(): void {
 		this.locationLoading = true;
 		this.locationError = null;
 
@@ -134,7 +134,7 @@ export class EditProfile implements OnInit, OnDestroy {
 		}
 	}
 
-	async handleLocation(pos: GeolocationPosition): Promise<void> {
+	private async handleLocation(pos: GeolocationPosition): Promise<void> {
 		this.locationLoading = true;
 		const lat: number = pos.coords.latitude;
 		const lng: number = pos.coords.longitude;
@@ -144,7 +144,7 @@ export class EditProfile implements OnInit, OnDestroy {
 	}
 
 
-	async reverseGeocode(latitude: number, longitude: number): Promise<string | null> {
+	private async reverseGeocode(latitude: number, longitude: number): Promise<string | null> {
 		const {Geocoder} = await (window as any).google.maps.importLibrary('geocoding');
 		const geocoder = new Geocoder();
 
@@ -160,17 +160,17 @@ export class EditProfile implements OnInit, OnDestroy {
 		});
 	}
 
-	onPhotoLoaded(): void {
+	protected onPhotoLoaded(): void {
 		this.handleLoaded();
 	}
 
-	clearPhoto(): void {
+	protected clearPhoto(): void {
 		this.photoPreviewUrl = null;
 		this.photoFile = null;
 		this.updatePhoto = true;
 	}
 
-	clearLocation(): void {
+	protected clearLocation(): void {
 		this.location = null;
 	}
 
@@ -186,7 +186,7 @@ export class EditProfile implements OnInit, OnDestroy {
 	}
 
 
-	async submit(): Promise<void> {
+	protected async submit(): Promise<void> {
 		if (this.form.invalid || this.locationLoading) {
 			this.form.markAllAsTouched();
 			return;

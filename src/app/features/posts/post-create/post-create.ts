@@ -17,9 +17,9 @@ import {trimmedMinLength} from "../../../shared/validators";
 	styleUrl: './post-create.css'
 })
 export class PostCreate {
-	error: string | null = null;
-	form: FormGroup;
-	creating: boolean = false;
+	protected error: string | null = null;
+	protected form: FormGroup;
+	protected creating: boolean = false;
 
 	constructor(
 		private fb: FormBuilder,
@@ -60,7 +60,7 @@ export class PostCreate {
 		}
 	}
 
-	onCancel(): void {
+	protected onCancel(): void {
 		this.location.back();
 	}
 }

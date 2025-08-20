@@ -19,11 +19,11 @@ import {AuthService} from "../../../core/services/auth.service";
 	styleUrl: './all-threads-list.css'
 })
 export class AllThreadsList implements OnInit, OnDestroy {
-	threads: ThreadModel[] = [];
-	error: string | null = null;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected threads: ThreadModel[] = [];
+	protected error: string | null = null;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
-	componentLoaded: boolean = false;
+	protected componentLoaded: boolean = false;
 
 	constructor(
 		private threadService: ThreadService,

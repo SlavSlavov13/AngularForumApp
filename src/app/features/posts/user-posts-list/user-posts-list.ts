@@ -20,21 +20,21 @@ import {PostsVisualization} from "../posts-visualization/posts-visualization";
 	styleUrl: './user-posts-list.css'
 })
 export class UserPostsList implements OnInit, OnDestroy {
-	posts: PostModel[] = [];
-	error: string | null = null;
-	uid: string | null = null;
-	userPostsCount: number | null = null;
-	myProfile: boolean = false;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected posts: PostModel[] = [];
+	protected error: string | null = null;
+	private uid: string | null = null;
+	private userPostsCount: number | null = null;
+	protected myProfile: boolean = false;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
-	componentLoaded: boolean = false;
-	currentUid: string | null = null;
-	user!: AppUserModel;
+	protected componentLoaded: boolean = false;
+	protected currentUid: string | null = null;
+	protected user!: AppUserModel;
 
 	constructor(
 		private postService: PostService,
 		private route: ActivatedRoute,
-		protected authService: AuthService,
+		private authService: AuthService,
 		private store: Store<AppState>,
 	) {
 	}

@@ -19,9 +19,9 @@ import {trimmedMinLength} from "../../../shared/validators";
 	styleUrl: './thread-create.css'
 })
 export class ThreadCreate {
-	error: string | null = null;
-	form: FormGroup;
-	creating: boolean = false;
+	protected error: string | null = null;
+	protected form: FormGroup;
+	protected creating: boolean = false;
 
 	constructor(
 		private fb: FormBuilder,
@@ -67,7 +67,7 @@ export class ThreadCreate {
 		}
 	}
 
-	onCancel(): void {
+	protected onCancel(): void {
 		this.location.back();
 	}
 }

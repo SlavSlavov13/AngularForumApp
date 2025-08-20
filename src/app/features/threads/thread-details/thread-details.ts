@@ -20,14 +20,14 @@ import {Dialog} from "@angular/cdk/dialog";
 	styleUrl: './thread-details.css'
 })
 export class ThreadDetails implements OnInit, OnDestroy {
-	error: string | null = null;
-	thread!: ThreadModel;
-	author!: AppUserModel;
-	tags: string = '';
-	currentUid: Promise<string | null> = this.authService.currentUid();
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected error: string | null = null;
+	protected thread!: ThreadModel;
+	protected author!: AppUserModel;
+	protected tags: string = '';
+	protected currentUid: Promise<string | null> = this.authService.currentUid();
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
-	deleting: boolean = false;
+	private deleting: boolean = false;
 
 	constructor(
 		private route: ActivatedRoute,
@@ -65,9 +65,10 @@ export class ThreadDetails implements OnInit, OnDestroy {
 		}
 	}
 
-	async delete(): Promise<void> {
+	protected async delete(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
+			this.deleting = true;
 			this.loadingHandled = false;
 			const result: unknown = await firstValueFrom(this.dialog.open(ConfirmDelete, {
 				data: {
@@ -83,6 +84,7 @@ export class ThreadDetails implements OnInit, OnDestroy {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
+			this.deleting = false;
 			this.handleLoaded();
 		}
 	}

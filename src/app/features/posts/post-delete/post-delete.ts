@@ -16,7 +16,7 @@ export class PostDelete {
 	@Input({required: true}) postId!: string;
 	@Output() deletionError: EventEmitter<string> = new EventEmitter<string>;
 	@Output() postDeleted: EventEmitter<string> = new EventEmitter<string>();
-	error: string | null = null;
+	private error: string | null = null;
 
 	constructor(
 		private postService: PostService,
@@ -24,7 +24,7 @@ export class PostDelete {
 	) {
 	}
 
-	async delete(): Promise<void> {
+	protected async delete(): Promise<void> {
 		try {
 			const post: PostModel = (await this.postService.getPost(this.postId))!;
 			const result: unknown = await firstValueFrom(this.dialog.open(ConfirmDelete, {

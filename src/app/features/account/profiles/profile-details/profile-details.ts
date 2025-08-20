@@ -5,8 +5,7 @@ import {AppUserModel} from "../../../../shared/models";
 import {ActivatedRoute} from "@angular/router";
 import {handleError} from "../../../../shared/helpers";
 import {Store} from "@ngrx/store";
-import {Observable} from "rxjs";
-import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../../store";
+import {AppState, hideLoading, showLoading} from "../../../../store";
 
 @Component({
 	selector: 'app-profile-details',
@@ -15,13 +14,12 @@ import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../..
 	styleUrl: './profile-details.css'
 })
 export class ProfileDetails implements OnInit, OnDestroy {
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 	private loadingHandled: boolean = false;
-	error: string | null = null;
-	uid: string | null = null;
-	user!: AppUserModel;
-	componentLoaded: boolean = false;
-	myProfile: boolean = false;
+	protected error: string | null = null;
+	private uid: string | null = null;
+	protected user!: AppUserModel;
+	protected componentLoaded: boolean = false;
+	protected myProfile: boolean = false;
 
 	constructor(
 		private route: ActivatedRoute,

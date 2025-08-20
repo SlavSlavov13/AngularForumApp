@@ -14,9 +14,9 @@ import {handleError} from "../../../shared/helpers";
 	styleUrls: ['./register.css']
 })
 export class Register implements OnInit {
-	form!: FormGroup;
-	saving: boolean = false;
-	error: string | null = null;
+	protected form!: FormGroup;
+	protected saving: boolean = false;
+	protected error: string | null = null;
 
 	constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
 	}
@@ -36,12 +36,12 @@ export class Register implements OnInit {
 		});
 	}
 
-	get passwords(): FormGroup {
+	protected get passwords(): FormGroup {
 		return this.form.get('passwords') as FormGroup;
 	}
 
 
-	async submit(): Promise<void> {
+	protected async submit(): Promise<void> {
 		if (this.form.invalid || this.saving) {
 			this.form.markAllAsTouched();
 			return;

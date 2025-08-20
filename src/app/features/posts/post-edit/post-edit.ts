@@ -20,11 +20,11 @@ import {trimmedMinLength} from "../../../shared/validators";
 	styleUrl: './post-edit.css'
 })
 export class PostEdit implements OnInit, OnDestroy {
-	error: string | null = null;
-	form!: FormGroup;
-	saving: boolean = false;
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
-	post!: PostModel;
+	protected error: string | null = null;
+	protected form!: FormGroup;
+	protected saving: boolean = false;
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	private post!: PostModel;
 	private loadingHandled: boolean = false;
 
 	constructor(
@@ -64,7 +64,7 @@ export class PostEdit implements OnInit, OnDestroy {
 		}
 	}
 
-	async submit(): Promise<void> {
+	protected async submit(): Promise<void> {
 		try {
 			if (this.form.invalid) {
 				this.form.markAllAsTouched();
@@ -86,7 +86,7 @@ export class PostEdit implements OnInit, OnDestroy {
 		}
 	}
 
-	onCancel(): void {
+	protected onCancel(): void {
 		this.location.back();
 	}
 }

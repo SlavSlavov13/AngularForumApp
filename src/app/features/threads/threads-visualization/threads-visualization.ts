@@ -24,7 +24,7 @@ export class ThreadsVisualization {
 	@Input() profileCardUser?: AppUserModel;
 	@Input() inProfile?: boolean;
 
-	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	protected loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
 
 	constructor(
 		private store: Store<AppState>
