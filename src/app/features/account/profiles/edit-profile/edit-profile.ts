@@ -3,7 +3,7 @@ import {AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Val
 import {AppUserModel} from "../../../../shared/models";
 import {AuthService} from "../../../../core/services/auth.service";
 import {passwordsMatchAndSameAsOldValidator} from "./passwordsMatchAndSameAsOld.validator";
-import {displayNameTakenValidator, emailTakenValidator} from "../../../../shared/validators";
+import {displayNameTakenValidator, emailTakenValidator, trimmedMinLength} from "../../../../shared/validators";
 import {handleError} from "../../../../shared/helpers";
 import {Router} from "@angular/router";
 import {Loader} from '@googlemaps/js-api-loader';
@@ -69,13 +69,13 @@ export class EditProfile implements OnInit, OnDestroy {
 			this.user = await this.authService.getUser(this.uid);
 
 			const passwordGroupOptions: AbstractControlOptions = {
-				validators: [passwordsMatchAndSameAsOldValidator]
+				validators: [passwordsMatchAndSameAsOldValidator(6)]
 			};
 
 			this.form = this.fb.group({
 				displayName: [
 					this.user.displayName,
-					[Validators.required, Validators.minLength(2)],
+					[Validators.required, trimmedMinLength(2)],
 					[displayNameTakenValidator(this.user.displayName, this.authService)]
 				],
 				email: [

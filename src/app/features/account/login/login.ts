@@ -4,6 +4,7 @@ import {CommonModule} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../core/services/auth.service';
 import {handleError} from "../../../shared/helpers";
+import {trimmedMinLength} from "../../../shared/validators";
 
 @Component({
 	selector: 'app-login',
@@ -25,7 +26,7 @@ export class Login {
 	) {
 		this.form = this.fb.group({
 			email: ['', [Validators.required, Validators.email]],
-			password: ['', [Validators.required, Validators.minLength(6)]],
+			password: ['', [Validators.required, trimmedMinLength(6)]],
 		});
 	}
 
@@ -40,7 +41,7 @@ export class Login {
 		const {email, password} = this.form.value as { email: string; password: string };
 
 		try {
-			await this.authService.login(email, password);
+			await this.authService.login(email.trim(), password.trim());
 			const returnUrl: string = this.route.snapshot.queryParamMap.get('returnUrl') || '/threads';
 			await this.router.navigateByUrl(returnUrl);
 		} catch (e) {

@@ -1,29 +1,41 @@
 import {AbstractControl, FormGroup, ValidationErrors, ValidatorFn} from '@angular/forms';
 
-export const passwordsMatchAndSameAsOldValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-	const group = control as FormGroup;
-	const currentPassword: string = group.get('currentPassword')?.value;
-	const newPassword: string = group.get('newPassword')?.value;
-	const repeatNewPassword: string = group.get('repeatNewPassword')?.value;
+export function passwordsMatchAndSameAsOldValidator(minLength: number): ValidatorFn {
+	return (control: AbstractControl): ValidationErrors | null => {
+		const group = control as FormGroup;
+		let currentPassword: string = group.get('currentPassword')?.value ?? '';
+		let newPassword: string = group.get('newPassword')?.value ?? '';
+		let repeatNewPassword: string = group.get('repeatNewPassword')?.value ?? '';
 
-	if (!currentPassword && !newPassword && !repeatNewPassword) {
+		currentPassword = currentPassword.trim();
+		newPassword = newPassword.trim();
+		repeatNewPassword = repeatNewPassword.trim();
+
+		if (!currentPassword && !newPassword && !repeatNewPassword) {
+			return null;
+		}
+
+		if (
+			(newPassword && newPassword.length < minLength) ||
+			(currentPassword && currentPassword.length < minLength)
+		) {
+			return {
+				minlength: {
+					requiredLength: minLength,
+					newPasswordLength: newPassword.length,
+					currentPasswordLength: currentPassword.length
+				}
+			};
+		}
+
+		if (newPassword === currentPassword && newPassword !== '') {
+			return {samePassword: true};
+		}
+
+		if (newPassword !== repeatNewPassword) {
+			return {passwordMismatch: true};
+		}
+
 		return null;
-	}
-
-	if (
-		(newPassword && newPassword.length < 6) ||
-		(currentPassword && currentPassword.length < 6)
-	) {
-		return {passwordTooShort: true};
-	}
-
-	if (newPassword === currentPassword && newPassword !== '') {
-		return {samePassword: true};
-	}
-
-	if (newPassword !== repeatNewPassword) {
-		return {passwordMismatch: true};
-	}
-
-	return null;
-};
+	};
+}
