@@ -32,7 +32,7 @@ export class PostDelete {
 					messageType: 'Delete post ',
 					itemContent: `"${post.body}"`,
 					messageEnd: '? This cannot be undone.'
-				}
+				},
 			}).closed);
 
 			if (result) {

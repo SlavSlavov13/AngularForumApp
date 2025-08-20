@@ -10,8 +10,8 @@
 			}
 			<a [routerLink]="['/profile', this.thread.authorId]" class="title author">Author: {{ this.author.displayName }}</a>
 			@if (this.thread.authorId === (this.currentUid | async)) {
-				<button [routerLink]="['/threads', this.thread.id, 'edit']">Edit</button>
-				<button type="button" class="danger" (click)="delete()">Delete</button>
+				<button [routerLink]="['/threads', this.thread.id, 'edit']">Edit Thread</button>
+				<button type="button" class="danger" (click)="delete()">Delete Thread</button>
 			}
 			<a [routerLink]="['/threads', this.thread.id, 'add-post']" class="title add-post">Add post to thread</a>
 		</section>

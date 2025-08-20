@@ -130,11 +130,7 @@
 
 			<!-- Submit Button -->
 			<button type="submit" class="btn btn-primary mt-3" [disabled]="(this.loading$ | async) || this.form.invalid || this.form.get('displayName')?.pending || this.form.get('email')?.pending || this.saving">
-				@if (this.saving) {
-					<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true">Saving...</span>
-				} @else {
-					Save Changes
-				}
+				{{ this.saving ? 'Saving...' : 'Save Changes' }}
 			</button>
 
 			<button type="button" class="btn btn-three mt-3" (click)="onCancel()">

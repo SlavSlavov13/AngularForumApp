@@ -38,7 +38,7 @@
 
 			<!-- Submit -->
 			<button [disabled]="this.saving || this.form.invalid" type="submit">
-				{{ this.saving ? 'Saving...' : 'Save' }}
+				{{ this.saving ? 'Saving...' : 'Save Changes' }}
 			</button>
 
 			@if (this.error) {
