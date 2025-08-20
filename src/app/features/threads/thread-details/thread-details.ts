@@ -67,7 +67,8 @@ export class ThreadDetails implements OnInit, OnDestroy {
 
 	async delete(): Promise<void> {
 		try {
-			this.deleting = true;
+			this.store.dispatch(showLoading());
+			this.loadingHandled = false;
 			const result: unknown = await firstValueFrom(this.dialog.open(ConfirmDelete, {
 				data: {
 					messageType: 'Delete thread ',
@@ -82,7 +83,7 @@ export class ThreadDetails implements OnInit, OnDestroy {
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {
-			this.deleting = false
+			this.handleLoaded();
 		}
 	}
 }
