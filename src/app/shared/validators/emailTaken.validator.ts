@@ -6,12 +6,12 @@ import {AuthService} from "../../core/services/auth.service";
 const controlSubjects = new WeakMap<AbstractControl, Subject<string>>();
 
 export function emailTakenValidator(
-	currentEmail: string | null,
-	authService: AuthService
+	authService: AuthService,
+	currentEmail?: string,
 ): AsyncValidatorFn {
 	return (control: AbstractControl): Observable<ValidationErrors | null> => {
 		if (!control.value) return of(null);
-		if (currentEmail === control.value) return of(null)
+		if (currentEmail && (currentEmail === control.value)) return of(null)
 
 		let subject: Subject<string> | undefined = controlSubjects.get(control);
 		if (!subject) {

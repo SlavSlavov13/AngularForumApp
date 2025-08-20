@@ -7,8 +7,12 @@
 			<small>
 				@if (this.form.get('email')?.errors?.['required']) {
 					<span>Email is required.</span>
-				} @else if (this.form.get('email')?.errors?.['email']) {
+				}
+				@if (this.form.get('email')?.errors?.['email']) {
 					<span>Enter a valid email.</span>
+				}
+				@if (this.form.get('email')?.errors?.['emailTaken']) {
+					<span>This email is already taken.</span>
 				}
 			</small>
 		}
@@ -20,6 +24,7 @@
 		@if (this.form.get('displayName')?.touched && this.form.get('displayName')?.invalid) {
 			<small>
 				@if (this.form.get('displayName')?.errors?.['required']) {
+
 					<span>Display name is required.</span>
 				} @else if (this.form.get('displayName')?.errors?.['minlength']) {
 					<span>Minimum length is {{ this.form.get('displayName')?.errors?.['minlength'].requiredLength }} characters.</span>
@@ -65,12 +70,12 @@
 
 	</div>
 
-	<button [disabled]="saving || form.invalid || form.get('displayName')?.pending" type="submit">
+	<button [disabled]="saving || this.form.invalid || this.form.get('displayName')?.pending || this.form.get('email')?.pending" type="submit">
 		{{ saving ? 'Creating account...' : 'Register' }}
 	</button>
 
 
-	@if (error) {
+	@if (this.error) {
 		<p style="color:#b00020">{{ this.error }}</p>
 	}
 </form>

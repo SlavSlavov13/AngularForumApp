@@ -76,12 +76,12 @@ export class EditProfile implements OnInit, OnDestroy {
 				displayName: [
 					this.user.displayName,
 					[Validators.required, trimmedMinLength(2)],
-					[displayNameTakenValidator(this.user.displayName, this.authService)]
+					[displayNameTakenValidator(this.authService, this.user.displayName!)]
 				],
 				email: [
 					this.user.email,
 					[Validators.required, customEmailValidator()],
-					[emailTakenValidator(this.user.email, this.authService)]
+					[emailTakenValidator(this.authService, this.user.email)]
 				],
 				passwords: this.fb.group(
 					{

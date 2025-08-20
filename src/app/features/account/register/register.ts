@@ -4,7 +4,7 @@ import {CommonModule} from '@angular/common';
 import {AuthService} from '../../../core/services/auth.service';
 import {Router} from '@angular/router';
 import {passwordMatchValidator} from "./passwordMatch.validator";
-import {customEmailValidator, displayNameTakenValidator, trimmedMinLength} from "../../../shared/validators";
+import {customEmailValidator, displayNameTakenValidator, emailTakenValidator, trimmedMinLength} from "../../../shared/validators";
 import {handleError} from "../../../shared/helpers";
 
 @Component({
@@ -23,11 +23,11 @@ export class Register implements OnInit {
 
 	ngOnInit(): void {
 		this.form = this.fb.group({
-			email: ['', [Validators.required, customEmailValidator()]],
+			email: ['', [Validators.required, customEmailValidator(), emailTakenValidator(this.authService)]],
 			displayName: [
 				'',
 				[Validators.required, trimmedMinLength(2)],
-				[displayNameTakenValidator(null, this.authService)]
+				[displayNameTakenValidator(this.authService)]
 			],
 			passwords: this.fb.group({
 				password: ['', [Validators.required, trimmedMinLength(6)]],

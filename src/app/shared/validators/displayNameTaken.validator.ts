@@ -6,13 +6,13 @@ import {AuthService} from "../../core/services/auth.service";
 const controlSubjects = new WeakMap<AbstractControl, Subject<string>>();
 
 export function displayNameTakenValidator(
-	currentDisplayName: string | null,
-	authService: AuthService
+	authService: AuthService,
+	currentDisplayName?: string,
 ): AsyncValidatorFn {
 	return (control: AbstractControl): Observable<ValidationErrors | null> => {
 		if (!control.value) return of(null);
 
-		if (currentDisplayName === control.value) return of(null)
+		if (currentDisplayName && currentDisplayName === control.value) return of(null)
 
 		let subject: Subject<string> | undefined = controlSubjects.get(control);
 		if (!subject) {

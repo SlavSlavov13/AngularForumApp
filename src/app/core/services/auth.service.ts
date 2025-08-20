@@ -136,23 +136,27 @@ export class AuthService {
 	}
 
 	isDisplayNameTaken(displayName: string): Observable<boolean> {
-		const q = query(
-			collection(this.db, 'users'),
-			where('displayName', '==', displayName)
-		);
-		return from(getDocs(q)).pipe(
-			map(snapshot => !snapshot.empty)
-		);
+		return runInInjectionContext(this.injector, (): Observable<boolean> => {
+			const q = query(
+				collection(this.db, 'users'),
+				where('displayName', '==', displayName)
+			);
+			return from(getDocs(q)).pipe(
+				map(snapshot => !snapshot.empty)
+			);
+		});
 	}
 
 	isEmailTaken(email: string): Observable<boolean> {
-		const q = query(
-			collection(this.db, 'users'),
-			where('email', '==', email)
-		);
-		return from(getDocs(q)).pipe(
-			map(snapshot => !snapshot.empty)
-		);
+		return runInInjectionContext(this.injector, (): Observable<boolean> => {
+			const q = query(
+				collection(this.db, 'users'),
+				where('email', '==', email)
+			);
+			return from(getDocs(q)).pipe(
+				map(snapshot => !snapshot.empty)
+			);
+		});
 	}
 
 
