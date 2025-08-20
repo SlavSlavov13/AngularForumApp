@@ -15,16 +15,18 @@ export const ownerGuard: CanActivateFn = async (route: ActivatedRouteSnapshot): 
 	const postId: string | null = route.paramMap.get('postId');
 	const threadId: string | null = route.paramMap.get('threadId');
 
+	const currentUid: string | null = await authService.currentUid();
+
 	if (threadId) {
 		const thread: ThreadModel = await firstValueFrom(threadService.getThread(threadId));
-		return thread.authorId === await authService.currentUid()
+		return thread.authorId === currentUid
 			? true
 			: router.createUrlTree([`/threads/${threadId}`]);
 	}
 
 	if (postId) {
 		const post: PostModel = await firstValueFrom(postService.getPost(postId));
-		return post.authorId === await authService.currentUid()
+		return post.authorId === currentUid
 			? true
 			: router.createUrlTree([`/threads/${post.threadId}`]);
 	}
