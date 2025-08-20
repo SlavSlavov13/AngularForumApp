@@ -59,7 +59,6 @@ export class AuthService {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
 
 			try {
-
 				const cred: UserCredential = await createUserWithEmailAndPassword(this.auth, email, password);
 
 				if (displayName) {
@@ -71,14 +70,13 @@ export class AuthService {
 
 				await setDoc(
 					doc(this.db, 'users', cred.user.uid),
-					{...appUser, createdAt: serverTimestamp()},
+					{...appUser, createdAt: serverTimestamp(), lastLogin: serverTimestamp()},
 					{merge: true}
 				);
 			} catch (err) {
 				throw new Error(mapFirebaseError(err));
 			}
 		});
-
 	}
 
 	async login(email: string, password: string): Promise<void> {
@@ -136,7 +134,6 @@ export class AuthService {
 		}
 		return users;
 	}
-
 
 	isDisplayNameTaken(displayName: string): Observable<boolean> {
 		const q = query(
