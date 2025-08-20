@@ -1,0 +1,12 @@
+<div class="modal-backdrop"></div>
+
+<div class="container">
+	<h2>Confirm Deletion</h2>
+
+	<p>{{ data.message }}</p>
+
+	<div class="actions">
+		<button type="button" class="danger" (click)="onConfirm()">Delete</button>
+		<button type="button" (click)="onCancel()">Cancel</button>
+	</div>
+</div>

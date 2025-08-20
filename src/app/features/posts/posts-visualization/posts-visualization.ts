@@ -26,18 +26,17 @@ export class PostsVisualization {
 	@Input() postInThread?: boolean;
 	@Input() profileCardUser?: AppUserModel;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
-	deleting: boolean = false;
 
 	constructor(
 		private store: Store<AppState>,
 	) {
 	}
 
-	onDeleting(): void {
-		this.deleting = true;
-	}
-
 	onPostDeleted(deletedPostId: string): void {
 		this.posts = this.posts.filter(post => post.id !== deletedPostId);
+	}
+
+	onDeletionError(errorMessage: string): void {
+		this.error = errorMessage;
 	}
 }
