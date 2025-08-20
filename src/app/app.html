@@ -5,7 +5,7 @@
 			<div class="error-message">{{ this.error }}</div>
 		} @else {
 			<header class="nav">
-				<a routerLink="/threads">Threads</a>
+				<a routerLink="/threads">All Threads</a>
 				@let loggedIn = this.authService.user$ | async;
 
 				@if (loggedIn) {
