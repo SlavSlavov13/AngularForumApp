@@ -7,6 +7,7 @@ import {handleError} from "../../../shared/helpers";
 import {PostService} from "../../../core/services/post.service";
 import {firstValueFrom} from "rxjs";
 import {Location} from "@angular/common";
+import {trimmedMinLength} from "../../../shared/validators";
 
 @Component({
 	selector: 'app-post-create',
@@ -30,7 +31,7 @@ export class PostCreate {
 		private location: Location,
 	) {
 		this.form = this.fb.group({
-			body: ['', [Validators.required, Validators.minLength(20)]],
+			body: ['', [Validators.required, trimmedMinLength(20)]],
 		});
 	}
 

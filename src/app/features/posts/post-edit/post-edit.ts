@@ -8,6 +8,7 @@ import {PostService} from "../../../core/services/post.service";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {Store} from "@ngrx/store";
 import {AsyncPipe, Location} from "@angular/common";
+import {trimmedMinLength} from "../../../shared/validators";
 
 @Component({
 	selector: 'app-post-edit',
@@ -43,7 +44,7 @@ export class PostEdit implements OnInit, OnDestroy {
 			this.post = await firstValueFrom(this.postService.getPost(postId));
 
 			this.form = this.fb.group({
-				body: [this.post.body, [Validators.required, Validators.minLength(20)]],
+				body: [this.post.body, [Validators.required, trimmedMinLength(20)]],
 			});
 		} catch (e) {
 			this.error = handleError(e);

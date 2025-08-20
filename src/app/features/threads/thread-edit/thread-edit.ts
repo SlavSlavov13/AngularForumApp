@@ -8,6 +8,7 @@ import {handleError} from "../../../shared/helpers";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {Store} from "@ngrx/store";
 import {AsyncPipe, Location} from "@angular/common";
+import {trimmedMinLength} from "../../../shared/validators";
 
 @Component({
 	selector: 'app-thread-edit',
@@ -42,8 +43,8 @@ export class ThreadEdit implements OnInit, OnDestroy {
 			this.thread = await firstValueFrom(this.threadService.getThread(threadId));
 
 			this.form = this.fb.group({
-				title: [this.thread.title, [Validators.required, Validators.minLength(6)]],
-				body: [this.thread.body, [Validators.required, Validators.minLength(20)]],
+				title: [this.thread.title, [Validators.required, trimmedMinLength(6)]],
+				body: [this.thread.body, [Validators.required, trimmedMinLength(20)]],
 				tags: [Array.isArray(this.thread.tags) ? this.thread.tags.join(', ') : (this.thread.tags ?? '')],
 			});
 		} catch (e) {

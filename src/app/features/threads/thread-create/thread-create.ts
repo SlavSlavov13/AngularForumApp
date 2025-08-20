@@ -8,6 +8,7 @@ import {DocumentReference} from '@angular/fire/firestore';
 import {firstValueFrom} from "rxjs";
 import {handleError} from "../../../shared/helpers";
 import {Location} from "@angular/common";
+import {trimmedMinLength} from "../../../shared/validators";
 
 @Component({
 	selector: 'app-thread-create',
@@ -31,8 +32,8 @@ export class ThreadCreate {
 		private location: Location,
 	) {
 		this.form = this.fb.group({
-			title: ['', [Validators.required, Validators.minLength(6)]],
-			body: ['', [Validators.required, Validators.minLength(20)]],
+			title: ['', [Validators.required, trimmedMinLength(6)]],
+			body: ['', [Validators.required, trimmedMinLength(20)]],
 			tags: ['']
 		});
 	}
