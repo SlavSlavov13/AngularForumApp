@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AuthService} from "../../../core/services/auth.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {AppUserModel, PostCreateModel} from "../../../shared/models";
+import {PostCreateModel} from "../../../shared/models";
 import {handleError} from "../../../shared/helpers";
 import {PostService} from "../../../core/services/post.service";
 import {firstValueFrom} from "rxjs";
@@ -41,13 +41,11 @@ export class PostCreate {
 			const {body} = this.form.value;
 
 			const uid: string = (await this.authService.currentUid())!;
-			const author: AppUserModel = (await this.authService.getUser(uid))!;
 			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
 			const payload: PostCreateModel = {
 				threadId: threadId,
 				body: body,
 				authorId: uid,
-				authorName: author.displayName!
 			};
 
 			await firstValueFrom(this.postService.createPost(payload));

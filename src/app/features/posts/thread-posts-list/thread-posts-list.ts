@@ -18,7 +18,7 @@ import {PostsVisualization} from "../posts-visualization/posts-visualization";
 	styleUrl: './thread-posts-list.css'
 })
 export class ThreadPostsList implements OnInit, OnDestroy {
-	posts: PostModel[] = [];
+	posts: (PostModel & { authorName?: string })[] = [];
 	threadId!: string;
 	error: string | null = null;
 	currentUid: string | null = null;
@@ -40,7 +40,23 @@ export class ThreadPostsList implements OnInit, OnDestroy {
 			this.store.dispatch(showLoading());
 			this.currentUid = await this.authService.currentUid();
 			this.threadId = this.route.snapshot.paramMap.get('threadId')!;
-			this.posts = await firstValueFrom(this.postService.listPostsByThread(this.threadId));
+
+			const posts: PostModel[] = await firstValueFrom(this.postService.listPostsByThread(this.threadId));
+
+			const authorIds: string[] = Array.from(new Set(posts.map(p => p.authorId)));
+			const users: AppUserModel[] = authorIds.length > 0
+				? await this.authService.getUsersByIds(authorIds)
+				: [];
+
+			const userMap = users.reduce((acc, user) => {
+				acc[user.uid] = user.displayName!;
+				return acc;
+			}, {} as { [key: string]: string });
+
+			this.posts = posts.map(p => ({
+				...p,
+				authorName: userMap[p.authorId]
+			})) as (PostModel & { authorName: string })[];
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {

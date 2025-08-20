@@ -19,7 +19,7 @@ import {PostDelete} from "../post-delete/post-delete";
 	styleUrl: './posts-visualization.css'
 })
 export class PostsVisualization {
-	@Input({required: true}) posts!: PostModel[];
+	@Input({required: true}) posts!: (PostModel & { authorName?: string })[];
 	@Input({required: true}) error!: string | null;
 	@Input() currentUid!: string | null | undefined;
 	@Input() postsLimited?: boolean;

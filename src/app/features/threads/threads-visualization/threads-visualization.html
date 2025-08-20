@@ -10,7 +10,7 @@
 					<span> · {{ t.body }}</span>
 					<span> · {{ t.replyCount || 0 }} {{ 'reply' | pluralize: t.replyCount : 'replies' }}</span>
 					@if (!this.inProfile) {
-						<a [routerLink]="['/profile', t.authorId]" class="title"> · Author: {{ t.authorName }}</a>
+						<a [routerLink]="['/profile', t.authorId]" class="title"> · Author: {{ t?.authorName }}</a>
 					}
 				</div>
 			}

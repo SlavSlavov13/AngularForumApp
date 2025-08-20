@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ThreadModel} from "../../../shared/models";
+import {AppUserModel, ThreadModel} from "../../../shared/models";
 import {firstValueFrom, Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../store";
 import {ThreadService} from "../../../core/services/thread.service";
@@ -7,6 +7,7 @@ import {Store} from "@ngrx/store";
 import {handleError} from "../../../shared/helpers";
 import {ThreadsVisualization} from "../threads-visualization/threads-visualization";
 import {AsyncPipe} from "@angular/common";
+import {AuthService} from "../../../core/services/auth.service";
 
 @Component({
 	selector: 'app-all-threads-list',
@@ -26,6 +27,7 @@ export class AllThreadsList implements OnInit, OnDestroy {
 
 	constructor(
 		private threadService: ThreadService,
+		private authService: AuthService,
 		private store: Store<AppState>
 	) {
 	}
@@ -33,7 +35,23 @@ export class AllThreadsList implements OnInit, OnDestroy {
 	async ngOnInit(): Promise<void> {
 		try {
 			this.store.dispatch(showLoading());
-			this.threads = await firstValueFrom(this.threadService.listThreads());
+			const threads: ThreadModel[] = await firstValueFrom(this.threadService.listThreads());
+
+			const authorIds: string[] = Array.from(new Set(threads.map(t => t.authorId)));
+
+			const users: AppUserModel[] = authorIds.length > 0
+				? await this.authService.getUsersByIds(authorIds)
+				: [];
+
+			const userMap = users.reduce((acc, user) => {
+				acc[user.uid] = user.displayName!;
+				return acc;
+			}, {} as { [key: string]: string });
+
+			this.threads = threads.map(t => ({
+				...t,
+				authorName: userMap[t.authorId]
+			})) as (ThreadModel & { authorName: string })[];
 		} catch (e) {
 			this.error = handleError(e);
 		} finally {

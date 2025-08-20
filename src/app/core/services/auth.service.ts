@@ -124,6 +124,20 @@ export class AuthService {
 		});
 	}
 
+	async getUsersByIds(ids: string[]): Promise<AppUserModel[]> {
+		const users: AppUserModel[] = [];
+		for (const id of ids) {
+			try {
+				const user: AppUserModel = await this.getUser(id);
+				users.push(user);
+			} catch (err) {
+				throw new Error(mapFirebaseError(err));
+			}
+		}
+		return users;
+	}
+
+
 	isDisplayNameTaken(displayName: string): Observable<boolean> {
 		const q = query(
 			collection(this.db, 'users'),
