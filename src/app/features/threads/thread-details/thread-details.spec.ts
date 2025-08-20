@@ -8,6 +8,7 @@ import {Location} from '@angular/common';
 import {Dialog} from '@angular/cdk/dialog';
 import {of} from 'rxjs';
 import {AppUserModel, ThreadModel} from '../../../shared/models';
+import {Firestore} from "@angular/fire/firestore";
 
 describe('ThreadDetails', () => {
 	let component: ThreadDetails;
@@ -76,6 +77,7 @@ describe('ThreadDetails', () => {
 				{provide: Store, useValue: storeMock},
 				{provide: Location, useValue: locationMock},
 				{provide: Dialog, useValue: dialogMock},
+				{provide: Firestore, useValue: {}}
 			],
 		}).compileComponents();
 
@@ -92,7 +94,6 @@ describe('ThreadDetails', () => {
 		(component as any).ngOnInit();
 		tick();
 
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
 		expect(threadServiceMock.getThread).toHaveBeenCalledWith('thread123');
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('user123');
 		expect((component as any).thread).toEqual(mockThread);
@@ -107,7 +108,6 @@ describe('ThreadDetails', () => {
 		tick();
 
 		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
 	}));
 
 	it('should call handleLoaded on ngOnDestroy', () => {

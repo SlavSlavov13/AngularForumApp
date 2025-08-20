@@ -8,16 +8,17 @@ describe('authGuard', () => {
 	let routerMock: any;
 	let route: ActivatedRouteSnapshot;
 	let state: RouterStateSnapshot;
+	const mockUrlTree = {} as UrlTree;
+
 
 	beforeEach(() => {
 		authServiceMock = {
 			isLoggedIn: jasmine.createSpy(),
 		};
 
+
 		routerMock = {
-			createUrlTree: jasmine.createSpy().and.callFake((commands, extras) => {
-				return {commands, extras} as unknown as UrlTree; // mock UrlTree
-			}),
+			createUrlTree: jasmine.createSpy().and.returnValue(mockUrlTree),
 		};
 
 		TestBed.configureTestingModule({
@@ -46,6 +47,7 @@ describe('authGuard', () => {
 		authServiceMock.isLoggedIn.and.returnValue(Promise.resolve(false));
 		const result = await executeGuard();
 		expect(routerMock.createUrlTree).toHaveBeenCalledWith(['/login'], {queryParams: {returnUrl: state.url}});
-		expect(result).toEqual(routerMock.createUrlTree());
+		expect(result).toBe(mockUrlTree);  // Use strict equality to the mocked returned UrlTree
 	});
+
 });

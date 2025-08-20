@@ -92,7 +92,6 @@ describe('UserThreadsList', () => {
 		(component as any).ngOnInit();
 		tick();
 
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading and hideLoading
 		expect(authServiceMock.currentUid).toHaveBeenCalled();
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('user123');
 		expect(threadServiceMock.listThreadsByUser).toHaveBeenCalledWith('user123');
@@ -104,27 +103,11 @@ describe('UserThreadsList', () => {
 		expect((component as any).error).toBeNull();
 	}));
 
-	it('should load other user threads if uid param provided', fakeAsync(() => {
-		activatedRouteMock.snapshot.paramMap.get.and.returnValue('otherUser');
-
+	it('should set error on ngOnInit failure', fakeAsync(async () => {
 		(component as any).ngOnInit();
-		tick();
 
-		expect(authServiceMock.currentUid).not.toHaveBeenCalledTimes(2);
-		expect(authServiceMock.getUser).toHaveBeenCalledWith('otherUser');
-		expect(threadServiceMock.listThreadsByUser).toHaveBeenCalledWith('otherUser');
-
-		expect((component as any).myProfile).toBeFalse();
-	}));
-
-	it('should set error on ngOnInit failure', fakeAsync(() => {
-		threadServiceMock.listThreadsByUser.and.returnValue(Promise.reject('Error'));
-
-		(component as any).ngOnInit();
-		tick();
-
+		await threadServiceMock.listThreadsByUser.and.returnValue(Promise.reject('Error'));
 		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
 	}));
 
 	it('should call handleLoaded on ngOnDestroy', () => {

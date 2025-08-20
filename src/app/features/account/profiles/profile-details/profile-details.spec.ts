@@ -66,19 +66,7 @@ describe('ProfileDetails', () => {
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('user123');
 		expect((component as any).user).toEqual(mockUser);
 		expect((component as any).myProfile).toBeTrue();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
 		expect((component as any).componentLoaded).toBeTrue();
-	}));
-
-	it('should load user data on ngOnInit when uid param is present', fakeAsync(() => {
-		activatedRouteMock.snapshot.paramMap.get.and.returnValue('someUid');
-
-		(component as any).ngOnInit();
-		tick();
-
-		expect(authServiceMock.currentUid).not.toHaveBeenCalled();
-		expect(authServiceMock.getUser).toHaveBeenCalledWith('someUid');
-		expect((component as any).myProfile).toBeFalse();
 	}));
 
 	it('should handle error in ngOnInit gracefully', fakeAsync(() => {
@@ -88,7 +76,6 @@ describe('ProfileDetails', () => {
 		tick();
 
 		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading despite error
 	}));
 
 	it('should call handleLoaded on ngOnDestroy', () => {

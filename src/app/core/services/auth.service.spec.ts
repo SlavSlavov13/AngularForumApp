@@ -1,27 +1,43 @@
 import {TestBed} from '@angular/core/testing';
-import {BehaviorSubject} from 'rxjs';
 import {AuthService} from './auth.service';
-import {AppUserModel} from '../../shared/models';
+import {Storage} from '@angular/fire/storage';
+import {Auth} from '@angular/fire/auth';
+import {Firestore} from '@angular/fire/firestore';
+import {Injector} from '@angular/core';
+
+// Minimal Storage mock (expand with methods your service uses)
+const storageMock = {
+	ref: () => ({}),
+};
+
+// Minimal Auth mock with onAuthStateChanged stub
+const authMock = {
+	onAuthStateChanged: (callback: Function) => {
+		// Immediately call callback with null to simulate signed out state
+		callback(null);
+		return () => {
+		}; // unsubscribe function
+	},
+	currentUser: null,
+};
+
+// Minimal Firestore mock (expand with methods your service uses)
+const firestoreMock = {};
 
 describe('AuthService', () => {
 	let service: AuthService;
-
-	// Mock Storage or other dependencies your AuthService requires
-	const storageMock = {
-		// mock the required methods here, e.g.
-		ref: () => ({ /* mock functions */}),
-		upload: () => Promise.resolve(),
-		// Add any other methods your service uses
-	};
 
 	beforeEach(() => {
 		TestBed.configureTestingModule({
 			providers: [
 				AuthService,
-				{provide: Storage, useValue: storageMock}, // Provide Storage mock
-				// Add any other dependencies here similarly if needed
-			]
+				{provide: Storage, useValue: storageMock},
+				{provide: Auth, useValue: authMock},
+				{provide: Firestore, useValue: firestoreMock},
+				Injector, // Angular provides this automatically but included here for clarity
+			],
 		});
+
 		service = TestBed.inject(AuthService);
 	});
 
@@ -31,14 +47,22 @@ describe('AuthService', () => {
 
 	describe('#currentUid', () => {
 		it('should return null when no user is logged in', async () => {
-			service['userSub'] = new BehaviorSubject<AppUserModel | null>(null);
+			service['userSub'].next(null);
 			const uid = await service.currentUid();
 			expect(uid).toBeNull();
 		});
 
 		it('should return uid when user is logged in', async () => {
-			const mockUser: AppUserModel = {uid: 'user123', email: 'test@example.com', displayName: 'name', photoURL: '', location: null, createdAt: undefined, lastLogin: undefined};
-			service['userSub'] = new BehaviorSubject<AppUserModel | null>(mockUser);
+			const mockUser = {
+				uid: 'user123',
+				email: 'test@example.com',
+				displayName: 'name',
+				photoURL: '',
+				location: null,
+				createdAt: undefined,
+				lastLogin: undefined,
+			};
+			service['userSub'].next(mockUser);
 			const uid = await service.currentUid();
 			expect(uid).toBe('user123');
 		});
@@ -46,14 +70,22 @@ describe('AuthService', () => {
 
 	describe('#isLoggedIn', () => {
 		it('should be false when userSub value is null', async () => {
-			service['userSub'] = new BehaviorSubject<AppUserModel | null>(null);
+			service['userSub'].next(null);
 			const loggedIn = await service.isLoggedIn();
 			expect(loggedIn).toBeFalse();
 		});
 
 		it('should be true when userSub value is not null', async () => {
-			const mockUser: AppUserModel = {uid: 'user123', email: 'test@example.com', displayName: 'name', photoURL: '', location: null, createdAt: undefined, lastLogin: undefined};
-			service['userSub'] = new BehaviorSubject<AppUserModel | null>(mockUser);
+			const mockUser = {
+				uid: 'user123',
+				email: 'test@example.com',
+				displayName: 'name',
+				photoURL: '',
+				location: null,
+				createdAt: undefined,
+				lastLogin: undefined,
+			};
+			service['userSub'].next(mockUser);
 			const loggedIn = await service.isLoggedIn();
 			expect(loggedIn).toBeTrue();
 		});

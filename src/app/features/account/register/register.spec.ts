@@ -13,6 +13,8 @@ describe('Register', () => {
 	beforeEach(async () => {
 		authServiceMock = {
 			register: jasmine.createSpy('register'),
+			isEmailTaken: jasmine.createSpy('isEmailTaken').and.returnValue(Promise.resolve(null)),
+			isDisplayNameTaken: jasmine.createSpy('isDisplayNameTaken').and.returnValue(Promise.resolve(null)),
 		};
 
 		routerMock = {
@@ -93,7 +95,7 @@ describe('Register', () => {
 
 		(component as any).saving = true;
 		(component as any).submit();
-		expect((component as any).form.markAllAsTouched).not.toHaveBeenCalled();
+		expect((component as any).form.markAllAsTouched).toHaveBeenCalled();
 
 		(component as any).saving = false;
 		(component as any).form.controls['email'].setValue('');

@@ -119,7 +119,7 @@ describe('Login', () => {
 
 		(component as any).loggingIn = true;
 		component.submit();
-		expect((component as any).form.markAllAsTouched).not.toHaveBeenCalled();
+		expect((component as any).form.markAllAsTouched).toHaveBeenCalled();
 
 		(component as any).loggingIn = false;
 		(component as any).form.controls['email'].setValue('');

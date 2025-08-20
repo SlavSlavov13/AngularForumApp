@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AppUserModel} from '../../../../shared/models';
-import {AuthService} from "../../../../core/services/auth.service";
 import {RouterLink} from "@angular/router";
 import {Observable} from "rxjs";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../../store";
@@ -28,7 +27,6 @@ export class ProfileCard implements OnInit, OnDestroy {
 	protected thisComponentLoaded: boolean = false;
 
 	constructor(
-		private authService: AuthService,
 		private store: Store<AppState>,
 		private cdr: ChangeDetectorRef,
 	) {

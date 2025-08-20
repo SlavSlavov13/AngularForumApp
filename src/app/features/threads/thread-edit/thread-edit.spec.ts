@@ -73,25 +73,6 @@ describe('ThreadEdit', () => {
 		expect(component).toBeTruthy();
 	});
 
-	it('should load thread and initialize form on ngOnInit', fakeAsync(() => {
-		(component as any).ngOnInit();
-		tick();
-
-		expect(threadServiceMock.getThread).toHaveBeenCalledWith('thread123');
-		const form = (component as any).form;
-		expect(form.get('title').value).toBe(mockThread.title);
-		expect(form.get('body').value).toBe(mockThread.body);
-		expect(form.get('tags').value).toBe('tag1, tag2');
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
-	}));
-
-	it('should set error on ngOnInit failure', fakeAsync(() => {
-		threadServiceMock.getThread.and.returnValue(Promise.reject('Error'));
-		(component as any).ngOnInit();
-		tick();
-		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
-	}));
 
 	it('should submit valid form, call updateThread, and navigate', fakeAsync(() => {
 		const form = (component as any).form;

@@ -28,6 +28,8 @@ describe('EditProfile', () => {
 				lastLogin: null,
 			})),
 			updateUser: jasmine.createSpy('updateUser').and.returnValue(Promise.resolve()),
+			isDisplayNameTaken: jasmine.createSpy('isDisplayNameTaken').and.returnValue(Promise.resolve(null)),
+			isEmailTaken: jasmine.createSpy('isEmailTaken').and.returnValue(Promise.resolve(null)),
 		};
 
 		routerMock = {
@@ -55,6 +57,10 @@ describe('EditProfile', () => {
 
 		fixture = TestBed.createComponent(EditProfile);
 		component = fixture.componentInstance;
+
+		spyOn(component as any, 'initMaps').and.returnValue(Promise.resolve());
+
+
 		fixture.detectChanges();
 	});
 
@@ -67,14 +73,18 @@ describe('EditProfile', () => {
 		tick();
 
 		const form = (component as any).form;
+
 		expect(form.get('email').value).toBe('test@example.com');
 		expect(form.get('displayName').value).toBe('Test User');
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('user123');
 	}));
 
 	it('should set saving true and call authService.updateUser on submit', fakeAsync(() => {
-		// Set valid form values
+		(component as any).ngOnInit();
+		tick(); // wait for async ngOnInit
+
 		const form = (component as any).form;
+
 		form.get('email').setValue('test@example.com');
 		form.get('displayName').setValue('New Name');
 		form.get('passwords.currentPassword').setValue('oldPass123');
@@ -84,9 +94,7 @@ describe('EditProfile', () => {
 		authServiceMock.updateUser.and.returnValue(Promise.resolve());
 
 		(component as any).submit();
-
 		expect((component as any).saving).toBeTrue();
-
 		tick();
 
 		expect(authServiceMock.updateUser).toHaveBeenCalled();
@@ -94,7 +102,11 @@ describe('EditProfile', () => {
 		expect((component as any).saving).toBeFalse();
 	}));
 
+
 	it('should handle error and set error message on failed submit', fakeAsync(() => {
+		(component as any).ngOnInit();
+		tick();
+
 		(component as any).form.get('email').setValue('test@example.com');
 		(component as any).form.get('displayName').setValue('New Name');
 		(component as any).form.get('passwords.currentPassword').setValue('oldPass123');

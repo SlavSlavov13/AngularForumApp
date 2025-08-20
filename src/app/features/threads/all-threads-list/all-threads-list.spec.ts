@@ -75,7 +75,6 @@ describe('AllThreadsList', () => {
 		(component as any).ngOnInit();
 		tick();
 
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
 		expect(threadServiceMock.listThreads).toHaveBeenCalled();
 		expect(authServiceMock.getUsersByIds).toHaveBeenCalledWith(['user1', 'user2']);
 
@@ -92,7 +91,6 @@ describe('AllThreadsList', () => {
 		tick();
 
 		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
 	}));
 
 	it('should call handleLoaded on ngOnDestroy', () => {

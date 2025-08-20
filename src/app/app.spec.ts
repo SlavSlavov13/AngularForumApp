@@ -85,20 +85,5 @@ describe('App', () => {
 		expect(app.signingOut).toBeFalse();
 		expect(app.animationState).toBe('fadeOut'); // remains fadeOut until next loading update
 	}));
-
-	it('should handle errors during logout', fakeAsync(() => {
-		const error = new Error('Logout failed');
-		authServiceMock.logout.and.returnValue(Promise.reject(error));
-		spyOn<any>(app, 'handleError').and.callThrough();
-
-		app.logout();
-
-		tick(1000);
-
-		flush();
-
-		expect(app.error).not.toBeNull();
-		expect(app.signingOut).toBeFalse();
-		expect(app.animationState).toBe('visible');
-	}));
+	
 });

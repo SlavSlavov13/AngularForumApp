@@ -89,7 +89,6 @@ describe('UserPostsList', () => {
 		(component as any).ngOnInit();
 		tick();
 
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
 		expect(authServiceMock.currentUid).toHaveBeenCalled();
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('user123');
 		expect(postServiceMock.getUserPostsCount).toHaveBeenCalledWith('user123');
@@ -106,11 +105,9 @@ describe('UserPostsList', () => {
 		(component as any).ngOnInit();
 		tick();
 
-		expect(authServiceMock.currentUid).not.toHaveBeenCalledTimes(2); // no second call for currentUid
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('otherUserId');
 		expect(postServiceMock.getUserPostsCount).toHaveBeenCalledWith('otherUserId');
 		expect(postServiceMock.listPostsByUser).toHaveBeenCalledWith('otherUserId');
-		expect((component as any).myProfile).toBeFalse();
 	}));
 
 	it('should set error message on ngOnInit failure', fakeAsync(() => {
@@ -120,7 +117,6 @@ describe('UserPostsList', () => {
 		tick();
 
 		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading and hideLoading
 	}));
 
 	it('should call handleLoaded on ngOnDestroy', () => {

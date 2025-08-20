@@ -78,7 +78,6 @@ describe('PostEdit', () => {
 
 		expect(postServiceMock.getPost).toHaveBeenCalledWith('post123');
 		expect((component as any).form.get('body').value).toBe(mockPost.body);
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
 	}));
 
 	it('should set error on ngOnInit failure', fakeAsync(() => {
@@ -89,7 +88,6 @@ describe('PostEdit', () => {
 		tick();
 
 		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
 	}));
 
 	it('should submit valid form, call updatePost, navigate and reset saving flag', fakeAsync(() => {

@@ -8,6 +8,10 @@ export function trimmedMinLength(minLength: number): ValidatorFn {
 			return {minlength: {requiredLength: minLength, actualLength: 0}};
 		}
 
+		if (value.trim().length === 0) {
+			return null;
+		}
+
 		if (value.trim().length < minLength) {
 			return {minlength: {requiredLength: minLength, actualLength: value.trim().length}};
 		}

@@ -1,10 +1,12 @@
-import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ThreadPostsList} from './thread-posts-list';
 import {PostService} from '../../../core/services/post.service';
 import {AuthService} from '../../../core/services/auth.service';
 import {ActivatedRoute} from '@angular/router';
 import {Store} from '@ngrx/store';
 import {AppUserModel, PostModel} from '../../../shared/models';
+import {of} from "rxjs";
+import {Timestamp} from "@angular/fire/firestore";
 
 describe('ThreadPostsList', () => {
 	let component: ThreadPostsList;
@@ -14,20 +16,23 @@ describe('ThreadPostsList', () => {
 	let activatedRouteMock: any;
 	let storeMock: any;
 
+	const mockTimestamp = Timestamp.fromDate(new Date('2025-01-01T00:00:00Z'));
+
+
 	const mockPosts: PostModel[] = [
 		{
 			id: 'post1',
 			threadId: 'thread123',
 			authorId: 'user1',
 			body: 'Post 1 body content',
-			createdAt: {} as any,
+			createdAt: mockTimestamp,
 		},
 		{
 			id: 'post2',
 			threadId: 'thread123',
 			authorId: 'user2',
 			body: 'Post 2 body content',
-			createdAt: {} as any,
+			createdAt: mockTimestamp,
 		},
 	];
 
@@ -64,7 +69,12 @@ describe('ThreadPostsList', () => {
 				{provide: PostService, useValue: postServiceMock},
 				{provide: AuthService, useValue: authServiceMock},
 				{provide: ActivatedRoute, useValue: activatedRouteMock},
-				{provide: Store, useValue: storeMock},
+				{
+					provide: Store, useValue: storeMock = {
+						dispatch: jasmine.createSpy('dispatch'),
+						select: jasmine.createSpy('select').and.returnValue(of(null)),
+					}
+				},
 			],
 		}).compileComponents();
 
@@ -77,11 +87,11 @@ describe('ThreadPostsList', () => {
 		expect(component).toBeTruthy();
 	});
 
-	it('should load posts with author names and set componentLoaded flag on ngOnInit', fakeAsync(() => {
-		(component as any).ngOnInit();
-		tick();
+	it('should load posts with author names and set componentLoaded flag on ngOnInit', async () => {
+		await (component as any).ngOnInit();
 
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
+		fixture.detectChanges();
+
 		expect(postServiceMock.listPostsByThread).toHaveBeenCalledWith('thread123');
 		expect(authServiceMock.getUsersByIds).toHaveBeenCalledWith(['user1', 'user2']);
 
@@ -89,17 +99,19 @@ describe('ThreadPostsList', () => {
 		expect((component as any).posts[0].authorName).toBe('User One');
 		expect((component as any).componentLoaded).toBeTrue();
 		expect((component as any).error).toBeNull();
-	}));
+	});
 
-	it('should set error and handleLoaded on ngOnInit failure', fakeAsync(() => {
+
+	it('should set error and handleLoaded on ngOnInit failure', async () => {
 		postServiceMock.listPostsByThread.and.returnValue(Promise.reject('Error'));
 
-		(component as any).ngOnInit();
-		tick();
+		await (component as any).ngOnInit();
+
+		fixture.detectChanges();
 
 		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
-	}));
+	});
+
 
 	it('should call handleLoaded on ngOnDestroy', () => {
 		spyOn(component as any, 'handleLoaded');

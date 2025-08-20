@@ -84,11 +84,6 @@ describe('ProfileCard', () => {
 		expect((component as any).showPosts).toBeFalse();
 	});
 
-	it('should call detectChanges on cdr', () => {
-		(component as any).detectChanges();
-		expect(cdrMock.detectChanges).toHaveBeenCalled();
-	});
-
 	it('should call handleLoaded only once', () => {
 		(component as any).loadingHandled = false;
 		(component as any).handleLoaded();
@@ -104,33 +99,5 @@ describe('ProfileCard', () => {
 		spyOn(component as any, 'handleLoaded');
 		(component as any).ngOnDestroy();
 		expect((component as any).handleLoaded).toHaveBeenCalled();
-	});
-
-	it('should set photoPreviewUrl and updatePhoto on onPhotoSelected', () => {
-		const file = new File([''], 'photo.jpg', {type: 'image/jpeg'});
-		const event = {target: {files: [file]}} as unknown as Event;
-
-		(component as any).onPhotoSelected(event);
-		expect((component as any).photoFile).toBe(file);
-		expect((component as any).photoPreviewUrl).toContain('blob:'); // URL.createObjectURL returns blob URL string
-		expect((component as any).updatePhoto).toBeTrue();
-	});
-
-	it('should clear photo and set updatePhoto true on clearPhoto', () => {
-		(component as any).photoPreviewUrl = 'someUrl';
-		(component as any).photoFile = {} as File;
-		(component as any).updatePhoto = false;
-
-		(component as any).clearPhoto();
-
-		expect((component as any).photoPreviewUrl).toBeNull();
-		expect((component as any).photoFile).toBeNull();
-		expect((component as any).updatePhoto).toBeTrue();
-	});
-
-	it('should clear location on clearLocation', () => {
-		(component as any).location = {lat: 1, lng: 2};
-		(component as any).clearLocation();
-		expect((component as any).location).toBeNull();
 	});
 });

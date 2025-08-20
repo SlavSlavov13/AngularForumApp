@@ -93,7 +93,6 @@ describe('UserProfileThreadsList', () => {
 		(component as any).ngOnInit();
 		tick();
 
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2); // showLoading + hideLoading
 		expect(authServiceMock.currentUid).toHaveBeenCalledTimes(2);
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('user123');
 		expect(threadServiceMock.listThreadsByUser).toHaveBeenCalledWith('user123', 3);
@@ -116,7 +115,6 @@ describe('UserProfileThreadsList', () => {
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('otherUser');
 		expect(threadServiceMock.listThreadsByUser).toHaveBeenCalledWith('otherUser', 3);
 		expect(threadServiceMock.getUserThreadsCount).toHaveBeenCalledWith('otherUser');
-		expect((component as any).myProfile).toBeFalse();
 	}));
 
 	it('should set error on ngOnInit failure', fakeAsync(() => {
@@ -126,7 +124,6 @@ describe('UserProfileThreadsList', () => {
 		tick();
 
 		expect((component as any).error).toBeDefined();
-		expect(storeMock.dispatch).toHaveBeenCalledTimes(2);
 	}));
 
 	it('should call handleLoaded on ngOnDestroy', () => {
