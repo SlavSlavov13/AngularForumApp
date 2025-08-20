@@ -16,6 +16,8 @@ header.nav {
 }
 
 header.nav a {
+	box-sizing: border-box;
+	padding: 10px;
 	color: #003366; /* Darker Blue Links */
 	text-decoration: none;
 	margin-right: 15px;
@@ -32,10 +34,10 @@ header.nav a:hover {
 }
 
 button {
+	padding: 10px 12px;
 	background-color: #0073e6; /* Blue Button */
 	border: none;
 	color: white;
-	padding: 6px 12px;
 	cursor: pointer;
 	font-weight: 600;
 	border-radius: 3px;
