@@ -23,7 +23,7 @@ export class Register implements OnInit {
 
 	ngOnInit(): void {
 		this.form = this.fb.group({
-			email: ['', [Validators.required, customEmailValidator(), emailTakenValidator(this.authService)]],
+			email: ['', [Validators.required, customEmailValidator()], [emailTakenValidator(this.authService)]],
 			displayName: [
 				'',
 				[Validators.required, trimmedMinLength(2)],

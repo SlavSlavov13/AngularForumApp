@@ -11,7 +11,7 @@
 				@if (this.form.get('email')?.errors?.['email']) {
 					<span>Enter a valid email.</span>
 				}
-				@if (this.form.get('email')?.errors?.['emailTaken']) {
+				@if (this.form.controls['email']?.errors?.['emailTaken']) {
 					<span>This email is already taken.</span>
 				}
 			</small>
