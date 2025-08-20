@@ -109,7 +109,6 @@ describe('UserProfilePostsList', () => {
 
 		(component as any).ngOnInit();
 		tick();
-
 		expect(authServiceMock.getUser).toHaveBeenCalledWith('otherUserId');
 		expect(postServiceMock.getUserPostsCount).toHaveBeenCalledWith('otherUserId');
 		expect(postServiceMock.listPostsByUser).toHaveBeenCalledWith('otherUserId', 3);
