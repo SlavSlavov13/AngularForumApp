@@ -56,7 +56,6 @@ export class PostCreate {
 			await this.router.navigate([`/threads/${threadId}`]);
 		} catch (e) {
 			this.error = handleError(e);
-			console.log(e)
 		} finally {
 			this.creating = false;
 		}
