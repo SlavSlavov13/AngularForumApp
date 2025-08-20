@@ -8,16 +8,6 @@ h1 {
 	text-align: center;
 }
 
-app-threads-visualization {
-	display: block;
-	max-width: 900px;
-	margin: 0 auto 30px auto;
-	padding: 10px 15px;
-	background-color: #e6f0ff; /* Very light blue background */
-	border-radius: 8px;
-	box-shadow: 0 3px 6px rgba(0, 64, 128, 0.15);
-}
-
 /* Responsive Design */
 
 @media (max-width: 768px) {
@@ -25,21 +15,11 @@ app-threads-visualization {
 		font-size: 1.6rem;
 		margin: 20px 10px 15px 10px;
 	}
-
-	app-threads-visualization {
-		max-width: 100%;
-		margin: 0 0 25px 0;
-		padding: 15px 10px;
-	}
 }
 
 @media (max-width: 480px) {
 	h1 {
 		font-size: 1.4rem;
 		margin: 15px 8px 12px 8px;
-	}
-
-	app-threads-visualization {
-		padding: 10px 8px;
 	}
 }

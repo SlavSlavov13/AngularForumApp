@@ -76,9 +76,10 @@ div > a, span {
 }
 
 .threads-container {
+	box-sizing: border-box;
 	display: block;
 	max-width: 900px;
-	margin: 0 auto 30px auto;
+	margin: 15px auto 15px auto;
 	padding: 10px 25px;
 	background-color: #e6f0ff; /* Light blue background */
 	border-radius: 8px;
