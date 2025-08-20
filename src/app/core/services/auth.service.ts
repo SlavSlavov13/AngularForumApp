@@ -151,7 +151,7 @@ export class AuthService {
 		return runInInjectionContext(this.injector, (): Observable<boolean> => {
 			const q = query(
 				collection(this.db, 'users'),
-				where('email', '==', email)
+				where('email', '==', email.toLowerCase())
 			);
 			return from(getDocs(q)).pipe(
 				map(snapshot => !snapshot.empty)
