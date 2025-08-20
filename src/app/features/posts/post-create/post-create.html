@@ -19,8 +19,7 @@
 				<div class="validation-errors">
 					@if (this.form.get('body')?.errors?.['required']) {
 						<p>Post content is required.</p>
-					}
-					@if (this.form.get('body')?.errors?.['minlength']) {
+					} @else if (this.form.get('body')?.errors?.['minlength']) {
 						<span>Minimum length is {{ this.form.get('body')?.errors?.['minlength']?.requiredLength }} characters.</span>
 					}
 				</div>

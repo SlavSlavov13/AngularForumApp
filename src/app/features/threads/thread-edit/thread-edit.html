@@ -11,8 +11,7 @@
 				<small class="error">
 					@if (this.form.controls['title'].errors?.['required']) {
 						Title is required.
-					}
-					@if (this.form.controls['title'].errors?.['minlength']) {
+					} @else if (this.form.controls['title'].errors?.['minlength']) {
 						Minimum length is {{ this.form.get('title')?.errors?.['minlength']?.requiredLength }} characters.
 					}
 				</small>
@@ -25,8 +24,7 @@
 				<small class="error">
 					@if (this.form.controls['body'].errors?.['required']) {
 						Body is required.
-					}
-					@if (this.form.controls['body'].errors?.['minlength']) {
+					} @else if (this.form.controls['body'].errors?.['minlength']) {
 						Minimum length is {{ this.form.get('body')?.errors?.['minlength']?.requiredLength }} characters.
 					}
 				</small>

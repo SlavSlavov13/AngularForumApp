@@ -14,8 +14,7 @@
 					<div>
 						Post body is required.
 					</div>
-				}
-				@if (this.form.get('body')?.errors?.['minlength']) {
+				} @else if (this.form.get('body')?.errors?.['minlength']) {
 					<div>
 						Minimum length is {{ this.form.get('body')?.errors?.['minlength']?.requiredLength }} characters.
 					</div>

@@ -24,11 +24,9 @@
 					<div class="invalid-feedback">
 						@if (this.form.get('displayName')?.errors?.['required']) {
 							<div>Display Name is required.</div>
-						}
-						@if (this.form.get('displayName')?.errors?.['minlength']) {
+						} @else if (this.form.get('displayName')?.errors?.['minlength']) {
 							<span>Minimum length is {{ this.form.get('displayName')?.errors?.['minlength'].requiredLength }} characters.</span>
-						}
-						@if (this.form.get('displayName')?.errors?.['displayNameTaken']) {
+						} @else if (this.form.get('displayName')?.errors?.['displayNameTaken']) {
 							<span>This display name is already taken.</span>
 						}
 					</div>
@@ -49,11 +47,9 @@
 					<div class="invalid-feedback">
 						@if (this.form.get('email')?.errors?.['required']) {
 							<div>Email is required.</div>
-						}
-						@if (this.form.get('email')?.errors?.['email']) {
+						} @else if (this.form.get('email')?.errors?.['email']) {
 							<div>Please enter a valid email address.</div>
-						}
-						@if (this.form.get('email')?.errors?.['emailTaken']) {
+						} @else if (this.form.get('email')?.errors?.['emailTaken']) {
 							<span>This email is already taken.</span>
 						}
 					</div>
@@ -77,11 +73,9 @@
 					<div class="invalid-feedback d-block">
 						@if (this.form.get('passwords')?.errors?.['passwordMismatch']) {
 							<div>New password and repeated password do not match.</div>
-						}
-						@if (this.form.get('passwords')?.errors?.['minlength']) {
+						} @else if (this.form.get('passwords')?.errors?.['minlength']) {
 							<span>Minimum length is {{ this.form.get('passwords')?.errors?.['minlength'].requiredLength }} characters.</span>
-						}
-						@if (this.form.get('passwords')?.errors?.['samePassword']) {
+						} @else if (this.form.get('passwords')?.errors?.['samePassword']) {
 							<div>New password must be different from the current password.</div>
 						}
 					</div>

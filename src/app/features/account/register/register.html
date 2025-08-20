@@ -7,11 +7,9 @@
 			<small>
 				@if (this.form.get('email')?.errors?.['required']) {
 					<span>Email is required.</span>
-				}
-				@if (this.form.get('email')?.errors?.['email']) {
+				} @else if (this.form.get('email')?.errors?.['email']) {
 					<span>Enter a valid email.</span>
-				}
-				@if (this.form.controls['email']?.errors?.['emailTaken']) {
+				} @else if (this.form.controls['email']?.errors?.['emailTaken']) {
 					<span>This email is already taken.</span>
 				}
 			</small>
