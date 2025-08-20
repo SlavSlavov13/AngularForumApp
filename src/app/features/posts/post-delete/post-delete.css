@@ -1,7 +1,7 @@
 /* Danger Button Styling */
 
 button.danger {
-	background-color: #f8a2b6;
+	background-color: #e4879e;
 	color: white;
 	border: none;
 	padding: 8px 16px;
@@ -14,7 +14,7 @@ button.danger {
 }
 
 button.danger:hover:not(:disabled) {
-	background-color: #f886a1;
+	background-color: #e36c89;
 }
 
 button.danger:disabled {

@@ -75,12 +75,12 @@ button[type="button"]:not(.danger):hover {
 
 /* Danger Button */
 button.danger {
-	background-color: #f8a2b6;
+	background-color: #e4879e;
 	color: white;
 }
 
 button.danger:hover {
-	background-color: #f886a1;
+	background-color: #e36c89;
 }
 
 /* Responsive for small screens */

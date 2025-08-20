@@ -61,7 +61,7 @@ button, .add-post {
 }
 
 button.danger {
-	background-color: #f8a2b6;
+	background-color: #e4879e;
 }
 
 button:hover:not(:disabled) {
@@ -69,7 +69,7 @@ button:hover:not(:disabled) {
 }
 
 button.danger:hover {
-	background-color: #f886a1;
+	background-color: #e36c89;
 }
 
 .add-post {
