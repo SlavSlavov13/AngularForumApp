@@ -47,8 +47,8 @@ export class ThreadCreate {
 
 			const uid: string = (await this.authService.currentUid())!;
 			const payload: ThreadCreateModel = {
-				title,
-				body,
+				title: title.trim(),
+				body: body.trim(),
 				tags: tags
 					? tags.split(',').map((t: string): string => t.trim()).filter(Boolean)
 					: [],

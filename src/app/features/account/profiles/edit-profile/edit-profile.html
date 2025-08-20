@@ -125,7 +125,7 @@
 
 			<!-- Error Message -->
 			@if (this.error) {
-				<div class="alert alert-danger mt-3">{{ this.error }}</div>
+				<p style="color:#b00020">{{ this.error }}</p>
 			}
 
 			<!-- Submit Button -->
@@ -135,6 +135,10 @@
 				} @else {
 					Save Changes
 				}
+			</button>
+
+			<button type="button" class="btn btn-three mt-3" (click)="onCancel()">
+				Cancel
 			</button>
 		</form>
 	</div>

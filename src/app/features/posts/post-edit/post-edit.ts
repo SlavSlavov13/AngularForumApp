@@ -72,7 +72,7 @@ export class PostEdit implements OnInit, OnDestroy {
 			const raw = this.form.value as { body: string; };
 
 			const patch: Partial<ThreadModel> = {
-				body: raw.body,
+				body: raw.body.trim(),
 			};
 
 			this.postService.updatePost(this.post.id, patch).subscribe({

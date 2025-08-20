@@ -25,6 +25,8 @@
 	width: 90%;
 	font-family: Arial, sans-serif;
 	color: #004080;
+	word-break: break-word;
+	overflow-wrap: break-word;
 }
 
 /* Title */

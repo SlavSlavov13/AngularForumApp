@@ -159,14 +159,15 @@ export class AuthService {
 	async updateUser(data: {
 		displayName: string,
 		email: string,
-		currentPassword?: string,
-		newPassword?: string,
+		currentPassword: string,
+		newPassword: string,
 		photoFile: File | null,
 		location: {
 			lat: number,
 			lng: number,
 			name?: string
-		} | null
+		} | null,
+		updatePhoto: boolean,
 	}): Promise<void> {
 		await runInInjectionContext(this.injector, async (): Promise<void> => {
 
@@ -174,8 +175,10 @@ export class AuthService {
 			const firebaseUser: User = this.auth.currentUser!;
 
 			const profileData: { displayName?: string; } = {};
+			if (data.updatePhoto) {
+				await this.uploadProfilePhoto(data.photoFile);
+			}
 			if (data.displayName !== firebaseUser.displayName) profileData.displayName = data.displayName;
-			await this.uploadProfilePhoto(data.photoFile)
 			if (Object.keys(profileData).length > 0) {
 				await updateProfile(firebaseUser, profileData);
 			}

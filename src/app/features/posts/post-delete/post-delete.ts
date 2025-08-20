@@ -28,7 +28,11 @@ export class PostDelete {
 		try {
 			const post: PostModel = (await firstValueFrom(this.postService.getPost(this.postId)))!;
 			const result: unknown = await firstValueFrom(this.dialog.open(ConfirmDelete, {
-				data: {message: `Delete post "${post.body}"? This cannot be undone.`}
+				data: {
+					messageType: 'Delete post ',
+					itemContent: `"${post.body}"`,
+					messageEnd: '? This cannot be undone.'
+				}
 			}).closed);
 
 			if (result) {

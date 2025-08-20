@@ -79,8 +79,8 @@ export class ThreadEdit implements OnInit, OnDestroy {
 					: [];
 
 			const patch: Partial<ThreadModel> = {
-				title: raw.title,
-				body: raw.body,
+				title: raw.title.trim(),
+				body: raw.body.trim(),
 				tags: tagsArray,
 			};
 

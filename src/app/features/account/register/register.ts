@@ -53,7 +53,7 @@ export class Register implements OnInit {
 		const password: string = passwords.password;
 
 		try {
-			await this.authService.register(email, password, displayName);
+			await this.authService.register(email.trim(), password.trim(), displayName.trim());
 			await this.router.navigateByUrl('/threads');
 			this.form.reset();
 		} catch (e) {

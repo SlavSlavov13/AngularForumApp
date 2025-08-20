@@ -3,7 +3,7 @@
 <div class="container">
 	<h2>Confirm Deletion</h2>
 
-	<p>{{ data.message }}</p>
+	<p>{{ data.messageType }}<strong>{{ data.itemContent }}</strong>{{ data.messageEnd }}</p>
 
 	<div class="actions">
 		<button type="button" class="danger" (click)="onConfirm()">Delete</button>

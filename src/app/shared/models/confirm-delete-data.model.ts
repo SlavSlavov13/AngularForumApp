@@ -1,3 +1,5 @@
 export interface ConfirmDeleteData {
-	message: string;
+	messageType: string;
+	itemContent: string;
+	messageEnd: string;
 }

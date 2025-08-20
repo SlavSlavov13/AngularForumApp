@@ -10,7 +10,7 @@ import {Loader} from '@googlemaps/js-api-loader';
 import {Observable} from "rxjs";
 import {Store} from "@ngrx/store";
 import {AppState, hideLoading, selectLoadingVisible, showLoading} from "../../../../store";
-import {AsyncPipe} from "@angular/common";
+import {AsyncPipe, Location} from "@angular/common";
 
 @Component({
 	selector: 'app-edit-profile',
@@ -35,6 +35,7 @@ export class EditProfile implements OnInit, OnDestroy {
 	location: { lat: number, lng: number, name?: string, } | null = null;
 	locationError: string | null = null;
 	loading$: Observable<boolean> = this.store.select(selectLoadingVisible);
+	updatePhoto: boolean = false;
 
 
 	private mapsLoader: Loader = new Loader({
@@ -54,6 +55,7 @@ export class EditProfile implements OnInit, OnDestroy {
 		private authService: AuthService,
 		private router: Router,
 		private store: Store<AppState>,
+		private locationForRoutes: Location,
 	) {
 	}
 
@@ -108,6 +110,7 @@ export class EditProfile implements OnInit, OnDestroy {
 		if (input.files && input.files.length) {
 			this.photoFile = input.files[0];
 			this.photoPreviewUrl = URL.createObjectURL(this.photoFile);
+			this.updatePhoto = true;
 		}
 	}
 
@@ -164,6 +167,7 @@ export class EditProfile implements OnInit, OnDestroy {
 	clearPhoto(): void {
 		this.photoPreviewUrl = null;
 		this.photoFile = null;
+		this.updatePhoto = true;
 	}
 
 	clearLocation(): void {
@@ -190,13 +194,22 @@ export class EditProfile implements OnInit, OnDestroy {
 		this.error = null;
 		this.saving = true;
 		try {
+			let displayName = this.form.get('displayName')!.value;
+			let email = this.form.get('email')!.value;
+			let currentPassword = this.form.get('passwords.currentPassword')?.value;
+			let newPassword = this.form.get('passwords.newPassword')?.value;
+
+			currentPassword = currentPassword ? currentPassword.trim() : '';
+			newPassword = newPassword ? newPassword.trim() : '';
+
 			const data = {
-				displayName: this.form.get('displayName')!.value,
-				email: this.form.get('email')!.value,
-				currentPassword: this.form.get('passwords.currentPassword')?.value,
-				newPassword: this.form.get('passwords.newPassword')?.value,
+				displayName: displayName.trim(),
+				email: email.trim(),
+				currentPassword: currentPassword,
+				newPassword: newPassword,
 				photoFile: this?.photoFile,
-				location: this?.location
+				location: this?.location,
+				updatePhoto: this.updatePhoto,
 			}
 			await this.authService.updateUser(data)
 			if (data.email !== this.user.email) {
@@ -208,5 +221,9 @@ export class EditProfile implements OnInit, OnDestroy {
 		} finally {
 			this.saving = false;
 		}
+	}
+
+	onCancel(): void {
+		this.locationForRoutes.back();
 	}
 }

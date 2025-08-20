@@ -72,6 +72,7 @@ button.btn {
 	font-size: 1rem;
 	transition: background-color 0.3s ease;
 	border: none;
+	margin-right: 10px;
 }
 
 button.btn-primary {
@@ -132,6 +133,15 @@ button.btn-secondary:disabled {
 	margin-top: 10px;
 }
 
+.btn-three {
+	color: white;
+	background-color: #003366;
+}
+
+.btn-three:hover {
+	background-color: #024b95;
+}
+
 /* Responsive Design */
 
 @media (max-width: 768px) {
@@ -140,7 +150,7 @@ button.btn-secondary:disabled {
 		margin: 20px 15px;
 	}
 
-	button.btn-secondary {
+	button.btn-secondary, .btn-three {
 		margin-top: 10px;
 		margin-right: 0;
 		width: 100%;
@@ -154,7 +164,8 @@ button.btn-secondary:disabled {
 	}
 
 	button.btn-primary,
-	button.btn-secondary {
+	button.btn-secondary,
+	.btn-three {
 		width: 100%;
 		font-size: 1rem;
 	}

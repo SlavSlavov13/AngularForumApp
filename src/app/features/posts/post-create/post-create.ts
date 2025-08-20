@@ -44,7 +44,7 @@ export class PostCreate {
 			const threadId: string = this.route.snapshot.paramMap.get('threadId')!;
 			const payload: PostCreateModel = {
 				threadId: threadId,
-				body: body,
+				body: body.trim(),
 				authorId: uid,
 			};
 
