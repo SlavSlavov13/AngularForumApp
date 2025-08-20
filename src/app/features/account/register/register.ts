@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/
 import {CommonModule} from '@angular/common';
 import {AuthService} from '../../../core/services/auth.service';
 import {Router} from '@angular/router';
-import {passwordMatchValidator} from "./passwordMatch.validator";
+import {passwordMatchValidator} from "./password-match.validator";
 import {customEmailValidator, displayNameTakenValidator, emailTakenValidator, trimmedMinLength} from "../../../shared/validators";
 import {handleError} from "../../../shared/helpers";
 

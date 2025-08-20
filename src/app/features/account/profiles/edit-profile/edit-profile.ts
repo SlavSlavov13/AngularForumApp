@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {AppUserModel} from "../../../../shared/models";
 import {AuthService} from "../../../../core/services/auth.service";
-import {passwordsMatchAndSameAsOldValidator} from "./passwordsMatchAndSameAsOld.validator";
+import {passwordsMatchAndSameAsOldValidator} from "./passwords-match-and-same-as-old.validator";
 import {customEmailValidator, displayNameTakenValidator, emailTakenValidator, trimmedMinLength} from "../../../../shared/validators";
 import {handleError} from "../../../../shared/helpers";
 import {Router} from "@angular/router";
